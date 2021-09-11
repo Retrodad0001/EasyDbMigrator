@@ -1,12 +1,12 @@
-using System;
 using Xunit;
 
 namespace EasyDbMigratorTests
 {
-    public class UnitTest1
+    public class MigrationTests //cannot run these test parallel because these are integration test
     {
         [Fact]
-        public void Test1()
+        [Trait("Category", "Integrationtest")] 
+        public void Can_migrate_create_database_and_run_all_migrations() 
         {
 
         }
