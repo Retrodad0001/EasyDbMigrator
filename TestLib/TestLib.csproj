@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="MigrationScripts\CreateDB.sql" />
+    <None Remove="MigrationScripts\Script2.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="MigrationScripts\Script2.sql" />
+    <EmbeddedResource Include="MigrationScripts\CreateDB.sql" />
+  </ItemGroup>
+
+</Project>
