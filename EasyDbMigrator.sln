@@ -5,6 +5,13 @@ VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDbMigrator", "EasyDbMigrator\EasyDbMigrator.csproj", "{8F72D2B1-71DF-455F-994F-41E32780233F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDbMigratorTests", "EasyDbMigratorTests\EasyDbMigratorTests.csproj", "{C440DB68-A61F-425C-AB06-39A8B475655A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6F223ADD-7137-481D-A871-D44C9FF8DE15}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +22,10 @@ Global
 		{8F72D2B1-71DF-455F-994F-41E32780233F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F72D2B1-71DF-455F-994F-41E32780233F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F72D2B1-71DF-455F-994F-41E32780233F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C440DB68-A61F-425C-AB06-39A8B475655A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C440DB68-A61F-425C-AB06-39A8B475655A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C440DB68-A61F-425C-AB06-39A8B475655A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C440DB68-A61F-425C-AB06-39A8B475655A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
