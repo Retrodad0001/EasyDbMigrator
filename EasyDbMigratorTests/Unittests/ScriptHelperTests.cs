@@ -1,7 +1,7 @@
-﻿using EasyDbMigrator;
+﻿using EasyDbMigrator.Helpers;
 using FluentAssertions;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using TestLib;
 using Xunit;
 
@@ -11,11 +11,11 @@ namespace EasyDbMigratorTests.Unittests
     public class ScriptHelperTests
     {
         [Fact]
-        public void TryConvertResourceNamesToScriptsInCorrectSequenceByType()
+        public async Task TryConvertResourceNamesToScriptsInCorrectSequenceByTypeAsync()
         {
             var sut = new ScriptsHelper();
 
-            var result = sut.TryConvertoScriptsInCorrectSequenceByType(typeof(SomeCustomClass));
+            var result = await sut.TryConvertoScriptsInCorrectSequenceByTypeAsync(typeof(SomeCustomClass));
 
             _ = result.Should().HaveCount(3);
 

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigratorTests.Integrationtests
 {
+    [ExcludeFromCodeCoverage] //this class is used for testing only
     public record VersioningTableRow
     {
         public int Id { get; set; }

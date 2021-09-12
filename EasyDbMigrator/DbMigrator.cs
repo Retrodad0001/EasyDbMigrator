@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyDbMigrator.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -65,7 +66,7 @@ namespace EasyDbMigrator
         {
             //TODO use utc, also in test scenario's 
             ScriptsHelper scriptsHelper = new ScriptsHelper();
-            List<Script> orderedScripts = scriptsHelper.TryConvertoScriptsInCorrectSequenceByType(customclassType);
+            List<Script> orderedScripts = await scriptsHelper.TryConvertoScriptsInCorrectSequenceByTypeAsync(customclassType);
 
             string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
 

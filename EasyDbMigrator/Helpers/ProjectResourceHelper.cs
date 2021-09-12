@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace EasyDbMigrator
+namespace EasyDbMigrator.Helpers
 {
     public class ProjectResourceHelper
     {

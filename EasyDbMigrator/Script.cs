@@ -11,7 +11,9 @@ namespace EasyDbMigrator
 
         public string NamePart { get; private set; }
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public Script(string scriptname, string content)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             if (string.IsNullOrWhiteSpace(scriptname))
             {
@@ -47,7 +49,5 @@ namespace EasyDbMigrator
         {
             return $"{NamePart} - {DatePartOfName} - {SequenceNumberPart} - content: {Content}";
         }
-
-
     }
 }

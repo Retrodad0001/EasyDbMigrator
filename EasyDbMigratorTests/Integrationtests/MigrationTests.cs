@@ -9,9 +9,7 @@ using Xunit;
 
 //TODO add rule underscore
 
-#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace EasyDbMigratorTests
-#pragma warning restore IDE0130 // Namespace does not match folder structure
 {
     [ExcludeFromCodeCoverage]
     public class MigrationTests //cannot run these test parallel because these are integration test
@@ -28,7 +26,7 @@ namespace EasyDbMigratorTests
 
                 DbTestHelper helper = new DbTestHelper(connectionstring);
 
-                await DeleteDatabaseIfExist(databasename, helper);
+                await DeleteDatabaseIfExistAsync(databasename, helper);
 
                 DbMigrator migrator = new(connectionstring: connectionstring);
                 _ = await migrator.TryApplyMigrationsAsync(databasename: databasename
@@ -42,13 +40,15 @@ namespace EasyDbMigratorTests
 
                 _ = helper.CheckMigrationsTable(expectedRows, databasename);//TODO check if these info is in migration table and if table exist
             }
+#pragma warning disable CA1031 // Do not catch general exception types, for sake of testing this is no problem
             catch (Exception ex)
+#pragma warning restore CA1031
             {
                 Assert.True(false, ex.ToString());
             }
         }
 
-        private async Task DeleteDatabaseIfExist(string databasename, DbTestHelper helper)
+        private async Task DeleteDatabaseIfExistAsync(string databasename, DbTestHelper helper)
         {
             string query = $@"
                 IF EXISTS(SELECT * FROM master.sys.databases WHERE name='{databasename}')
@@ -62,12 +62,8 @@ namespace EasyDbMigratorTests
             _ = await helper.TryExecuteSQLScriptAsync(query);
         }
 
-        //TODO test rollback script when error in script or otherwise
-        //TODO test that scripts run in sequence
         //TODO test when there are no scripts
         //TODO add retry policy
         //TODO add time-out policy
-
-
     }
 }

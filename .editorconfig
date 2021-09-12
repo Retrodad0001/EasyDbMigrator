@@ -270,7 +270,7 @@ dotnet_diagnostic.IDE0060.severity = warning
 dotnet_diagnostic.IDE0052.severity = warning
 
 # IDE0130: Namespace does not match folder structure
-dotnet_diagnostic.IDE0130.severity = suggestion
+dotnet_diagnostic.IDE0130.severity = none
 
 # CA1063: Implement IDisposable Correctly
 dotnet_diagnostic.CA1063.severity = warning
@@ -363,7 +363,7 @@ dotnet_diagnostic.CA3011.severity = error
 dotnet_diagnostic.CA3012.severity = error
 
 # CA1031: Do not catch general exception types
-dotnet_diagnostic.CA1031.severity = suggestion
+dotnet_diagnostic.CA1031.severity = warning
 
 # CA1058: Types should not extend certain base types
 dotnet_diagnostic.CA1058.severity = warning
@@ -372,7 +372,7 @@ dotnet_diagnostic.CA1058.severity = warning
 dotnet_diagnostic.CA1061.severity = warning
 
 # CA1305: Specify IFormatProvider
-dotnet_diagnostic.CA1305.severity = warning
+dotnet_diagnostic.CA1305.severity = silent
 
 # CA1307: Specify StringComparison for clarity
 dotnet_diagnostic.CA1307.severity = warning
