@@ -255,7 +255,7 @@ dotnet_diagnostic.CS1998.severity = error
 dotnet_diagnostic.IDE0044.severity = suggestion
 
 # CA1822: Mark members as static
-dotnet_diagnostic.CA1822.severity = suggestion
+dotnet_diagnostic.CA1822.severity = none
 
 # CA1707: Identifiers should not contain underscores
 dotnet_diagnostic.CA1707.severity = none

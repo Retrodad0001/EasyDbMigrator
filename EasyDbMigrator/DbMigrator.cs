@@ -1,9 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
-using TestLib;
 
 namespace EasyDbMigrator
 {
@@ -17,60 +15,91 @@ namespace EasyDbMigrator
             {
                 throw new ArgumentException($"'{nameof(connectionstring)}' cannot be null or whitespace.", nameof(connectionstring));
             }
-
             _connectionstring = connectionstring;
         }
 
-        public async Task<bool> TryApplyMigrationsAsync()
+        public async Task<bool> TryApplyMigrationsAsync(string databasename, Type customClass, DateTime executedDateTime)  //TODO add unique script name test before run
         {
+            if (string.IsNullOrWhiteSpace(databasename)) throw new ArgumentException($"'{nameof(databasename)}' cannot be null or whitespace.", nameof(databasename));
 
-            //always use master first
-
-            bool succeeded1 = await TryExcecuteScriptAsync("ignore", @"use master");
-
-            Assembly? assembly = Assembly.GetAssembly(typeof(Migration));
-
-            if (assembly == null)
-            {
-                return false;//TODO return more specific error
-            }
-
-            var resourcenames = assembly.GetManifestResourceNames(); //TODO add test when there other resources than .sql files
-
-            foreach (string resourcename in resourcenames)
-            {
-                using (Stream stream = assembly.GetManifestResourceStream(resourcename))
-                {
-
-                    if (stream is null)
-                    {
-                        return false;//TODO more specific result
-                    }
-
-                    using (StreamReader reader = new(stream))
-                    {
-                        string sqlScript = reader.ReadToEnd();
-                        bool succeeded2 = await TryExcecuteScriptAsync(resourcename: resourcename, sqlScript: sqlScript);
-                    }
-                }
-            }
+            await SetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(databasename: databasename); //TODO test stuff when goes wrong in this step
+            await SetupMigrationTableWhenNotExcist(databasename: databasename); //TOOD log every step in file or command or both
+            await RunMigrationScripts(databasename: databasename
+                , customclassType: customClass
+                , executedDateTime: executedDateTime);//TODO do some logic with these return
 
             return true;
         }
 
-        private async Task<bool> TryExcecuteScriptAsync(string resourcename, string sqlScript)
+        private async Task SetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(string databasename)
         {
-            if (string.IsNullOrWhiteSpace(sqlScript))
+            string sqlScriptCreateDatabase = @$" 
+                USE Master
+                IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '{databasename}')
+                BEGIN
+                    CREATE DATABASE {databasename}
+                END";
+
+            _ = await TryExcecuteScriptAsync(string.Empty, sqlScriptContent: sqlScriptCreateDatabase);
+        }
+
+        private async Task SetupMigrationTableWhenNotExcist(string databasename)
+        {
+            string sqlScriptCreateMigrationTable = @$" USE {databasename}  
+                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='DbMigrationsRun' AND xtype='U')
+                BEGIN
+                    CREATE TABLE DbMigrationsRun 
+                    (
+                        Id int IDENTITY(1,1) PRIMARY KEY,
+                        Executed Datetime2 NOT NULL,
+                        ScriptName nvarchar(50) NOT NULL UNIQUE,
+                        ScriptContent nvarchar(max) NOT NULL,
+                        Version nvarchar(10) NOT NULL
+                    )
+                END";
+
+            _ = await TryExcecuteScriptAsync(string.Empty, sqlScriptContent: sqlScriptCreateMigrationTable); //TODO do something with result
+        }
+
+        private async Task RunMigrationScripts(string databasename, Type customclassType, DateTime executedDateTime)
+        {
+            //TODO use utc, also in test scenario's 
+            ScriptsHelper scriptsHelper = new ScriptsHelper();
+            List<Script> orderedScripts = scriptsHelper.TryConvertoScriptsInCorrectSequenceByType(customclassType);
+
+            string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+
+
+            foreach (Script script in orderedScripts)
             {
-                throw new ArgumentException($"{resourcename} script is empty, is there something wrong?");
+                //TODO check if script has already run
+
+                string sqlscriptToExecute = string.Empty;
+                sqlscriptToExecute += " BEGIN TRANSACTION;";
+                sqlscriptToExecute += script.Content;
+                sqlscriptToExecute += @$" USE {databasename} 
+                            INSERT INTO DbMigrationsRun (Executed, ScriptName, ScriptContent, version)
+                            VALUES ('{sqlFormattedDate}', '{script.NamePart}', 'xx', '1.0.0');
+                        ";
+                sqlscriptToExecute += " COMMIT;";
+
+                _ = await TryExcecuteScriptAsync(scriptname: script.NameScriptsComplete, sqlScriptContent: sqlscriptToExecute);
             }
+        }
 
-            using SqlConnection connection = new SqlConnection(_connectionstring);
-            using SqlCommand command = new(sqlScript, connection);
+        private async Task<bool> TryExcecuteScriptAsync(string scriptname, string sqlScriptContent)
+        {
+                if (string.IsNullOrWhiteSpace(sqlScriptContent))
+                {
+                    throw new ArgumentException($"{scriptname} script is empty, is there something wrong?");
+                }
 
-            await command.Connection.OpenAsync();
-            _ = await command.ExecuteNonQueryAsync();
+                using SqlConnection connection = new SqlConnection(_connectionstring);
+                using SqlCommand command = new(sqlScriptContent, connection);
 
+                await command.Connection.OpenAsync();
+                _ = await command.ExecuteNonQueryAsync();
+           
             return true;
         }
     }

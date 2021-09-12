@@ -5,13 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="MigrationScripts\CreateDB.sql" />
-    <None Remove="MigrationScripts\Script2.sql" />
+    <None Remove="MigrationScripts\20212230_001_CreateDB.sql" />
+    <None Remove="MigrationScripts\20212230_002_Script2.sql" />
+    <None Remove="MigrationScripts\20212231_001_Script1.sql" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="MigrationScripts\Script2.sql" />
-    <EmbeddedResource Include="MigrationScripts\CreateDB.sql" />
+    <EmbeddedResource Include="MigrationScripts\20212231_001_Script1.sql" />
+    <EmbeddedResource Include="MigrationScripts\20212230_002_Script2.sql" />
+    <EmbeddedResource Include="MigrationScripts\20212230_001_CreateDB.sql" />
   </ItemGroup>
 
 </Project>

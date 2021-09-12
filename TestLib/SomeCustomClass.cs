@@ -1,6 +1,6 @@
 ﻿namespace TestLib
 {
-    public class Migration
+    public class SomeCustomClass
     {
     }
 }
