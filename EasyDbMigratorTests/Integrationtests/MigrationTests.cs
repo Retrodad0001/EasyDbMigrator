@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using TestLib;
 using Xunit;
 
-//TODO add rule underscore
-
 namespace EasyDbMigratorTests
 {
     [ExcludeFromCodeCoverage]
@@ -31,10 +29,10 @@ namespace EasyDbMigratorTests
                 DbMigrator migrator = new(connectionstring: connectionstring);
                 _ = await migrator.TryApplyMigrationsAsync(databasename: databasename
                     , customClass: typeof(SomeCustomClass)
-                    , executedDateTime: ExecutedDataTime);//TODO add rule so : in param must be set
+                    , executedDateTime: ExecutedDataTime);
 
                 List<VersioningTableRow> expectedRows = new List<VersioningTableRow>();
-                expectedRows.Add(new VersioningTableRow { Id = 1, Executed = ExecutedDataTime, ScriptContent= "xx", ScriptName= "CreateDB",  Version = "1.0.0" });
+                expectedRows.Add(new VersioningTableRow { Id = 1, Executed = ExecutedDataTime, ScriptContent = "xx", ScriptName= "CreateDB", Version = "1.0.0" });
                 expectedRows.Add(new VersioningTableRow { Id = 2, Executed = ExecutedDataTime, ScriptContent = "xx", ScriptName = "Script2", Version = "1.0.0" });
                 expectedRows.Add(new VersioningTableRow { Id = 3, Executed = ExecutedDataTime, ScriptContent = "xx", ScriptName = "Script1", Version = "1.0.0" });
 
@@ -62,7 +60,7 @@ namespace EasyDbMigratorTests
             _ = await helper.TryExecuteSQLScriptAsync(query);
         }
 
-        //TODO test when there are no scripts
+        
         //TODO add retry policy
         //TODO add time-out policy
     }

@@ -16,18 +16,20 @@ namespace EasyDbMigrator
             {
                 throw new ArgumentException($"'{nameof(connectionstring)}' cannot be null or whitespace.", nameof(connectionstring));
             }
+
             _connectionstring = connectionstring;
         }
 
-        public async Task<bool> TryApplyMigrationsAsync(string databasename, Type customClass, DateTime executedDateTime)  //TODO add unique script name test before run
+        public async Task<bool> TryApplyMigrationsAsync(string databasename, Type customClass, DateTime executedDateTime)  
         {
-            if (string.IsNullOrWhiteSpace(databasename)) throw new ArgumentException($"'{nameof(databasename)}' cannot be null or whitespace.", nameof(databasename));
+            if (string.IsNullOrWhiteSpace(databasename)) 
+                throw new ArgumentException($"'{nameof(databasename)}' cannot be null or whitespace.", nameof(databasename));
 
-            await SetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(databasename: databasename); //TODO test stuff when goes wrong in this step
-            await SetupMigrationTableWhenNotExcist(databasename: databasename); //TOOD log every step in file or command or both
-            await RunMigrationScripts(databasename: databasename
+            await SetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(databasename: databasename); //TODO do some reporting back when fails and unittest this
+            await SetupMigrationTableWhenNotExcistAsync(databasename: databasename); //TODO do some reporting back when fails and unittest this
+            await RunMigrationScriptsAsync(databasename: databasename
                 , customclassType: customClass
-                , executedDateTime: executedDateTime);//TODO do some logic with these return
+                , executedDateTime: executedDateTime);//TODO do some reporting back when fails and unittest this
 
             return true;
         }
@@ -44,7 +46,7 @@ namespace EasyDbMigrator
             _ = await TryExcecuteScriptAsync(string.Empty, sqlScriptContent: sqlScriptCreateDatabase);
         }
 
-        private async Task SetupMigrationTableWhenNotExcist(string databasename)
+        private async Task SetupMigrationTableWhenNotExcistAsync(string databasename)
         {
             string sqlScriptCreateMigrationTable = @$" USE {databasename}  
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='DbMigrationsRun' AND xtype='U')
@@ -59,28 +61,28 @@ namespace EasyDbMigrator
                     )
                 END";
 
-            _ = await TryExcecuteScriptAsync(string.Empty, sqlScriptContent: sqlScriptCreateMigrationTable); //TODO do something with result
+            _ = await TryExcecuteScriptAsync(string.Empty, sqlScriptContent: sqlScriptCreateMigrationTable);
         }
 
-        private async Task RunMigrationScripts(string databasename, Type customclassType, DateTime executedDateTime)
+        private async Task RunMigrationScriptsAsync(string databasename, Type customclassType, DateTime executedDateTime)
         {
-            //TODO use utc, also in test scenario's 
             ScriptsHelper scriptsHelper = new ScriptsHelper();
             List<Script> orderedScripts = await scriptsHelper.TryConvertoScriptsInCorrectSequenceByTypeAsync(customclassType);
 
-            string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+            //TODO test: script-name should be unique
 
+            string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
 
             foreach (Script script in orderedScripts)
             {
-                //TODO check if script has already run
+                //TODO check if script has already run based on NameScriptsComplete exist in table
 
                 string sqlscriptToExecute = string.Empty;
                 sqlscriptToExecute += " BEGIN TRANSACTION;";
                 sqlscriptToExecute += script.Content;
                 sqlscriptToExecute += @$" USE {databasename} 
                             INSERT INTO DbMigrationsRun (Executed, ScriptName, ScriptContent, version)
-                            VALUES ('{sqlFormattedDate}', '{script.NamePart}', 'xx', '1.0.0');
+                            VALUES ('{sqlFormattedDate}', '{script.NameScriptsComplete}', 'xx', '1.0.0');
                         ";
                 sqlscriptToExecute += " COMMIT;";
 

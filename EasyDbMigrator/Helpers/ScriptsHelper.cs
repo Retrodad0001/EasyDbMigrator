@@ -7,25 +7,29 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator.Helpers
 {
-    public class ScriptsHelper //add extra unittest to test this stuff, and give back result when failes (result class?)
+    public class ScriptsHelper
     {
         public async Task<List<Script>> TryConvertoScriptsInCorrectSequenceByTypeAsync(Type customclass)  
         {
             Assembly? assembly = Assembly.GetAssembly(customclass);
 
             if (assembly is null)
-                return new List<Script>();//TODO do better than this
+                throw new InvalidOperationException($"assembly is null for custom-class : {customclass}");
 
             string[] resourcenames = new ProjectResourceHelper().TryGetListOfResourceNamesFromAssemblyByType(customclass);
+
+            //TODO test when there are no scripts and report back something useful but not fail
+            //TODO test if there are other files then .sql and report back something useful
 
             List<Script> scripts = new List<Script>();
             foreach (string resourcename in resourcenames)
             {
+                //TODO log somehow every thing i do
                 using (Stream? stream = assembly.GetManifestResourceStream(resourcename))
                 {
                     if (stream is null)
                     {
-                        return new List<Script>();//TODO more specific result, not covering your ass kind of code here
+                        throw new InvalidOperationException($"steam cannot be null for resource name: {resourcename}");
                     }
 
                     using (StreamReader reader = new(stream))

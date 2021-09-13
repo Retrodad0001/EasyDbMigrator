@@ -30,7 +30,7 @@ namespace EasyDbMigrator
             SplitUpNameofScript(scriptname);
         }
 
-        private void SplitUpNameofScript(string completeNameOfScript) //TODO test: what if scripts are in different namespaces
+        private void SplitUpNameofScript(string completeNameOfScript)
         {
             string[] namePartsWithAssemblyPrefix = completeNameOfScript.Split('.', StringSplitOptions.None);
             string[] nameParts = namePartsWithAssemblyPrefix[^2].Split('_', StringSplitOptions.None); //not the last one because this is the .sql file extension

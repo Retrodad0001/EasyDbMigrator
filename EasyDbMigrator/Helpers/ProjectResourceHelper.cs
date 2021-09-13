@@ -11,10 +11,10 @@ namespace EasyDbMigrator.Helpers
 
             if (assembly == null)
             {
-                return null;//TODO return more specific error
+                throw new InvalidOperationException($"assembly is null for custom-class: {customClass}");
             }
 
-            string[] resourcenames = assembly.GetManifestResourceNames(); //TODO add test when there other resources than .sql files
+            string[] resourcenames = assembly.GetManifestResourceNames();
             return resourcenames;
         }
 

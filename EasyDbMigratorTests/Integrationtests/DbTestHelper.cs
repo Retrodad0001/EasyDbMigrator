@@ -34,7 +34,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     SELECT Id, Executed, ScriptName, ScriptContent, Version 
                     FROM DbMigrationsRun");
 
-                _ = actual.Should().HaveSameCount(expected); //TODO add whole table test not only count
+                _ = actual.Should().HaveSameCount(expected);
                 _ = actual.Should().Contain(expected);
 
                 return true;
