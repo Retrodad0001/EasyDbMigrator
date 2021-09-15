@@ -1,60 +1,37 @@
 ﻿using Dapper;
 using FluentAssertions;
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 
 namespace EasyDbMigratorTests.Integrationtests
 {
     [ExcludeFromCodeCoverage]
     public class DbTestHelper
     {
-        private readonly string connectionstring;
 
-        public DbTestHelper(string connectionstring)
-        {
-            if (string.IsNullOrEmpty(connectionstring))
-            {
-                throw new ArgumentException($"'{nameof(connectionstring)}' cannot be null or empty.", nameof(connectionstring));
-            }
-
-            this.connectionstring = connectionstring;
+        public DbTestHelper()
+        { 
         }
 
-        public bool CheckMigrationsTable(List<VersioningTableRow> expected, string testdbName)
+        public bool CheckMigrationsTable(string connectionString,
+            List<VersioningTableRow> expectedRows
+            , string testdbName)
         {
-            using (SqlConnection connection = new SqlConnection(connectionstring))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
                 List<VersioningTableRow> actual = (List<VersioningTableRow>)connection.Query<VersioningTableRow>(@$"
                     use {testdbName}
-                    SELECT Id, Executed, ScriptName, ScriptContent, Version 
+                    SELECT Id, Executed, ScriptName, Version 
                     FROM DbMigrationsRun");
 
-                _ = actual.Should().HaveSameCount(expected);
-                _ = actual.Should().Contain(expected);
+                _ = actual.Should().HaveSameCount(expectedRows);
+                _ = actual.Should().Contain(expectedRows);
 
                 return true;
             }
-        }
-
-        public async Task<bool> TryExecuteSQLScriptAsync(string scriptContent)
-        {
-            if (string.IsNullOrWhiteSpace(scriptContent))
-            {
-                throw new ArgumentException("scriptContent cannot be empty, is there something wrong?");
-            }
-
-            using SqlConnection connection = new SqlConnection(connectionstring);
-            using SqlCommand command = new(scriptContent, connection);
-
-            await command.Connection.OpenAsync();
-            _ = await command.ExecuteNonQueryAsync();
-
-            return true;
         }
     }
 }

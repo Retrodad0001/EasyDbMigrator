@@ -33,8 +33,8 @@ namespace EasyDbMigrator.Helpers
                 string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");//TODO find better way than this way
                 string updateVersioningTableScript = $@" 
                             USE {sqlDataBaseInfo.DatabaseName} 
-                            INSERT INTO DbMigrationsRun (Executed, ScriptName, ScriptContent, version)
-                            VALUES ('{sqlFormattedDate}', '{script.NamePart}', 'xx', '1.0.0');
+                            INSERT INTO DbMigrationsRun (Executed, ScriptName, version)
+                            VALUES ('{sqlFormattedDate}', '{script.NamePart}', '1.0.0');
                         ";
 
                 using SqlConnection connection = new SqlConnection(sqlDataBaseInfo.ConnectionString);

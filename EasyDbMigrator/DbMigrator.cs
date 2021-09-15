@@ -58,7 +58,6 @@ namespace EasyDbMigrator
                         Id int IDENTITY(1,1) PRIMARY KEY,
                         Executed Datetime2 NOT NULL,
                         ScriptName nvarchar(50) NOT NULL UNIQUE,
-                        ScriptContent nvarchar(max) NOT NULL,
                         Version nvarchar(10) NOT NULL
                     )
                 END";
