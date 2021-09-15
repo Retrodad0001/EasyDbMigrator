@@ -24,7 +24,6 @@ namespace EasyDbMigrator.Helpers
             List<Script> scripts = new List<Script>();
             foreach (string resourcename in resourcenames)
             {
-                //TODO log somehow every thing i do
                 using (Stream? stream = assembly.GetManifestResourceStream(resourcename))
                 {
                     if (stream is null)

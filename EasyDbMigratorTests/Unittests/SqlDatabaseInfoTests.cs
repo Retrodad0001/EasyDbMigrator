@@ -3,7 +3,7 @@
 namespace EasyDbMigratorTests.Unittests
 {
     [ExcludeFromCodeCoverage]
-    public class ProjectResourceHelperTests
+    public class SqlDatabaseInfoTests
     {
 
     }

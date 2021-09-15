@@ -30,7 +30,6 @@ namespace EasyDbMigratorTests.Unittests
             _ = result[2].SequenceNumberPart.Should().Be(1);
             _ = result[2].NamePart.Should().Be("Script1");
             _ = result[2].DatePartOfName.Should().Be(new System.DateTime(2021, 12, 31));
-
         }
     }
 }

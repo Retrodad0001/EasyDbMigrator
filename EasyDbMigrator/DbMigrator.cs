@@ -1,54 +1,56 @@
 ﻿using EasyDbMigrator.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 
 namespace EasyDbMigrator
 {
     public class DbMigrator
     {
-        private readonly string _connectionstring;
-
-        public DbMigrator(string connectionstring)
+        public DbMigrator()
         {
-            if (string.IsNullOrWhiteSpace(connectionstring))
-            {
-                throw new ArgumentException($"'{nameof(connectionstring)}' cannot be null or whitespace.", nameof(connectionstring));
-            }
-
-            _connectionstring = connectionstring;
         }
 
-        public async Task<bool> TryApplyMigrationsAsync(string databasename, Type customClass, DateTime executedDateTime)  
+        public async Task<bool> TryApplyMigrationsAsync(SqlDataBaseInfo sqlDataBaseInfo
+            , Type customClass
+            , DateTime executedDateTime)
         {
-            if (string.IsNullOrWhiteSpace(databasename)) 
-                throw new ArgumentException($"'{nameof(databasename)}' cannot be null or whitespace.", nameof(databasename));
+            if (sqlDataBaseInfo is null)
+            {
+                throw new ArgumentNullException(nameof(sqlDataBaseInfo));
+            }
 
-            await SetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(databasename: databasename); //TODO do some reporting back when fails and unittest this
-            await SetupMigrationTableWhenNotExcistAsync(databasename: databasename); //TODO do some reporting back when fails and unittest this
-            await RunMigrationScriptsAsync(databasename: databasename
+            if (customClass is null) //TODO: change this because this is not needed when run form command-line
+            {
+                throw new ArgumentNullException(nameof(customClass));
+            }
+
+            await SetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(sqlDataBaseInfo: sqlDataBaseInfo); //TODO do some reporting back when fails and unittest this
+            await SetupMigrationTableWhenNotExcistAsync(sqlDataBaseInfo: sqlDataBaseInfo); //TODO do some reporting back when fails and unittest this
+            await RunMigrationScriptsAsync(sqlDataBaseInfo: sqlDataBaseInfo
                 , customclassType: customClass
                 , executedDateTime: executedDateTime);//TODO do some reporting back when fails and unittest this
 
             return true;
         }
 
-        private async Task SetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(string databasename)
+        private async Task SetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(SqlDataBaseInfo sqlDataBaseInfo)
         {
             string sqlScriptCreateDatabase = @$" 
                 USE Master
-                IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '{databasename}')
+                IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '{sqlDataBaseInfo.DatabaseName}')
                 BEGIN
-                    CREATE DATABASE {databasename}
+                    CREATE DATABASE {sqlDataBaseInfo.DatabaseName}
                 END";
 
-            _ = await TryExcecuteScriptAsync(string.Empty, sqlScriptContent: sqlScriptCreateDatabase);
+            _ = await new SqlDbHelper().TryExcecuteSingleScriptAsync(connectionString: sqlDataBaseInfo.ConnectionString
+                , scriptName: "EasyDbMigrator.SetupEmptyDb"
+                , sqlScriptContent: sqlScriptCreateDatabase);
         }
 
-        private async Task SetupMigrationTableWhenNotExcistAsync(string databasename)
+        private async Task SetupMigrationTableWhenNotExcistAsync(SqlDataBaseInfo sqlDataBaseInfo)
         {
-            string sqlScriptCreateMigrationTable = @$" USE {databasename}  
+            string sqlScriptCreateMigrationTable = @$" USE {sqlDataBaseInfo.DatabaseName}  
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='DbMigrationsRun' AND xtype='U')
                 BEGIN
                     CREATE TABLE DbMigrationsRun 
@@ -61,49 +63,26 @@ namespace EasyDbMigrator
                     )
                 END";
 
-            _ = await TryExcecuteScriptAsync(string.Empty, sqlScriptContent: sqlScriptCreateMigrationTable);
+            _ = await new SqlDbHelper().TryExcecuteSingleScriptAsync(connectionString: sqlDataBaseInfo.ConnectionString
+                , scriptName: "EasyDbMigrator.SetupDbMigrationsRunTable"
+                , sqlScriptContent: sqlScriptCreateMigrationTable);
         }
 
-        private async Task RunMigrationScriptsAsync(string databasename, Type customclassType, DateTime executedDateTime)
+        private async Task RunMigrationScriptsAsync(SqlDataBaseInfo sqlDataBaseInfo
+            , Type customclassType
+            , DateTime executedDateTime)
         {
             ScriptsHelper scriptsHelper = new ScriptsHelper();
             List<Script> orderedScripts = await scriptsHelper.TryConvertoScriptsInCorrectSequenceByTypeAsync(customclassType);
 
-            //TODO test: script-name should be unique
-
-            string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
-
             foreach (Script script in orderedScripts)
             {
-                //TODO check if script has already run based on NameScriptsComplete exist in table
-
-                string sqlscriptToExecute = string.Empty;
-                sqlscriptToExecute += " BEGIN TRANSACTION;";
-                sqlscriptToExecute += script.Content;
-                sqlscriptToExecute += @$" USE {databasename} 
-                            INSERT INTO DbMigrationsRun (Executed, ScriptName, ScriptContent, version)
-                            VALUES ('{sqlFormattedDate}', '{script.NameScriptsComplete}', 'xx', '1.0.0');
-                        ";
-                sqlscriptToExecute += " COMMIT;";
-
-                _ = await TryExcecuteScriptAsync(scriptname: script.NameScriptsComplete, sqlScriptContent: sqlscriptToExecute);
+                _ = await new SqlDbHelper().RunDbMigrationScriptAsync(sqlDataBaseInfo: sqlDataBaseInfo
+                    , script: script
+                    , executedDateTime: executedDateTime);
             }
         }
 
-        private async Task<bool> TryExcecuteScriptAsync(string scriptname, string sqlScriptContent)
-        {
-                if (string.IsNullOrWhiteSpace(sqlScriptContent))
-                {
-                    throw new ArgumentException($"{scriptname} script is empty, is there something wrong?");
-                }
-
-                using SqlConnection connection = new SqlConnection(_connectionstring);
-                using SqlCommand command = new(sqlScriptContent, connection);
-
-                await command.Connection.OpenAsync();
-                _ = await command.ExecuteNonQueryAsync();
-           
-            return true;
-        }
+       
     }
 }
