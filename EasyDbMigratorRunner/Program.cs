@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigratorRunner
 {
+    [ExcludeFromCodeCoverage]
     public class Program
     {
 #pragma warning disable CA1801 // Review unused parameters

@@ -10,11 +10,6 @@ namespace EasyDbMigratorTests.Integrationtests
     [ExcludeFromCodeCoverage]
     public class DbTestHelper
     {
-
-        public DbTestHelper()
-        { 
-        }
-
         public bool CheckMigrationsTable(string connectionString,
             List<VersioningTableRow> expectedRows
             , string testdbName)

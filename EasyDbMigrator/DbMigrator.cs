@@ -7,10 +7,6 @@ namespace EasyDbMigrator
 {
     public class DbMigrator
     {
-        public DbMigrator()
-        {
-        }
-
         public async Task<bool> TryApplyMigrationsAsync(SqlDataBaseInfo sqlDataBaseInfo
             , Type customClass
             , DateTime executedDateTime)
@@ -81,7 +77,5 @@ namespace EasyDbMigrator
                     , executedDateTime: executedDateTime);
             }
         }
-
-       
     }
 }
