@@ -12,9 +12,9 @@ TODO code coverage
 
 EasyDBMigrator is an open-source sql database migration framework & Tool. It strongly favors simplicity and easy to use for automatic CI/CD strategies. 
 
-Migrations can be written in SQL (T-SQL) and support an append only strategy. 
+Migrations can be written in SQL (T-SQL). 
 
-It has a Command-line client for managing migrations and a framework written for .net to use migrations in local en CI pipeline based integration testing.
+It has a Command-line client for managing migrations and a framework written for .net to integrate database migrations in local en CI pipeline based integration testing scenario's.
 
 ## Wat we want to accomplish ?
 
