@@ -1,4 +1,7 @@
-BUILDS & STATISTICS:
+# Last news
+The software is still under-construction so do not use it in production! 
+
+# BUILDS & STATISTICS:
 
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/CI.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/CI.yml)
 
