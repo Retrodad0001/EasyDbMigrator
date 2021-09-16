@@ -1,4 +1,7 @@
+BUILDS & STATISTICS:
+
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/CI.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/CI.yml)
+
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml)
 
 # EasyDBMigrator - making database migrations easier
@@ -9,9 +12,9 @@ TODO
 
 ## Wat we want to accomplish ?
 
-1. Make it easy to integrate db migrations in your integration tests written in .NET or PowerShell
-2. Make it easy to integrate db migrations in your CI/CD flows
-3. Make it easy to integrate db migrations in your manual db migration strategy
+1. Make it easy to integrate SQL db migrations in your integration tests written in .NET or PowerShell
+2. Make it easy to integrate SQL db migrations in your CI/CD flows
+3. Make it easy to integrate SQL db migrations in your manual db migration strategy
 
 ### Wat do we not want to accomplish ?
 TODO
