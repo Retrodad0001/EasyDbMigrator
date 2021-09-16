@@ -4,6 +4,8 @@ BUILDS & STATISTICS:
 
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml)
 
+TODO code coverage
+
 # EasyDBMigrator - making database migrations easier
 
 ## What is EasyDBMigrator?
