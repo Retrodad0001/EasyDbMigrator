@@ -1,5 +1,5 @@
-[![Build](https://github.com/Azure/bicep/actions/workflows/CI.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/CI.yml)
-[![Build](https://github.com/Azure/bicep/actions/workflows/CI.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml)
+[![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/CI.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/CI.yml)
+[![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml)
 
 # EasyDBMigrator - making database migrations easier
 
