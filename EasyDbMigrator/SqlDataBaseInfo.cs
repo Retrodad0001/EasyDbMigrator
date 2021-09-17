@@ -23,6 +23,11 @@
                 throw new System.ArgumentException($"'{nameof(databaseName)}' cannot be null or whitespace.", nameof(databaseName));
             }
 
+            if (databaseName.Trim().Split(" ").Length > 1)
+            {
+                throw new System.ArgumentException($"'{nameof(databaseName)}' can only be one word.", nameof(databaseName));
+            }
+
             ConnectionString = connectionString;
             DatabaseName = databaseName;
         }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using EasyDbMigrator;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigratorRunner
@@ -12,7 +15,16 @@ namespace EasyDbMigratorRunner
 #pragma warning restore IDE0060 // Remove unused parameter
 #pragma warning restore CA1801 // Review unused parameters
         {
-            Console.WriteLine("Hello World, implement me please ;)");
+            ConsoleLoggerOptions options = new();
+
+            var loggerFactory = LoggerFactory.Create(builder => {
+                _ = builder.AddConsole();
+            });
+
+            ILogger logger = loggerFactory.CreateLogger<DbMigrator>();
+
+            loggerFactory.Dispose();
+            DbMigrator migrator = new DbMigrator(logger);
         }
     }
 }

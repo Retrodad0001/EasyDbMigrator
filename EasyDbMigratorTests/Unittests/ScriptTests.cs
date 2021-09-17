@@ -4,7 +4,7 @@ namespace EasyDbMigratorTests.Unittests
 {
 
     [ExcludeFromCodeCoverage]
-    public class ScriptTests//TODO Test scenario's like: what is script name contains no namespace prefix, is empty ...
+    public class ScriptTests
     {
     }
 

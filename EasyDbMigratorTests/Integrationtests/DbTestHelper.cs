@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigratorTests.Integrationtests
 {
-    //TODO *** use https://codecov.io and put link in readme.md
     [ExcludeFromCodeCoverage]
     public class DbTestHelper
     {
