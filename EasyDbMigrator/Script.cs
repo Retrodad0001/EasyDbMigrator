@@ -44,7 +44,6 @@ namespace EasyDbMigrator
             SequenceNumberPart = int.Parse(nameParts[1]);
             NamePart = nameParts[2];
         }
-
         public override string ToString()
         {
             return $"{NamePart} - {DatePartOfName} - {SequenceNumberPart} - content: {Content}";

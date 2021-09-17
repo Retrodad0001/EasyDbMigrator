@@ -18,8 +18,12 @@ namespace EasyDbMigrator.Helpers
 
             string[] resourcenames = new ProjectResourceHelper().TryGetListOfResourceNamesFromAssemblyByType(customclass);
 
-            //TODO test when there are no scripts and report back something useful but not fail
-            //TODO test if there are other files then .sql and report back something useful
+            //TODO HIGH: test migrations fail when no database can be setup
+            //TODO HIGH: test migrations fail when no version table can be added
+            //TODO HIGH: test migrations fail when no database can be found
+            //TODO HIGH: test ignore non .sql files
+            //TODO HIGH:test script cannot be run (bad script content)
+            //TODO NICE: test log : how many scripts are found
 
             List<Script> scripts = new List<Script>();
             foreach (string resourcename in resourcenames)

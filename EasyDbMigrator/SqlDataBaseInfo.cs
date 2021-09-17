@@ -1,10 +1,10 @@
 ﻿namespace EasyDbMigrator
 {
-    //TODO add action policy : code coverage should go up
-    //TODO add retry policy or in configuration class?
-    //TODO add time-out policy or in configuration class?
-    //TODO add test that database name can only be one word (sql-injection stuff...)
-    //TODO add test check connection string correct format
+    //TODO HIGH: add action policy : code coverage should go up
+    //TODO HIGH: add retry policy or in configuration class?
+    //TODO HIGH: add time-out policy or in configuration class?
+    //TODO HIGH: add test check connection string correct format
+
     public class SqlDataBaseInfo //start with this no need for extra abstractions, use sql for now en sql only
     {
         public string ConnectionString { get; }

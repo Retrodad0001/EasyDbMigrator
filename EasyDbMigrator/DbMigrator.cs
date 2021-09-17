@@ -26,11 +26,6 @@ namespace EasyDbMigrator
                 throw new ArgumentNullException(nameof(sqlDataBaseInfo));
             }
 
-            if (customClass is null) //TODO: change this because this is not needed when run form command-line
-            {
-                throw new ArgumentNullException(nameof(customClass));
-            }
-
             await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(sqlDataBaseInfo: sqlDataBaseInfo); 
             _logger.LogInformation(@"setup database when there is none with default settings executed successfully");
             

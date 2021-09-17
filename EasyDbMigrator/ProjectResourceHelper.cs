@@ -17,6 +17,5 @@ namespace EasyDbMigrator.Helpers
             string[] resourcenames = assembly.GetManifestResourceNames();
             return resourcenames;
         }
-
     }
 }

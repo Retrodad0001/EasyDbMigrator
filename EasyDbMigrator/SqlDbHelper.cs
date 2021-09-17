@@ -24,7 +24,7 @@ namespace EasyDbMigrator.Helpers
 
                 return true;
             }
-            catch (Exception)//TODO add more logging here
+            catch (Exception)
             {
                 return false;
             }
