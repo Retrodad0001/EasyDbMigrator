@@ -13,12 +13,14 @@ namespace EasyDbMigratorTests.Unittests
         [Theory]
         [InlineData("", true)]
         [InlineData(" ", true)]
-       // [InlineData("x.sql", false)] //TODO FIX ME
-        public void the_parameter_scriptname_should_be_correct(string scriptname, bool shouldThrowException)
+        //[InlineData("withPrefix1.xx.sql", false)]
+        //[InlineData("withPrefix2.xx.xx.sql", false)]
+        //[InlineData("withnoPrefix.sql", false)]
+        public void the_parameter_scriptname_should_be_correct(string filename, bool shouldThrowException)
         {
             Action act = () =>
             {
-                Script sut = new Script(scriptname: scriptname, content: "xx");
+                Script sut = new Script(filename: filename, content: "xx");
             };
 
             if (shouldThrowException)
@@ -34,7 +36,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                Script sut = new Script(scriptname: "xx", content: content);
+                Script sut = new Script(filename: "xx", content: content);
             };
 
             if (shouldThrowException)

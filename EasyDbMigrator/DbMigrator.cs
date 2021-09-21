@@ -1,4 +1,5 @@
 ﻿using EasyDbMigrator.Helpers;
+using EasyDbMigrator.Infra;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -9,12 +10,23 @@ namespace EasyDbMigrator
     public class DbMigrator
     {
         private readonly ILogger _logger;
+        private readonly ISqlDbHelper _sqlDbHelper;
+        private readonly IScriptsHelper _scriptsHelper;
 
-        public DbMigrator(ILogger logger)
+        public DbMigrator(ILogger logger, ISqlDbHelper sqlDbHelper, IScriptsHelper scriptsHelper)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger)); 
+            if (sqlDbHelper is null)
+                throw new ArgumentNullException(nameof(sqlDbHelper));
+         
+            if (scriptsHelper is null)
+                throw new ArgumentNullException(nameof(scriptsHelper));
 
-          
+            if (logger is null)
+                throw new ArgumentNullException(nameof(logger));
+
+            _logger = logger;
+            _sqlDbHelper = sqlDbHelper;
+            _scriptsHelper = scriptsHelper;
         }
 
         public async Task<bool> TryApplyMigrationsAsync(SqlDataBaseInfo sqlDataBaseInfo
@@ -35,6 +47,7 @@ namespace EasyDbMigrator
             await TryRunAllMigrationScriptsAsync(sqlDataBaseInfo: sqlDataBaseInfo
                 , customclassType: customClass
                 , executedDateTime: executedDateTime);
+           
             _logger.LogInformation("Whole migration process executed successfully");
             
             return true;
@@ -49,7 +62,7 @@ namespace EasyDbMigrator
                     CREATE DATABASE {sqlDataBaseInfo.DatabaseName}
                 END";
 
-            _ = await new SqlDbHelper().TryExcecuteSingleScriptAsync(connectionString: sqlDataBaseInfo.ConnectionString
+            _ = await _sqlDbHelper.TryExcecuteSingleScriptAsync(connectionString: sqlDataBaseInfo.ConnectionString
                 , scriptName: "EasyDbMigrator.SetupEmptyDb"
                 , sqlScriptContent: sqlScriptCreateDatabase);
         }
@@ -63,12 +76,12 @@ namespace EasyDbMigrator
                     (
                         Id int IDENTITY(1,1) PRIMARY KEY,
                         Executed Datetime2 NOT NULL,
-                        ScriptName nvarchar(50) NOT NULL UNIQUE,
+                        Filename nvarchar(100) NOT NULL UNIQUE,
                         Version nvarchar(10) NOT NULL
                     )
                 END";
 
-            _ = await new SqlDbHelper().TryExcecuteSingleScriptAsync(connectionString: sqlDataBaseInfo.ConnectionString
+            _ = await _sqlDbHelper.TryExcecuteSingleScriptAsync(connectionString: sqlDataBaseInfo.ConnectionString
                 , scriptName: "EasyDbMigrator.SetupDbMigrationsRunTable"
                 , sqlScriptContent: sqlScriptCreateMigrationTable);
         }
@@ -77,12 +90,12 @@ namespace EasyDbMigrator
             , Type customclassType
             , DateTime executedDateTime)
         {
-            ScriptsHelper scriptsHelper = new ScriptsHelper();
-            List<Script> orderedScripts = await scriptsHelper.TryConvertoScriptsInCorrectSequenceByTypeAsync(customclassType);
+             
+            List<Script> orderedScripts = await _scriptsHelper.TryConvertoScriptsInCorrectSequenceByTypeAsync(customclassType);
 
             foreach (Script script in orderedScripts)
             {
-                Result<RunMigrationResult> result = await new SqlDbHelper().RunDbMigrationScriptWhenNotRunnedBeforeAsync(sqlDataBaseInfo: sqlDataBaseInfo
+                Result<RunMigrationResult> result = await _sqlDbHelper.RunDbMigrationScriptWhenNotRunnedBeforeAsync(sqlDataBaseInfo: sqlDataBaseInfo
                     , script: script
                     , executedDateTime: executedDateTime);
 
@@ -91,10 +104,10 @@ namespace EasyDbMigrator
                     switch (result.Value)
                     {
                         case RunMigrationResult.MigrationScriptExecuted:
-                            _logger.LogInformation($"script: {script.NamePart} was run");
+                            _logger.LogInformation($"script: {script.FileName} was run");
                             break;
                         case RunMigrationResult.IgnoredAllreadyRun:
-                            _logger.LogInformation($"script: {script.NamePart} was not run because migrations was already executed");
+                            _logger.LogInformation($"script: {script.FileName} was not run because migrations was already executed");
                             break;
                         default:
                             break;//ignore this one....
@@ -102,7 +115,7 @@ namespace EasyDbMigrator
                 }
                 else if (result.IsFailure)
                 {
-                    _logger.LogError(result.Exception, $"Exception is thrown while running script: {script.NamePart}");
+                    _logger.LogError(result.Exception, $"Exception is thrown while running script: {script.FileName}");
                 }
             }
         }

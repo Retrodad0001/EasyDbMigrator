@@ -19,7 +19,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 List<VersioningTableRow> actual = (List<VersioningTableRow>)connection.Query<VersioningTableRow>(@$"
                     use {testdbName}
-                    SELECT Id, Executed, ScriptName, Version 
+                    SELECT Id, Executed, Filename, Version 
                     FROM DbMigrationsRun");
 
                 _ = actual.Should().HaveSameCount(expectedRows);

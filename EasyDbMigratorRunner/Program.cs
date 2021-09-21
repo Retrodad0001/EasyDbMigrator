@@ -24,7 +24,9 @@ namespace EasyDbMigratorRunner
             ILogger logger = loggerFactory.CreateLogger<DbMigrator>();
 
             loggerFactory.Dispose();
-            DbMigrator migrator = new DbMigrator(logger);
+            DbMigrator migrator = new DbMigrator(logger: logger
+                , sqlDbHelper: new EasyDbMigrator.Infra.SqlDbHelper()
+                , scriptsHelper: new EasyDbMigrator.Infra.ScriptsHelper());
         }
     }
 }

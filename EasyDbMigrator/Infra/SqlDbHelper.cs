@@ -1,11 +1,12 @@
-﻿using System;
+﻿using EasyDbMigrator.Helpers;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
-namespace EasyDbMigrator.Helpers
+namespace EasyDbMigrator.Infra
 {
-    public partial class SqlDbHelper
+    public class SqlDbHelper : ISqlDbHelper
     {
         public async Task<bool> TryExcecuteSingleScriptAsync(string connectionString, string scriptName, string sqlScriptContent)
         {
@@ -43,7 +44,7 @@ namespace EasyDbMigrator.Helpers
                 string checkIfScriptHasExecuted = $@"USE {sqlDataBaseInfo.DatabaseName} 
                         SELECT Id
                         FROM DbMigrationsRun
-                         WHERE ScriptName = '{script.NamePart}'
+                         WHERE Filename = '{script.FileName}'
                         ";
 
                 using SqlCommand cmdcheckNotExecuted = new(checkIfScriptHasExecuted, connection);
@@ -57,8 +58,8 @@ namespace EasyDbMigrator.Helpers
                 string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");//TODO find better way than this way
                 string updateVersioningTableScript = $@" 
                             USE {sqlDataBaseInfo.DatabaseName} 
-                            INSERT INTO DbMigrationsRun (Executed, ScriptName, version)
-                            VALUES ('{sqlFormattedDate}', '{script.NamePart}', '1.0.0');
+                            INSERT INTO DbMigrationsRun (Executed, Filename, version)
+                            VALUES ('{sqlFormattedDate}', '{script.FileName}', '1.0.0');
                         ";
 
                 transaction = connection.BeginTransaction(IsolationLevel.Serializable, "EasyDbMigrator");
