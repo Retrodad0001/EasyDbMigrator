@@ -2,13 +2,15 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace EasyDbMigrator.Infra
 {
+    [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
     public class SqlDbHelper : ISqlDbHelper
     {
-        public async Task<bool> TryExcecuteSingleScriptAsync(string connectionString, string scriptName, string sqlScriptContent)
+        public async Task<Result<bool>> TryExcecuteSingleScriptAsync(string connectionString, string scriptName, string sqlScriptContent)
         {
             try
             {
@@ -23,13 +25,14 @@ namespace EasyDbMigrator.Infra
                 await command.Connection.OpenAsync();
                 _ = await command.ExecuteNonQueryAsync();
 
-                return true;
+                return new Result<bool>(isSucces: true);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return new Result<bool>(isSucces: false, exception: ex);
             }
         }
+
         public async Task<Result<RunMigrationResult>> RunDbMigrationScriptWhenNotRunnedBeforeAsync(SqlDataBaseInfo sqlDataBaseInfo
             , Script script
             , DateTime executedDateTime)
@@ -55,7 +58,7 @@ namespace EasyDbMigrator.Infra
                     return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.IgnoredAllreadyRun);
                 }
 
-                string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");//TODO find better way than this way
+                string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
                 string updateVersioningTableScript = $@" 
                             USE {sqlDataBaseInfo.DatabaseName} 
                             INSERT INTO DbMigrationsRun (Executed, Filename, version)

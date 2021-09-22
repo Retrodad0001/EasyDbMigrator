@@ -6,12 +6,13 @@ using System.Diagnostics.CodeAnalysis;
 namespace EasyDbMigratorTests.Integrationtests.TestHelpers
 {
     [ExcludeFromCodeCoverage]
-    public static class LoggerTestExtensions
+    public static class LoggerTestExtensions 
     {
         public static Mock<ILogger<T>> CheckIfLoggerWasCalled<T>(this Mock<ILogger<T>> mockedLogger
             , string expectedMessage
             , LogLevel expectedLogLevel
-            , Times times)
+            , Times times
+            , bool shouldLogExeption) 
         {
             if (mockedLogger is null)
             {
@@ -29,12 +30,24 @@ namespace EasyDbMigratorTests.Integrationtests.TestHelpers
 #pragma warning restore CA1310 // Specify StringComparison for correctness
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-            mockedLogger.Verify(x => x.Log(
-                    It.Is<LogLevel>(l => l == expectedLogLevel),
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => state(v, t)),
-                    It.IsAny<Exception>(),
-                    It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)), times);
+            if (shouldLogExeption)
+            {
+                mockedLogger.Verify(x => x.Log(
+                        It.Is<LogLevel>(l => l == expectedLogLevel),
+                        It.IsAny<EventId>(),
+                        It.Is<It.IsAnyType>((v, t) => state(v, t)),
+                        It.IsAny<Exception>(),//TODO PRIO FIX CHECK NOT NULL
+                        It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)), times);
+            }
+            else
+            {
+                mockedLogger.Verify(x => x.Log(
+                        It.Is<LogLevel>(l => l == expectedLogLevel),
+                        It.IsAny<EventId>(),
+                        It.Is<It.IsAnyType>((v, t) => state(v, t)),
+                        It.IsAny<Exception>(),
+                        It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)), times);
+            }
 
             return mockedLogger;
         }

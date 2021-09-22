@@ -1,7 +1,5 @@
 ﻿namespace EasyDbMigrator
 {
-    //TODO HIGH: add action policy : code coverage should go up
-    //TODO HIGH: add retry policy or in configuration class?
     //TODO HIGH: add time-out policy or in configuration class?
     //TODO HIGH: add test check connection string correct format
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigrator.Helpers
 {
@@ -23,6 +24,12 @@ namespace EasyDbMigrator.Helpers
             IsSuccess = isSucces;
             Value = value;
             Exception = null;
+        }
+
+        [ExcludeFromCodeCoverage] //this method is used for debug only
+        public override string ToString()
+        {
+            return $"isSucces: {IsSuccess} exception: {Exception}";
         }
     }
 }

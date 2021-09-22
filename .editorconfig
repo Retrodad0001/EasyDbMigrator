@@ -363,7 +363,7 @@ dotnet_diagnostic.CA3011.severity = error
 dotnet_diagnostic.CA3012.severity = error
 
 # CA1031: Do not catch general exception types
-dotnet_diagnostic.CA1031.severity = warning
+dotnet_diagnostic.CA1031.severity = silent
 
 # CA1058: Types should not extend certain base types
 dotnet_diagnostic.CA1058.severity = warning

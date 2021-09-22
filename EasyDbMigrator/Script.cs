@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigrator
 {
@@ -9,9 +10,7 @@ namespace EasyDbMigrator
         public DateTime DatePartOfName { get; private set; }
         public int SequenceNumberPart { get; private set; }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public Script(string filename, string content)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             if (string.IsNullOrWhiteSpace(filename))
             {
@@ -36,9 +35,9 @@ namespace EasyDbMigrator
             DatePartOfName = new DateTime(year: yearPart, month: monthPart, day:dayPart);
 
             SequenceNumberPart = int.Parse(filename.Substring(9, 3));
-
-
         }
+
+        [ExcludeFromCodeCoverage]
         public override string ToString()
         {
             return $"{FileName} - {DatePartOfName} - {SequenceNumberPart} - content: {Content}";

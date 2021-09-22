@@ -14,24 +14,17 @@ namespace EasyDbMigrator.Infra
         {
             Assembly? assembly = Assembly.GetAssembly(customclass);
 
-            if (assembly is null)
+            if (assembly is null) //TODO test: edge case but still a case : stream can be null with Assembly.GetAssembly(type)
                 throw new InvalidOperationException($"assembly is null for custom-class : {customclass}");
 
-            string[] filenames = new ProjectResourceHelper().TryGetListOfResourceNamesFromAssemblyByType(customclass);
-
-            //TODO HIGH: test migrations fail when no database can be setup
-            //TODO HIGH: test migrations fail when no version table can be added
-            //TODO HIGH: test migrations fail when no database can be found
-            //TODO HIGH: test ignore non .sql files
-            //TODO HIGH:test script cannot be run (bad script content)
-            //TODO NICE: test log : how many scripts are found
+            string[] filenames = new ManifestResourceHelper().TryGetListOfResourceNamesFromAssemblyByType(customclass);
 
             List<Script> scripts = new List<Script>();
             foreach (string filename in filenames)
             {
                 using (Stream? stream = assembly.GetManifestResourceStream(filename))
                 {
-                    if (stream is null)
+                    if (stream is null) //TODO test: edge case but still a case : stream can be null with GetManifestResourceStream(name)
                     {
                         throw new InvalidOperationException($"steam cannot be null for resource name: {filename}");
                     }

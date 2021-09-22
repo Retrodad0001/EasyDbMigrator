@@ -38,22 +38,46 @@ namespace EasyDbMigrator
                 throw new ArgumentNullException(nameof(sqlDataBaseInfo));
             }
 
-            await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(sqlDataBaseInfo: sqlDataBaseInfo); 
-            _logger.LogInformation(@"setup database when there is none with default settings executed successfully");
-            
-            await TrySetupDbMigrationsRunTableWhenNotExcistAsync(sqlDataBaseInfo: sqlDataBaseInfo); 
-            _logger.LogInformation(@"setup DbMigrationsRun when there is none executed successfully");
-            
-            await TryRunAllMigrationScriptsAsync(sqlDataBaseInfo: sqlDataBaseInfo
-                , customclassType: customClass
-                , executedDateTime: executedDateTime);
-           
+            Result<bool> setupDatabaseSucceeded;
+            Result<bool> createVersiongTableSucceeded = new(isSucces: false); 
+            bool migrationRunwithoutErrors = false;
+
+            setupDatabaseSucceeded = await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(sqlDataBaseInfo: sqlDataBaseInfo);
+
+            if (setupDatabaseSucceeded.IsFailure)
+                _logger.LogError(@"setup database when there is none with default settings: error occurred", setupDatabaseSucceeded.Exception);
+            else
+                _logger.LogInformation(@"setup database when there is none with default settings executed successfully");
+
+            if (setupDatabaseSucceeded.IsSuccess)
+            {
+                createVersiongTableSucceeded = await TrySetupDbMigrationsRunTableWhenNotExcistAsync(sqlDataBaseInfo: sqlDataBaseInfo);
+
+                if (createVersiongTableSucceeded.IsFailure)
+                    _logger.LogError(@"setup DbMigrationsRun when there is none executed with errors", createVersiongTableSucceeded.Exception);
+                else
+                    _logger.LogInformation(@"setup DbMigrationsRun when there is none executed successfully");
+
+                if (createVersiongTableSucceeded.IsSuccess)
+                {
+                    migrationRunwithoutErrors = await TryRunAllMigrationScriptsAsync(sqlDataBaseInfo: sqlDataBaseInfo
+                        , customclassType: customClass
+                        , executedDateTime: executedDateTime);
+                }
+            }
+
+            if (setupDatabaseSucceeded.IsFailure || createVersiongTableSucceeded.IsFailure || !migrationRunwithoutErrors)
+            {
+                _logger.LogError("Whole migration process executed with errors");
+                return false;
+            }
+
             _logger.LogInformation("Whole migration process executed successfully");
-            
+
             return true;
         }
 
-        private async Task TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(SqlDataBaseInfo sqlDataBaseInfo)
+        private async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(SqlDataBaseInfo sqlDataBaseInfo)
         {
             string sqlScriptCreateDatabase = @$" 
                 USE Master
@@ -62,12 +86,14 @@ namespace EasyDbMigrator
                     CREATE DATABASE {sqlDataBaseInfo.DatabaseName}
                 END";
 
-            _ = await _sqlDbHelper.TryExcecuteSingleScriptAsync(connectionString: sqlDataBaseInfo.ConnectionString
+            Result<bool> result = await _sqlDbHelper.TryExcecuteSingleScriptAsync(connectionString: sqlDataBaseInfo.ConnectionString
                 , scriptName: "EasyDbMigrator.SetupEmptyDb"
                 , sqlScriptContent: sqlScriptCreateDatabase);
+
+            return result;
         }
 
-        private async Task TrySetupDbMigrationsRunTableWhenNotExcistAsync(SqlDataBaseInfo sqlDataBaseInfo)
+        private async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExcistAsync(SqlDataBaseInfo sqlDataBaseInfo)
         {
             string sqlScriptCreateMigrationTable = @$" USE {sqlDataBaseInfo.DatabaseName}  
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='DbMigrationsRun' AND xtype='U')
@@ -81,16 +107,17 @@ namespace EasyDbMigrator
                     )
                 END";
 
-            _ = await _sqlDbHelper.TryExcecuteSingleScriptAsync(connectionString: sqlDataBaseInfo.ConnectionString
+            Result<bool> result = await _sqlDbHelper.TryExcecuteSingleScriptAsync(connectionString: sqlDataBaseInfo.ConnectionString
                 , scriptName: "EasyDbMigrator.SetupDbMigrationsRunTable"
                 , sqlScriptContent: sqlScriptCreateMigrationTable);
+
+            return result;
         }
 
-        private async Task TryRunAllMigrationScriptsAsync(SqlDataBaseInfo sqlDataBaseInfo
+        private async Task<bool> TryRunAllMigrationScriptsAsync(SqlDataBaseInfo sqlDataBaseInfo
             , Type customclassType
             , DateTime executedDateTime)
         {
-             
             List<Script> orderedScripts = await _scriptsHelper.TryConvertoScriptsInCorrectSequenceByTypeAsync(customclassType);
 
             foreach (Script script in orderedScripts)
@@ -116,9 +143,10 @@ namespace EasyDbMigrator
                 else if (result.IsFailure)
                 {
                     _logger.LogError(result.Exception, $"Exception is thrown while running script: {script.FileName}");
+                    return false;
                 }
             }
+            return true;
         }
-
     }
 }

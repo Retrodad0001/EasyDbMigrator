@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 
+
 namespace EasyDbMigratorTests.Integrationtests
 {
-    [ExcludeFromCodeCoverage]
+    [ExcludeFromCodeCoverage] //this class is used for testing only
     public class DbTestHelper
     {
         public bool CheckMigrationsTable(string connectionString,
