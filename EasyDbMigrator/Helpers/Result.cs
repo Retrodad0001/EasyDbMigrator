@@ -19,11 +19,11 @@ namespace EasyDbMigrator.Helpers
             Exception = exception;
         }
 
-        public Result(bool isSucces, T value)
+        public Result(bool isSucces, T value, Exception? exception = null)
         {
             IsSuccess = isSucces;
             Value = value;
-            Exception = null;
+            Exception = exception;
         }
 
         [ExcludeFromCodeCoverage] //this method is used for debug only

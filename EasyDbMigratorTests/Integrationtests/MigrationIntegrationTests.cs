@@ -31,16 +31,14 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 await DeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
 
-                SqlDataBaseInfo sqlDataBaseInfo = new SqlDataBaseInfo(connectionString: connectionstring
+                MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring
                     , databaseName: databaseName);
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
                 DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
-                DbMigrator migrator = new DbMigrator(logger: loggerMock.Object, new SqlDbHelper(), new ScriptsHelper());
-                _ = await migrator.TryApplyMigrationsAsync(sqlDataBaseInfo: sqlDataBaseInfo
-                    , customClass: typeof(SomeCustomClass)
-                    , executedDateTime: ExecutedDataTime);
+                DbMigrator migrator = new DbMigrator(logger: loggerMock.Object, migrationConfiguration: config, new SqlDbConnector(), new AssemblyResourceHelper());
+                _ = await migrator.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass), executedDateTime: ExecutedDataTime);
 
                 List<VersioningTableRow> expectedRows = new List<VersioningTableRow>();
                 expectedRows.Add(new VersioningTableRow(id: 1, executed: ExecutedDataTime, filename: "20212230_001_CreateDB.sql", version: "1.0.0"));
@@ -52,15 +50,15 @@ namespace EasyDbMigratorTests.Integrationtests
                     , testdbName: databaseName);
 
                 _ = loggerMock
-                    .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was run", LogLevel.Information, Times.Exactly(1), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was not run because migrations was already executed", LogLevel.Information, Times.Never(), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because migrations was already executed", LogLevel.Information, Times.Never(), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was not run because migrations was already executed", LogLevel.Information, Times.Never(), shouldLogExeption: false);
+                    .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1))
+                    .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1))
+                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was run", LogLevel.Information, Times.Exactly(1))
+                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1))
+                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1))
+                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1))
+                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was not run because migrations was already executed", LogLevel.Information, Times.Never())
+                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because migrations was already executed", LogLevel.Information, Times.Never())
+                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was not run because migrations was already executed", LogLevel.Information, Times.Never());
             }
 #pragma warning disable CA1031 // Do not catch general exception types, for sake of testing this is no problem
             catch (Exception ex)
@@ -81,22 +79,28 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 await DeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
 
-                SqlDataBaseInfo sqlDataBaseInfo = new SqlDataBaseInfo(connectionString: connectionstring
+                MigrationConfiguration configuration = new MigrationConfiguration(connectionString: connectionstring
                     , databaseName: databaseName);
 
                 var loggerMockFirstRun = new Mock<ILogger<DbMigrator>>();
                 DateTime ExecutedFirsttimeDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
-                DbMigrator migrator1 = new(logger: loggerMockFirstRun.Object, new SqlDbHelper(), new ScriptsHelper());
-                _ = await migrator1.TryApplyMigrationsAsync(sqlDataBaseInfo: sqlDataBaseInfo
-                    , customClass: typeof(SomeCustomClass)
+                DbMigrator migrator1 = new(logger: loggerMockFirstRun.Object
+                    , migrationConfiguration:configuration
+                    , new SqlDbConnector()
+                    , new AssemblyResourceHelper());
+              
+                _ = await migrator1.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass)
                     , executedDateTime: ExecutedFirsttimeDataTime);
 
                 //now run the migrations again
                 var loggerMockSecondtRun = new Mock<ILogger<DbMigrator>>();
                 DateTime ExecutedSecondtimeDataTime = new DateTime(2021, 12, 31, 2, 16, 1);
-                DbMigrator migrator2 = new(logger: loggerMockSecondtRun.Object, new SqlDbHelper(), new ScriptsHelper());
-                _ = await migrator2.TryApplyMigrationsAsync(sqlDataBaseInfo: sqlDataBaseInfo
-                    , customClass: typeof(SomeCustomClass)
+                DbMigrator migrator2 = new(logger: loggerMockSecondtRun.Object
+                    , migrationConfiguration:configuration
+                    , new SqlDbConnector()
+                    , new AssemblyResourceHelper());
+             
+                _ = await migrator2.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass)
                     , executedDateTime: ExecutedSecondtimeDataTime);
 
                 //version-table should not be updated for the second time
@@ -110,15 +114,15 @@ namespace EasyDbMigratorTests.Integrationtests
                     , testdbName: databaseName);
 
                 _ = loggerMockSecondtRun
-                    .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was not run because migrations was already executed", LogLevel.Information, Times.Exactly(1), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because migrations was already executed", LogLevel.Information, Times.Exactly(1), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was not run because migrations was already executed", LogLevel.Information, Times.Exactly(1), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was run", LogLevel.Information, Times.Never(), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Never(), shouldLogExeption: false)
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Never(), shouldLogExeption: false);
+                    .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1))
+                    .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1))
+                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1))
+                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1))
+                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1))
+                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1))
+                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was run", LogLevel.Information, Times.Never())
+                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Never())
+                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Never());
             }
 #pragma warning disable CA1031 // Do not catch general exception types, for sake of testing this is no problem
             catch (Exception ex)
@@ -139,7 +143,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     DROP DATABASE {databaseName};
                 END
                 ";
-            _ = await new SqlDbHelper().TryExcecuteSingleScriptAsync(connectionString: connectionString
+            _ = await new SqlDbConnector().TryExcecuteSingleScriptAsync(connectionString: connectionString
                 , scriptName: "EasyDbMigrator.Integrationtest_dropDatabase"
                 , sqlScriptContent: query);
         }

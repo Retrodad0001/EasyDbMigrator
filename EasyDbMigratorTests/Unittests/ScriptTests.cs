@@ -16,7 +16,7 @@ namespace EasyDbMigratorTests.Unittests
         //[InlineData("withPrefix1.xx.sql", false)]
         //[InlineData("withPrefix2.xx.xx.sql", false)]
         //[InlineData("withnoPrefix.sql", false)]
-        public void the_parameter_scriptname_should_be_correct(string filename, bool shouldThrowException)
+        public void when_creating_the_parameter_scriptname_should_be_correct(string filename, bool shouldThrowException)
         {
             Action act = () =>
             {
@@ -32,7 +32,7 @@ namespace EasyDbMigratorTests.Unittests
         [Theory]
         [InlineData("", true)]
         [InlineData(" ", true)]
-        public void the_parameter_connectionsring_should_be_correct(string content, bool shouldThrowException)
+        public void when_creating_the_parameter_connectionsring_should_be_correct(string content, bool shouldThrowException)
         {
             Action act = () =>
             {

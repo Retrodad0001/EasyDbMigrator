@@ -4,17 +4,18 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>0.9.0</Version>
+    <Version>1.0.0</Version>
     <PackageId>Retrodad.EasyDbMigrator</PackageId>
-    <Description>Easy to use database migration library for integration tests and deploy pipelines</Description>
+    <Description>Easy to use database migration library for integrationtesting, CI/CD pipelines and manual migrations</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Retrodad0001/EasyDbMigrator</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
-    <PackageTags>database, migration, migrator, integration test, update database, CI, CD</PackageTags>
-    <PackageReleaseNotes>Easy to use database migration library for integration tests and deploy pipelines</PackageReleaseNotes>
+    <PackageTags>database, migration, migrator, integration test, update database, CI, CD, SQL, PostgreSQL , CosmosDB</PackageTags>
+    <PackageReleaseNotes>For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</PackageReleaseNotes>
     <PackageIcon>Icon.png</PackageIcon>
     <PackageIconUrl />
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Authors>Retrodad0001</Authors>
   </PropertyGroup>
 
   <ItemGroup>

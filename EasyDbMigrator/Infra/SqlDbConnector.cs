@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace EasyDbMigrator.Infra
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
-    public class SqlDbHelper : ISqlDbHelper
+    public class SqlDbConnector : IDatabaseConnector
     {
         public async Task<Result<bool>> TryExcecuteSingleScriptAsync(string connectionString, string scriptName, string sqlScriptContent)
         {
@@ -33,18 +33,18 @@ namespace EasyDbMigrator.Infra
             }
         }
 
-        public async Task<Result<RunMigrationResult>> RunDbMigrationScriptWhenNotRunnedBeforeAsync(SqlDataBaseInfo sqlDataBaseInfo
+        public async Task<Result<RunMigrationResult>> RunDbMigrationScriptWhenNotRunnedBeforeAsync(MigrationConfiguration migrationConfiguration
             , Script script
             , DateTime executedDateTime)
         {
             SqlTransaction? transaction = null;
             try
             {
-                using SqlConnection connection = new SqlConnection(sqlDataBaseInfo.ConnectionString);
+                using SqlConnection connection = new SqlConnection(migrationConfiguration.ConnectionString);
                 await connection.OpenAsync();
                 //check if script was executed before
 
-                string checkIfScriptHasExecuted = $@"USE {sqlDataBaseInfo.DatabaseName} 
+                string checkIfScriptHasExecuted = $@"USE {migrationConfiguration.DatabaseName} 
                         SELECT Id
                         FROM DbMigrationsRun
                          WHERE Filename = '{script.FileName}'
@@ -55,12 +55,12 @@ namespace EasyDbMigrator.Infra
 
                 if (result is not null)
                 {
-                    return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.IgnoredAllreadyRun);
+                    return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun);
                 }
 
                 string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
                 string updateVersioningTableScript = $@" 
-                            USE {sqlDataBaseInfo.DatabaseName} 
+                            USE {migrationConfiguration.DatabaseName} 
                             INSERT INTO DbMigrationsRun (Executed, Filename, version)
                             VALUES ('{sqlFormattedDate}', '{script.FileName}', '1.0.0');
                         ";
@@ -80,7 +80,7 @@ namespace EasyDbMigrator.Infra
             catch (SqlException ex)
             {
                 transaction?.Rollback();
-                return new Result<RunMigrationResult>(isSucces: false, ex);
+                return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted, ex);
             }
         }
     }

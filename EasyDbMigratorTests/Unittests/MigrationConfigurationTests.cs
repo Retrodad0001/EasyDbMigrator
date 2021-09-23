@@ -7,7 +7,7 @@ using Xunit;
 namespace EasyDbMigratorTests.Unittests
 {
     [ExcludeFromCodeCoverage]
-    public class SqlDatabaseInfoTests
+    public class MigrationConfigurationTests
     {
         [Theory]
         [InlineData("xxxxxx" , false)]
@@ -18,7 +18,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                SqlDataBaseInfo sut = new SqlDataBaseInfo("connection string", databasename);
+                MigrationConfiguration sut = new MigrationConfiguration("connection string", databasename);
             };
 
             if (shouldThrowException)
@@ -34,7 +34,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                SqlDataBaseInfo sut = new SqlDataBaseInfo(connentionsting, "databasename");
+                MigrationConfiguration sut = new MigrationConfiguration(connentionsting, "databasename");
             };
 
             if (shouldThrowException)

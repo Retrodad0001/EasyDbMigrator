@@ -3,6 +3,7 @@ using EasyDbMigrator.Infra;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EasyDbMigrator
@@ -10,39 +11,30 @@ namespace EasyDbMigrator
     public class DbMigrator
     {
         private readonly ILogger _logger;
-        private readonly ISqlDbHelper _sqlDbHelper;
-        private readonly IScriptsHelper _scriptsHelper;
+        private readonly MigrationConfiguration _migrationConfiguration;
+        private readonly IDatabaseConnector _databaseconnector;
+        private readonly IAssemblyResourceHelper _assemblyResourceHelper;
 
-        public DbMigrator(ILogger logger, ISqlDbHelper sqlDbHelper, IScriptsHelper scriptsHelper)
+        public DbMigrator(ILogger logger
+            , MigrationConfiguration migrationConfiguration
+            , IDatabaseConnector databaseconnector
+            , IAssemblyResourceHelper scriptsHelper)
         {
-            if (sqlDbHelper is null)
-                throw new ArgumentNullException(nameof(sqlDbHelper));
-         
-            if (scriptsHelper is null)
-                throw new ArgumentNullException(nameof(scriptsHelper));
-
-            if (logger is null)
-                throw new ArgumentNullException(nameof(logger));
-
-            _logger = logger;
-            _sqlDbHelper = sqlDbHelper;
-            _scriptsHelper = scriptsHelper;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _migrationConfiguration = migrationConfiguration ?? throw new ArgumentNullException(nameof(migrationConfiguration));
+            _databaseconnector = databaseconnector ?? throw new ArgumentNullException(nameof(databaseconnector));
+            _assemblyResourceHelper = scriptsHelper ?? throw new ArgumentNullException(nameof(scriptsHelper));
         }
 
-        public async Task<bool> TryApplyMigrationsAsync(SqlDataBaseInfo sqlDataBaseInfo
-            , Type customClass
-            , DateTime executedDateTime)
+        public async Task<bool> TryApplyMigrationsAsync(Type customClass, DateTime executedDateTime)
         {
-            if (sqlDataBaseInfo is null)
-            {
-                throw new ArgumentNullException(nameof(sqlDataBaseInfo));
-            }
+            _logger.LogInformation($"start running migrations for database: {_migrationConfiguration.DatabaseName}");
 
             Result<bool> setupDatabaseSucceeded;
             Result<bool> createVersiongTableSucceeded = new(isSucces: false); 
-            bool migrationRunwithoutErrors = false;
+            bool migrationRunwithoutUnknownExceptions = false;
 
-            setupDatabaseSucceeded = await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(sqlDataBaseInfo: sqlDataBaseInfo);
+            setupDatabaseSucceeded = await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: _migrationConfiguration);
 
             if (setupDatabaseSucceeded.IsFailure)
                 _logger.LogError(@"setup database when there is none with default settings: error occurred", setupDatabaseSucceeded.Exception);
@@ -51,7 +43,7 @@ namespace EasyDbMigrator
 
             if (setupDatabaseSucceeded.IsSuccess)
             {
-                createVersiongTableSucceeded = await TrySetupDbMigrationsRunTableWhenNotExcistAsync(sqlDataBaseInfo: sqlDataBaseInfo);
+                createVersiongTableSucceeded = await TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: _migrationConfiguration);
 
                 if (createVersiongTableSucceeded.IsFailure)
                     _logger.LogError(@"setup DbMigrationsRun when there is none executed with errors", createVersiongTableSucceeded.Exception);
@@ -60,13 +52,13 @@ namespace EasyDbMigrator
 
                 if (createVersiongTableSucceeded.IsSuccess)
                 {
-                    migrationRunwithoutErrors = await TryRunAllMigrationScriptsAsync(sqlDataBaseInfo: sqlDataBaseInfo
+                    migrationRunwithoutUnknownExceptions = await TryRunAllMigrationScriptsAsync(migrationConfiguration: _migrationConfiguration
                         , customclassType: customClass
                         , executedDateTime: executedDateTime);
                 }
             }
 
-            if (setupDatabaseSucceeded.IsFailure || createVersiongTableSucceeded.IsFailure || !migrationRunwithoutErrors)
+            if (setupDatabaseSucceeded.IsFailure || createVersiongTableSucceeded.IsFailure || !migrationRunwithoutUnknownExceptions)
             {
                 _logger.LogError("Whole migration process executed with errors");
                 return false;
@@ -77,25 +69,25 @@ namespace EasyDbMigrator
             return true;
         }
 
-        private async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(SqlDataBaseInfo sqlDataBaseInfo)
+        private async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration)
         {
             string sqlScriptCreateDatabase = @$" 
                 USE Master
-                IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '{sqlDataBaseInfo.DatabaseName}')
+                IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '{migrationConfiguration.DatabaseName}')
                 BEGIN
-                    CREATE DATABASE {sqlDataBaseInfo.DatabaseName}
+                    CREATE DATABASE {migrationConfiguration.DatabaseName}
                 END";
 
-            Result<bool> result = await _sqlDbHelper.TryExcecuteSingleScriptAsync(connectionString: sqlDataBaseInfo.ConnectionString
+            Result<bool> result = await _databaseconnector.TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
                 , scriptName: "EasyDbMigrator.SetupEmptyDb"
                 , sqlScriptContent: sqlScriptCreateDatabase);
 
             return result;
         }
 
-        private async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExcistAsync(SqlDataBaseInfo sqlDataBaseInfo)
+        private async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExcistAsync(MigrationConfiguration migrationConfiguration)
         {
-            string sqlScriptCreateMigrationTable = @$" USE {sqlDataBaseInfo.DatabaseName}  
+            string sqlScriptCreateMigrationTable = @$" USE {migrationConfiguration.DatabaseName}  
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='DbMigrationsRun' AND xtype='U')
                 BEGIN
                     CREATE TABLE DbMigrationsRun 
@@ -107,46 +99,63 @@ namespace EasyDbMigrator
                     )
                 END";
 
-            Result<bool> result = await _sqlDbHelper.TryExcecuteSingleScriptAsync(connectionString: sqlDataBaseInfo.ConnectionString
+            Result<bool> result = await _databaseconnector.TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
                 , scriptName: "EasyDbMigrator.SetupDbMigrationsRunTable"
                 , sqlScriptContent: sqlScriptCreateMigrationTable);
 
             return result;
         }
 
-        private async Task<bool> TryRunAllMigrationScriptsAsync(SqlDataBaseInfo sqlDataBaseInfo
+        private async Task<bool> TryRunAllMigrationScriptsAsync(MigrationConfiguration migrationConfiguration
             , Type customclassType
             , DateTime executedDateTime)
         {
-            List<Script> orderedScripts = await _scriptsHelper.TryConvertoScriptsInCorrectSequenceByTypeAsync(customclassType);
+            List<Script> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(customclassType);
+            List<Script> orderedScripts = SetScriptsInCorrectSequence(unOrderedScripts);
 
+            _logger.LogInformation($"Total scripts found: {orderedScripts.Count}");
+
+            bool skipBecauseOfErrorWithPreviousScript = false;
             foreach (Script script in orderedScripts)
             {
-                Result<RunMigrationResult> result = await _sqlDbHelper.RunDbMigrationScriptWhenNotRunnedBeforeAsync(sqlDataBaseInfo: sqlDataBaseInfo
+                if (skipBecauseOfErrorWithPreviousScript)
+                {
+                    _logger.LogWarning($"script: {script.FileName} was skipped due to exception in previous script");
+                    continue;
+                }
+
+                Result<RunMigrationResult> result = await _databaseconnector.RunDbMigrationScriptWhenNotRunnedBeforeAsync(migrationConfiguration: migrationConfiguration
                     , script: script
                     , executedDateTime: executedDateTime);
 
-                if (result.IsSuccess)
+                switch (result.Value)
                 {
-                    switch (result.Value)
-                    {
-                        case RunMigrationResult.MigrationScriptExecuted:
-                            _logger.LogInformation($"script: {script.FileName} was run");
-                            break;
-                        case RunMigrationResult.IgnoredAllreadyRun:
-                            _logger.LogInformation($"script: {script.FileName} was not run because migrations was already executed");
-                            break;
-                        default:
-                            break;//ignore this one....
-                    }
+                    case RunMigrationResult.MigrationScriptExecuted:
+                        _logger.LogInformation($"script: {script.FileName} was run");
+                        break;
+                    case RunMigrationResult.ScriptSkippedBecauseAlreadyRun:
+                        _logger.LogInformation($"script: {script.FileName} was not run because script was already executed");
+                        break;
+                    case RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted:
+                        _logger.LogError($"script: {script.FileName} was not completed due to exception");
+                        skipBecauseOfErrorWithPreviousScript = true;
+                        break;
+                    default:
+                        break;
                 }
-                else if (result.IsFailure)
-                {
-                    _logger.LogError(result.Exception, $"Exception is thrown while running script: {script.FileName}");
-                    return false;
-                }
+
             }
-            return true;
+
+            if (skipBecauseOfErrorWithPreviousScript)
+                return false;
+            else
+                return true;
+        }
+
+        private List<Script> SetScriptsInCorrectSequence(List<Script> scripts)
+        {
+            return scripts.OrderBy(s => s.DatePartOfName)
+                .ThenBy(s => s.SequenceNumberPart).ToList();
         }
     }
 }

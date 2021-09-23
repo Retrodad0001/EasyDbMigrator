@@ -1,15 +1,14 @@
 ﻿namespace EasyDbMigrator
 {
-    //TODO HIGH: add time-out policy or in configuration class?
     //TODO HIGH: add test check connection string correct format
 
-    public class SqlDataBaseInfo //start with this no need for extra abstractions, use sql for now en sql only
+    public class MigrationConfiguration //start with this no need for extra abstractions, use sql for now en sql only
     {
         public string ConnectionString { get; }
 
         public string DatabaseName { get; }
 
-        public SqlDataBaseInfo(string connectionString, string databaseName)
+        public MigrationConfiguration(string connectionString, string databaseName)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {

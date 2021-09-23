@@ -222,7 +222,7 @@ dotnet_diagnostic.IDE1006.severity = none
 dotnet_diagnostic.IDE0011.severity = none
 
 # IDE0045: Convert to conditional expression
-dotnet_diagnostic.IDE0045.severity = suggestion
+dotnet_diagnostic.IDE0045.severity = silent
 
 # IDE0046: Convert to conditional expression
 dotnet_diagnostic.IDE0046.severity = silent
