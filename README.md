@@ -8,7 +8,7 @@ The software is still under-construction so do not use it in production!
 
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml)
 
-TODO build delpoy package
+[![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/DEPLOY.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/DEPLOY.yml)
 
 ## Code Coverage:
 [![codecov](https://codecov.io/gh/Retrodad0001/easydbmigrator/branch/master/graph/badge.svg?token=JWYWLP98IW)](https://codecov.io/gh/Retrodad0001/easydbmigrator)
