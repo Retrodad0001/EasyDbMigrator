@@ -27,13 +27,7 @@ It has a Command-line client for managing migrations and a framework written for
 2. Make it easy to integrate SQL db migrations in your CI/CD flows
 3. Make it easy to integrate SQL db migrations in your manual db migration strategy
 
-### Wat do we not want to accomplish ?
-TODO
-
 ## Get started with EasyDBMigrator :
-TODO
-
-## Known limitations
 TODO
 
 ## FAQ
@@ -45,7 +39,4 @@ TODO
 ## Alternatives
 
 ## License
-TODO
-
-## Contributing
 TODO
