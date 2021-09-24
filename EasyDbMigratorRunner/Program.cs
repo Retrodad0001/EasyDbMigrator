@@ -15,14 +15,12 @@ namespace EasyDbMigratorRunner
         {
             ConsoleLoggerOptions options = new();
 
-            ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+            using ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
             {
                 _ = builder.AddConsole();
             });
 
             ILogger logger = loggerFactory.CreateLogger<DbMigrator>();
-
-            loggerFactory.Dispose();
 
             MigrationConfiguration config = new MigrationConfiguration(connectionString: string.Empty, databaseName: string.Empty);
 
