@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace EasyDbMigrator.Infra
+namespace EasyDbMigrator
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest
     public class AssemblyResourceHelper : IAssemblyResourceHelper
@@ -14,7 +14,7 @@ namespace EasyDbMigrator.Infra
         {
             Assembly? assembly = Assembly.GetAssembly(customClass);
 
-            if (assembly == null) 
+            if (assembly == null)
             {
                 throw new InvalidOperationException($"assembly is null for custom-class: {customClass}");
             }

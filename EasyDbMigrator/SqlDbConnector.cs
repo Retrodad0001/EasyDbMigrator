@@ -1,11 +1,10 @@
-﻿using EasyDbMigrator.Helpers;
-using System;
+﻿using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
-namespace EasyDbMigrator.Infra
+namespace EasyDbMigrator
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
     public class SqlDbConnector : IDatabaseConnector

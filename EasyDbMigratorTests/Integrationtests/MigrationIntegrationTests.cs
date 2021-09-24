@@ -8,7 +8,6 @@ using TestLib;
 using Xunit;
 using Moq;
 using EasyDbMigratorTests.Integrationtests.TestHelpers;
-using EasyDbMigrator.Infra;
 
 namespace EasyDbMigratorTests.Integrationtests
 {

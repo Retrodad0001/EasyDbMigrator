@@ -1,8 +1,7 @@
-﻿using EasyDbMigrator.Helpers;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
-namespace EasyDbMigrator.Infra
+namespace EasyDbMigrator
 {
     public interface IDatabaseConnector
     {

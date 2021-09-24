@@ -1,5 +1,4 @@
 ﻿using EasyDbMigrator;
-using EasyDbMigrator.Infra;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using System.Diagnostics.CodeAnalysis;
@@ -27,7 +26,7 @@ namespace EasyDbMigratorRunner
             DbMigrator migrator = new(logger: logger
                 , migrationConfiguration: config
                 , databaseconnector: new SqlDbConnector()
-                , scriptsHelper: new AssemblyResourceHelper());
+                , assemblyResourceHelper: new AssemblyResourceHelper());
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace EasyDbMigrator.Infra
+namespace EasyDbMigrator
 {
     public interface IAssemblyResourceHelper
     {

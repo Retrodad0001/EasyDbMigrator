@@ -1,7 +1,4 @@
-﻿using EasyDbMigrator;
-using EasyDbMigrator.Helpers;
-using EasyDbMigrator.Infra;
-using EasyDbMigratorTests.Integrationtests.TestHelpers;
+﻿using EasyDbMigratorTests.Integrationtests.TestHelpers;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -11,7 +8,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace EasyDbMigratorTests.Unittests
+//TODO datetime should per script instead one (DI)
+//TODO return result/string report for using in testing.
+//TODO add builder for setting up integration test
+
+namespace EasyDbMigrator
 {
     [ExcludeFromCodeCoverage]
     public class DbMigratorTests
@@ -25,7 +26,7 @@ namespace EasyDbMigratorTests.Unittests
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = new(logger: loggerMock.Object
                     , migrationConfiguration: new MigrationConfiguration("connection-string", "databasename")
-                    , databaseconnector: null, scriptsHelper: new AssemblyResourceHelper());
+                    , databaseconnector: null, assemblyResourceHelper: new AssemblyResourceHelper());
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             };
 
@@ -42,7 +43,7 @@ namespace EasyDbMigratorTests.Unittests
                 DbMigrator migrator = new(logger: loggerMock.Object
                     , migrationConfiguration: new MigrationConfiguration("connection-string", "databasename")
                     , databaseconnector: new SqlDbConnector()
-                    , scriptsHelper: null);
+                    , assemblyResourceHelper: null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             };
 
@@ -58,7 +59,7 @@ namespace EasyDbMigratorTests.Unittests
                 DbMigrator migrator = new(logger: null
                     , migrationConfiguration: new MigrationConfiguration("connection-string", "databasename")
                     , databaseconnector: new SqlDbConnector()
-                    , scriptsHelper: new AssemblyResourceHelper());
+                    , assemblyResourceHelper: new AssemblyResourceHelper());
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             };
 
@@ -76,7 +77,7 @@ namespace EasyDbMigratorTests.Unittests
                     , migrationConfiguration: null
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                     , databaseconnector: new SqlDbConnector()
-                    , scriptsHelper: new AssemblyResourceHelper());
+                    , assemblyResourceHelper: new AssemblyResourceHelper());
             };
 
             _ = act.Should().Throw<ArgumentNullException>();

@@ -1,6 +1,4 @@
-﻿using EasyDbMigrator.Helpers;
-using EasyDbMigrator.Infra;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,18 +16,18 @@ namespace EasyDbMigrator
         public DbMigrator(ILogger logger
             , MigrationConfiguration migrationConfiguration
             , IDatabaseConnector databaseconnector
-            , IAssemblyResourceHelper scriptsHelper)
+            , IAssemblyResourceHelper assemblyResourceHelper)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _migrationConfiguration = migrationConfiguration ?? throw new ArgumentNullException(nameof(migrationConfiguration));
             _databaseconnector = databaseconnector ?? throw new ArgumentNullException(nameof(databaseconnector));
-            _assemblyResourceHelper = scriptsHelper ?? throw new ArgumentNullException(nameof(scriptsHelper));
+            _assemblyResourceHelper = assemblyResourceHelper ?? throw new ArgumentNullException(nameof(assemblyResourceHelper));
         }
 
         public async Task<bool> TryApplyMigrationsAsync(Type customClass, DateTime executedDateTime)
         {
             _logger.LogInformation($"start running migrations for database: {_migrationConfiguration.DatabaseName}");
-
+            
             Result<bool> setupDatabaseSucceeded;
             Result<bool> createVersiongTableSucceeded = new(isSucces: false); 
             bool migrationRunwithoutUnknownExceptions = false;

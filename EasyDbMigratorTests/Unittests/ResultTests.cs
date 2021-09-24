@@ -1,4 +1,4 @@
-﻿using EasyDbMigrator.Helpers;
+﻿using EasyDbMigrator;
 using FluentAssertions;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;

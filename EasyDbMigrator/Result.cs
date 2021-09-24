@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace EasyDbMigrator.Helpers
+namespace EasyDbMigrator
 {
     public struct Result<T>
     {

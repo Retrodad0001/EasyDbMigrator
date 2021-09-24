@@ -1,4 +1,4 @@
-﻿namespace EasyDbMigrator.Helpers
+﻿namespace EasyDbMigrator
 {
     public enum RunMigrationResult
     {
