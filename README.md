@@ -8,8 +8,15 @@ The software is still under-construction so do not use it in production!
 
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml)
 
-## Code Coverage:
 [![codecov](https://codecov.io/gh/Retrodad0001/easydbmigrator/branch/master/graph/badge.svg?token=JWYWLP98IW)](https://codecov.io/gh/Retrodad0001/easydbmigrator)
+
+
+|         |       |       |
+| ------- | ----- | ----- |
+| `EasyDbMigrator` | [![NuGet](https://img.shields.io/nuget/v/EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/) | [![Nuget](https://img.shields.io/nuget/dt/EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/) |
+
+
+
 
 # EasyDBMigrator - making database migrations easier
 
