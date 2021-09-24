@@ -11,10 +11,10 @@ The software is still under-construction so do not use it in production!
 [![codecov](https://codecov.io/gh/Retrodad0001/easydbmigrator/branch/master/graph/badge.svg?token=JWYWLP98IW)](https://codecov.io/gh/Retrodad0001/easydbmigrator)
 
 
-|         |       |       |
-| ------- | ----- | ----- |
-| `EasyDbMigrator` | [![NuGet](https://img.shields.io/nuget/v/Retrodad.EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/) | [![Nuget](https://img.shields.io/nuget/dt/Retrodad.EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/) |
-
+|         |       |       |        |
+| ------- | ----- | ----- | -----  |
+| `EasyDbMigrator` | core & for integration testing |[![NuGet](https://img.shields.io/nuget/v/Retrodad.EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/) | [![Nuget](https://img.shields.io/nuget/dt/Retrodad.EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/) |
+| `EasyDbMigrator runner` | for manual running migrations and CD pipelines  | TODO | TODO |
 
 
 
