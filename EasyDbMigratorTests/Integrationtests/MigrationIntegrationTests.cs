@@ -49,15 +49,15 @@ namespace EasyDbMigratorTests.Integrationtests
                     , testdbName: databaseName);
 
                 _ = loggerMock
-                    .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1))
-                    .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1))
-                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was run", LogLevel.Information, Times.Exactly(1))
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1))
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1))
-                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1))
-                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was not run because migrations was already executed", LogLevel.Information, Times.Never())
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because migrations was already executed", LogLevel.Information, Times.Never())
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was not run because migrations was already executed", LogLevel.Information, Times.Never());
+                    .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was not run because migrations was already executed", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because migrations was already executed", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was not run because migrations was already executed", LogLevel.Information, Times.Never(), checkExceptionNotNull: false);
             }
 #pragma warning disable CA1031 // Do not catch general exception types, for sake of testing this is no problem
             catch (Exception ex)
@@ -113,15 +113,15 @@ namespace EasyDbMigratorTests.Integrationtests
                     , testdbName: databaseName);
 
                 _ = loggerMockSecondtRun
-                    .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1))
-                    .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1))
-                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1))
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1))
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1))
-                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1))
-                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was run", LogLevel.Information, Times.Never())
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Never())
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Never());
+                    .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false);
             }
 #pragma warning disable CA1031 // Do not catch general exception types, for sake of testing this is no problem
             catch (Exception ex)

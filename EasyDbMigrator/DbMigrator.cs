@@ -26,7 +26,7 @@ namespace EasyDbMigrator
 
         public async Task<bool> TryApplyMigrationsAsync(Type customClass, DateTime executedDateTime)
         {
-            _logger.LogInformation($"start running migrations for database: {_migrationConfiguration.DatabaseName}");
+            _logger.Log(logLevel: LogLevel.Information, message: $"start running migrations for database: {_migrationConfiguration.DatabaseName}");
             
             Result<bool> setupDatabaseSucceeded;
             Result<bool> createVersiongTableSucceeded = new(isSucces: false); 
@@ -35,18 +35,18 @@ namespace EasyDbMigrator
             setupDatabaseSucceeded = await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: _migrationConfiguration);
 
             if (setupDatabaseSucceeded.IsFailure)
-                _logger.LogError(@"setup database when there is none with default settings: error occurred", setupDatabaseSucceeded.Exception);
+                _logger.Log(logLevel: LogLevel.Error, exception: setupDatabaseSucceeded.Exception, @"setup database when there is none with default settings: error occurred");
             else
-                _logger.LogInformation(@"setup database when there is none with default settings executed successfully");
+                _logger.Log(logLevel: LogLevel.Information, message: @"setup database when there is none with default settings executed successfully");
 
             if (setupDatabaseSucceeded.IsSuccess)
             {
                 createVersiongTableSucceeded = await TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: _migrationConfiguration);
 
                 if (createVersiongTableSucceeded.IsFailure)
-                    _logger.LogError(@"setup DbMigrationsRun when there is none executed with errors", createVersiongTableSucceeded.Exception);
+                    _logger.Log(logLevel: LogLevel.Error, exception: createVersiongTableSucceeded.Exception, @"setup DbMigrationsRun when there is none executed with errors");
                 else
-                    _logger.LogInformation(@"setup DbMigrationsRun when there is none executed successfully");
+                    _logger.Log(logLevel:LogLevel.Information, message: @"setup DbMigrationsRun when there is none executed successfully");
 
                 if (createVersiongTableSucceeded.IsSuccess)
                 {
@@ -58,11 +58,11 @@ namespace EasyDbMigrator
 
             if (setupDatabaseSucceeded.IsFailure || createVersiongTableSucceeded.IsFailure || !migrationRunwithoutUnknownExceptions)
             {
-                _logger.LogError("Whole migration process executed with errors");
+                _logger.Log(logLevel: LogLevel.Error, exception:null , message: "Whole migration process executed with errors");
                 return false;
             }
 
-            _logger.LogInformation("Whole migration process executed successfully");
+            _logger.Log(logLevel: LogLevel.Information, message: "Whole migration process executed successfully");
 
             return true;
         }
@@ -111,14 +111,14 @@ namespace EasyDbMigrator
             List<Script> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(customclassType);
             List<Script> orderedScripts = SetScriptsInCorrectSequence(unOrderedScripts);
 
-            _logger.LogInformation($"Total scripts found: {orderedScripts.Count}");
+            _logger.Log(logLevel: LogLevel.Information, message: $"Total scripts found: {orderedScripts.Count}");
 
             bool skipBecauseOfErrorWithPreviousScript = false;
             foreach (Script script in orderedScripts)
             {
                 if (skipBecauseOfErrorWithPreviousScript)
                 {
-                    _logger.LogWarning($"script: {script.FileName} was skipped due to exception in previous script");
+                    _logger.Log(logLevel: LogLevel.Warning, message: $"script: {script.FileName} was skipped due to exception in previous script");
                     continue;
                 }
 
@@ -129,19 +129,18 @@ namespace EasyDbMigrator
                 switch (result.Value)
                 {
                     case RunMigrationResult.MigrationScriptExecuted:
-                        _logger.LogInformation($"script: {script.FileName} was run");
+                        _logger.Log(logLevel: LogLevel.Information, message: $"script: {script.FileName} was run");
                         break;
                     case RunMigrationResult.ScriptSkippedBecauseAlreadyRun:
-                        _logger.LogInformation($"script: {script.FileName} was not run because script was already executed");
+                        _logger.Log(logLevel: LogLevel.Information, message: $"script: {script.FileName} was not run because script was already executed");
                         break;
                     case RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted:
-                        _logger.LogError($"script: {script.FileName} was not completed due to exception");
+                        _logger.Log(logLevel: LogLevel.Error, exception: result.Exception, message: $"script: {script.FileName} was not completed due to exception");
                         skipBecauseOfErrorWithPreviousScript = true;
                         break;
                     default:
                         break;
                 }
-
             }
 
             if (skipBecauseOfErrorWithPreviousScript)

@@ -65,7 +65,7 @@ namespace WorkoutIntegrationTest
 
             if (exception != null)
             {
-                _ = sb.Append('\n').Append(exception);
+                _ = sb.Append('\n').Append($"message : {exception.Message} , trace : {exception.StackTrace} " );
             }
 
             _scopeProvider.ForEachScope((scope, state) =>
