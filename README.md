@@ -25,8 +25,6 @@ It has a Command-line client for managing migrations and a framework written for
 
 TODO add package nuget link
     
-
-
 ## Wat we want to accomplish ?
 
 1. Make it easy to integrate SQL db migrations in your integration tests written in .NET or PowerShell
