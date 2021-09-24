@@ -19,9 +19,9 @@ jobs:
         dotnet-version: 5.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Build
+    - name: Build debug version
       run: dotnet build --configuration Debug --no-restore
-    - name: Test
+    - name: Run unittest and codecoverage
       run: dotnet test --no-build --verbosity normal --filter Category!=Integrationtest /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-    - name: Upload coverage to Codecov
+    - name: Upload code coverage to Codecov
       uses: codecov/codecov-action@v1
