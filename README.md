@@ -8,6 +8,8 @@ The software is still under-construction so do not use it in production!
 
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml)
 
+TODO build delpoy package
+
 ## Code Coverage:
 [![codecov](https://codecov.io/gh/Retrodad0001/easydbmigrator/branch/master/graph/badge.svg?token=JWYWLP98IW)](https://codecov.io/gh/Retrodad0001/easydbmigrator)
 
@@ -20,6 +22,8 @@ EasyDBMigrator is an open-source sql database migration framework & Tool. It str
 Migrations can be written in SQL (T-SQL). 
 
 It has a Command-line client for managing migrations and a framework written for .net to integrate database migrations in local en CI pipeline based integration testing scenario's.
+
+TODO add package nuget link
 
 ## Wat we want to accomplish ?
 
