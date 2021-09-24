@@ -7,13 +7,13 @@ jobs:
   on-success:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-        steps:
-        - uses: actions/checkout@v2
-        - name: Setup .NET
-            uses: actions/setup-dotnet@v1
-            with:
-                dotnet-version: 5.0.x
-        - name: Restore dependencies
-        run: dotnet restore
-        - name: Build Release version
-        run: dotnet build --configuration Release --no-restore
+    steps:
+     - uses: actions/checkout@v2
+     - name: Setup .NET
+       uses: actions/setup-dotnet@v1
+       with:
+              dotnet-version: 5.0.x
+     - name: Restore dependencies
+       run: dotnet restore
+     - name: Build Release version
+       run: dotnet build --configuration Release --no-restore
