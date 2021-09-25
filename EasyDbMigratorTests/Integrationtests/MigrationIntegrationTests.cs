@@ -8,6 +8,7 @@ using TestLib;
 using Xunit;
 using Moq;
 using EasyDbMigratorTests.Integrationtests.TestHelpers;
+using FluentAssertions;
 
 namespace EasyDbMigratorTests.Integrationtests
 {
@@ -19,6 +20,9 @@ namespace EasyDbMigratorTests.Integrationtests
     [Collection(nameof(classNotRunParallel))]
     public class MigrationIntegrationTests
     {
+
+
+
         [Fact]
         [Trait("Category", "Integrationtest")]
         public async Task the_scenario_when_nothing_goes_wrong_with_running_migrations_on_an_empty_database()
@@ -35,29 +39,38 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
+                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
                 DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
-                DbMigrator migrator = new DbMigrator(logger: loggerMock.Object, migrationConfiguration: config, new SqlDbConnector(), new AssemblyResourceHelper());
-                _ = await migrator.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass), executedDateTime: ExecutedDataTime);
 
-                List<VersioningTableRow> expectedRows = new List<VersioningTableRow>();
-                expectedRows.Add(new VersioningTableRow(id: 1, executed: ExecutedDataTime, filename: "20212230_001_CreateDB.sql", version: "1.0.0"));
-                expectedRows.Add(new VersioningTableRow(id: 2, executed: ExecutedDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
-                expectedRows.Add(new VersioningTableRow(id: 3, executed: ExecutedDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
+                _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-                _ = new DbTestHelper().CheckMigrationsTable(connectionString: connectionstring
-                    , expectedRows: expectedRows
-                    , testdbName: databaseName);
+                
+                DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+                    , logger: loggerMock.Object
+                    , dataTimeHelperMock: datetimeHelperMock.Object);
+               
+                List<string> scriptsToExclude = new List<string>();
+                scriptsToExclude.Add("20212230_001_CreateDB.sql");
+                migrator.ExcludeScripts(scriptsToExclude);
+                
+                bool succeeded = await migrator.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));
+
+                _ = succeeded.Should().BeTrue();
 
                 _ = loggerMock
                     .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was not run because migrations was already executed", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because migrations was already executed", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was not run because migrations was already executed", LogLevel.Information, Times.Never(), checkExceptionNotNull: false);
+                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
+
+                List<VersioningTableRow> expectedRows = new List<VersioningTableRow>();
+                expectedRows.Add(new VersioningTableRow(id: 1, executed: ExecutedDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
+                expectedRows.Add(new VersioningTableRow(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
+
+                _ = new DbTestHelper().CheckMigrationsTable(connectionString: connectionstring
+                  , expectedRows: expectedRows
+                  , testdbName: databaseName);
+
             }
 #pragma warning disable CA1031 // Do not catch general exception types, for sake of testing this is no problem
             catch (Exception ex)
@@ -78,50 +91,57 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 await DeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
 
-                MigrationConfiguration configuration = new MigrationConfiguration(connectionString: connectionstring
+                MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring
                     , databaseName: databaseName);
 
-                var loggerMockFirstRun = new Mock<ILogger<DbMigrator>>();
+                var loggerMock = new Mock<ILogger<DbMigrator>>();
+
+                Mock<IDataTimeHelper> datetimeHelperMock1 = new Mock<IDataTimeHelper>();
                 DateTime ExecutedFirsttimeDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
-                DbMigrator migrator1 = new(logger: loggerMockFirstRun.Object
-                    , migrationConfiguration:configuration
-                    , new SqlDbConnector()
-                    , new AssemblyResourceHelper());
-              
-                _ = await migrator1.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass)
-                    , executedDateTime: ExecutedFirsttimeDataTime);
+
+                _ = datetimeHelperMock1.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedFirsttimeDataTime);
+
+                DbMigrator migrator1 = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+                    , logger: loggerMock.Object
+                    , dataTimeHelperMock: datetimeHelperMock1.Object);
+
+                List<string> scriptsToExclude = new List<string>();
+                scriptsToExclude.Add("20212230_001_CreateDB.sql");
+
+                migrator1.ExcludeScripts(scriptsToExclude);
+
+                _ = await migrator1.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));
 
                 //now run the migrations again
                 var loggerMockSecondtRun = new Mock<ILogger<DbMigrator>>();
                 DateTime ExecutedSecondtimeDataTime = new DateTime(2021, 12, 31, 2, 16, 1);
-                DbMigrator migrator2 = new(logger: loggerMockSecondtRun.Object
-                    , migrationConfiguration:configuration
-                    , new SqlDbConnector()
-                    , new AssemblyResourceHelper());
-             
-                _ = await migrator2.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass)
-                    , executedDateTime: ExecutedSecondtimeDataTime);
 
-                //version-table should not be updated for the second time
-                List<VersioningTableRow> expectedRows = new List<VersioningTableRow>();
-                expectedRows.Add(new VersioningTableRow(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20212230_001_CreateDB.sql", version: "1.0.0"));
-                expectedRows.Add(new VersioningTableRow(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
-                expectedRows.Add(new VersioningTableRow(id: 3, executed: ExecutedFirsttimeDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
+                Mock<IDataTimeHelper> datetimeHelperMock2 = new Mock<IDataTimeHelper>();
+                _ = datetimeHelperMock2.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedSecondtimeDataTime);
 
-                _ = new DbTestHelper().CheckMigrationsTable(connectionString: connectionstring
-                    , expectedRows: expectedRows
-                    , testdbName: databaseName);
+                DbMigrator migrator2 = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+                   , logger: loggerMockSecondtRun.Object
+                   , dataTimeHelperMock: datetimeHelperMock2.Object);
+
+                migrator2.ExcludeScripts(scriptsToExclude);
+                _ = await migrator2.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));
 
                 _ = loggerMockSecondtRun
                     .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_001_CreateDB.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false);
+                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
+
+                //version-table should not be updated for the second time
+                List<VersioningTableRow> expectedRows = new List<VersioningTableRow>();
+                expectedRows.Add(new VersioningTableRow(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
+                expectedRows.Add(new VersioningTableRow(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
+
+                _ = new DbTestHelper().CheckMigrationsTable(connectionString: connectionstring
+                 , expectedRows: expectedRows
+                 , testdbName: databaseName);
+
             }
 #pragma warning disable CA1031 // Do not catch general exception types, for sake of testing this is no problem
             catch (Exception ex)

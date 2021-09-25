@@ -6,25 +6,93 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator
 {
+
     public class DbMigrator
     {
         private readonly ILogger _logger;
         private readonly MigrationConfiguration _migrationConfiguration;
         private readonly IDatabaseConnector _databaseconnector;
         private readonly IAssemblyResourceHelper _assemblyResourceHelper;
+        private readonly IDataTimeHelper _dataTimeHelper;
+        private readonly List<string> _excludedScriptList = new List<string>();
 
         public DbMigrator(ILogger logger
             , MigrationConfiguration migrationConfiguration
             , IDatabaseConnector databaseconnector
-            , IAssemblyResourceHelper assemblyResourceHelper)
+            , IAssemblyResourceHelper assemblyResourceHelper
+            , IDataTimeHelper dataTimeHelper)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _migrationConfiguration = migrationConfiguration ?? throw new ArgumentNullException(nameof(migrationConfiguration));
-            _databaseconnector = databaseconnector ?? throw new ArgumentNullException(nameof(databaseconnector));
-            _assemblyResourceHelper = assemblyResourceHelper ?? throw new ArgumentNullException(nameof(assemblyResourceHelper));
+
+            if (logger is null)
+                throw new ArgumentNullException(nameof(logger));
+            _logger = logger;
+
+            if (migrationConfiguration is null)
+                throw new ArgumentNullException(nameof(migrationConfiguration));
+            _migrationConfiguration = migrationConfiguration;
+
+            if (databaseconnector is null)
+                throw new ArgumentNullException(nameof(databaseconnector));
+            _databaseconnector = databaseconnector;
+
+            if (assemblyResourceHelper is null)
+                throw new ArgumentNullException(nameof(assemblyResourceHelper));
+            _assemblyResourceHelper = assemblyResourceHelper;
+
+            if (dataTimeHelper is null)
+                throw new ArgumentNullException(nameof(dataTimeHelper));
+            _dataTimeHelper = dataTimeHelper;
         }
 
-        public async Task<bool> TryApplyMigrationsAsync(Type customClass, DateTime executedDateTime)
+        public static DbMigrator Create(MigrationConfiguration migrationConfiguration, ILogger logger)
+        {
+            if (migrationConfiguration is null)
+            {
+                throw new ArgumentNullException(nameof(migrationConfiguration));
+            }
+
+            if (logger is null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            DbMigrator result = new DbMigrator(logger: logger
+                , migrationConfiguration: migrationConfiguration
+                , databaseconnector: new SqlDbConnector()
+                , assemblyResourceHelper: new AssemblyResourceHelper()
+                , dataTimeHelper: new DataTimeHelper());
+
+            return result;
+        }
+
+        public static DbMigrator CreateForLocalIntegrationTesting(MigrationConfiguration migrationConfiguration
+            , ILogger logger
+            , IDataTimeHelper dataTimeHelperMock)
+        {
+            if (migrationConfiguration is null)
+            {
+                throw new ArgumentNullException(nameof(migrationConfiguration));
+            }
+
+            if (logger is null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (dataTimeHelperMock is null)
+            {
+                throw new ArgumentNullException(nameof(dataTimeHelperMock));
+            }
+
+            DbMigrator result = new DbMigrator(logger: logger
+               , migrationConfiguration: migrationConfiguration
+               , databaseconnector: new SqlDbConnector()
+               , assemblyResourceHelper: new AssemblyResourceHelper()
+               , dataTimeHelper: dataTimeHelperMock);
+
+            return result;
+        }
+        public async Task<bool> TryApplyMigrationsAsync(Type customClass)
         {
             _logger.Log(logLevel: LogLevel.Information, message: $"start running migrations for database: {_migrationConfiguration.DatabaseName}");
             
@@ -50,9 +118,14 @@ namespace EasyDbMigrator
 
                 if (createVersiongTableSucceeded.IsSuccess)
                 {
+                    List<Script> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(customclass: customClass);
+                    List<Script> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptList);
+                    List<Script> orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExludedScripts);
+
+                    _logger.Log(logLevel: LogLevel.Information, message: $"Total scripts found: {unOrderedScripts.Count}");
+
                     migrationRunwithoutUnknownExceptions = await TryRunAllMigrationScriptsAsync(migrationConfiguration: _migrationConfiguration
-                        , customclassType: customClass
-                        , executedDateTime: executedDateTime);
+                        , orderedScripts: orderedScriptsWithoutExcludedScripts);
                 }
             }
 
@@ -65,6 +138,11 @@ namespace EasyDbMigrator
             _logger.Log(logLevel: LogLevel.Information, message: "Whole migration process executed successfully");
 
             return true;
+        }
+
+        public void ExcludeScripts(List<string> scriptsToExclude)
+        {
+            _excludedScriptList.AddRange(scriptsToExclude);
         }
 
         private async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration)
@@ -104,15 +182,8 @@ namespace EasyDbMigrator
             return result;
         }
 
-        private async Task<bool> TryRunAllMigrationScriptsAsync(MigrationConfiguration migrationConfiguration
-            , Type customclassType
-            , DateTime executedDateTime)
+        private async Task<bool> TryRunAllMigrationScriptsAsync(MigrationConfiguration migrationConfiguration, List<Script> orderedScripts)
         {
-            List<Script> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(customclassType);
-            List<Script> orderedScripts = SetScriptsInCorrectSequence(unOrderedScripts);
-
-            _logger.Log(logLevel: LogLevel.Information, message: $"Total scripts found: {orderedScripts.Count}");
-
             bool skipBecauseOfErrorWithPreviousScript = false;
             foreach (Script script in orderedScripts)
             {
@@ -121,6 +192,8 @@ namespace EasyDbMigrator
                     _logger.Log(logLevel: LogLevel.Warning, message: $"script: {script.FileName} was skipped due to exception in previous script");
                     continue;
                 }
+
+                DateTime executedDateTime = _dataTimeHelper.GetCurrentUtcTime();
 
                 Result<RunMigrationResult> result = await _databaseconnector.RunDbMigrationScriptWhenNotRunnedBeforeAsync(migrationConfiguration: migrationConfiguration
                     , script: script
@@ -147,6 +220,12 @@ namespace EasyDbMigrator
                 return false;
             else
                 return true;
+        }
+
+        private List<Script> RemoveExcludedScripts(List<Script> scripts, List<string> excludedscripts)
+        {
+            var result = scripts.Where(p => !excludedscripts.Any(x => x == p.FileName)).ToList();
+            return result;
         }
 
         private List<Script> SetScriptsInCorrectSequence(List<Script> scripts)

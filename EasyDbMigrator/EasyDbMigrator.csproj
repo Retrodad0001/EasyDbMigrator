@@ -4,19 +4,19 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <PackageId>Retrodad.EasyDbMigrator</PackageId>
     <Description>EasyDbMigrator is a database migration framework written in C#. It can be used for integration testing on your local machine or in CI/CD Pipelines or for manual migrations.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Retrodad0001/EasyDbMigrator</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
-    <PackageTags>database, migration, migrator, integration test, update database, CI, CD, SQL, PostgreSQL , CosmosDB</PackageTags>
+    <PackageTags>database, migration, migrator, integration test, update database, CI, CD, SQL, PostgreSQL , CosmosDB, Update , DB</PackageTags>
     <PackageReleaseNotes>For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</PackageReleaseNotes>
     <PackageIcon>Icon.png</PackageIcon>
     <PackageIconUrl />
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <Authors>Retrodad0001</Authors>
-    <AssemblyVersion>1.0.0.3</AssemblyVersion>
+    <AssemblyVersion>1.0.0.4</AssemblyVersion>
     <FileVersion>1.0.0.3</FileVersion>
   </PropertyGroup>
 

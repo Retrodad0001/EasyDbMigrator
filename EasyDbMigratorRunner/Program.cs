@@ -23,10 +23,7 @@ namespace EasyDbMigratorRunner
 
             MigrationConfiguration config = new MigrationConfiguration(connectionString: string.Empty, databaseName: string.Empty);
 
-            DbMigrator migrator = new(logger: logger
-                , migrationConfiguration: config
-                , databaseconnector: new SqlDbConnector()
-                , assemblyResourceHelper: new AssemblyResourceHelper());
+            DbMigrator migrator = DbMigrator.Create(migrationConfiguration: config, logger: logger);
         }
     }
 }

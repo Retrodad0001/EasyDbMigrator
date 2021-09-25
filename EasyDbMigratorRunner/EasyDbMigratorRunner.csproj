@@ -10,7 +10,7 @@
     <PackageIconUrl />
     <RepositoryUrl>https://github.com/Retrodad0001/EasyDbMigrator</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
-    <PackageTags>database, migration, migrator, integration test, update database, CI, CD, SQL, PostgreSQL , CosmosDB</PackageTags>
+    <PackageTags>database, migration, migrator, integration test, update database, CI, CD, SQL, PostgreSQL , CosmosDB, Update , DB</PackageTags>
     <PackageReleaseNotes>For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator
 </PackageReleaseNotes>
     <StartupObject>EasyDbMigratorRunner.Program</StartupObject>

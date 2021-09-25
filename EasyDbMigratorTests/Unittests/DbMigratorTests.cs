@@ -8,42 +8,47 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Xunit;
 
-//TODO datetime should per script instead one (DI)
-//TODO return result/string report for using in testing.
-//TODO add builder for setting up integration test
-
 namespace EasyDbMigrator
 {
     [ExcludeFromCodeCoverage]
     public class DbMigratorTests
     {
         [Fact]
-        public void when_creating_the_parameter_sqlDbHelper_cannot_be_null()
+        public void when_constructing_the_parameter_connector_schould_be_provided()
         {
             Action act = () =>
             {
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+
+                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+                DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+
                 DbMigrator migrator = new(logger: loggerMock.Object
                     , migrationConfiguration: new MigrationConfiguration("connection-string", "databasename")
-                    , databaseconnector: null, assemblyResourceHelper: new AssemblyResourceHelper());
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+                    , databaseconnector: null
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+                    , assemblyResourceHelper: new AssemblyResourceHelper()
+                    , dataTimeHelper: datetimeHelperMock.Object);
             };
 
             _ = act.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void when_creating_the_parameter_scriptsHelper_cannot_be_null()
+        public void when_constructing_the_parameter_assemblyResourceHelper_schould_be_provided()
         {
             Action act = () =>
             {
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
+                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+                DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = new(logger: loggerMock.Object
                     , migrationConfiguration: new MigrationConfiguration("connection-string", "databasename")
                     , databaseconnector: new SqlDbConnector()
-                    , assemblyResourceHelper: null);
+                    , assemblyResourceHelper: null
+                    , dataTimeHelper: datetimeHelperMock.Object);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             };
 
@@ -51,15 +56,19 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public void when_creating_the_parameter_logger_cannot_be_null()
+        public void when_constructing_the_parameter_logger_schould_be_provided()
         {
             Action act = () =>
             {
+                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+                DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = new(logger: null
                     , migrationConfiguration: new MigrationConfiguration("connection-string", "databasename")
                     , databaseconnector: new SqlDbConnector()
-                    , assemblyResourceHelper: new AssemblyResourceHelper());
+                    , assemblyResourceHelper: new AssemblyResourceHelper()
+                    , dataTimeHelper: datetimeHelperMock.Object);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             };
 
@@ -67,23 +76,167 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public void when_running_migrations_the_migrationConfiguration_should_be_provided()
+        public void when_constructing_the_parameter_dataTimeHelper_schould_be_provided()
         {
             Action act = () =>
             {
+                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+                DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+                var loggerMock = new Mock<ILogger<DbMigrator>>();
+
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+                DbMigrator migrator = new(logger: loggerMock.Object
+                    , migrationConfiguration: new MigrationConfiguration("connection-string", "databasename")
+                    , databaseconnector: new SqlDbConnector()
+                    , assemblyResourceHelper: new AssemblyResourceHelper()
+                    , dataTimeHelper: null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+            };
+
+            _ = act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void when_constructing_migrations_the_migrationConfiguration_should_be_provided()
+        {
+            Action act = () =>
+            {
+                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+                DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+                _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
+
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 DbMigrator migrator = new(logger: loggerMock.Object
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                     , migrationConfiguration: null
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                     , databaseconnector: new SqlDbConnector()
-                    , assemblyResourceHelper: new AssemblyResourceHelper());
+                    , assemblyResourceHelper: new AssemblyResourceHelper()
+                    , dataTimeHelper: datetimeHelperMock.Object);
+            };
+
+            _ = act.Should().Throw<ArgumentNullException>();
+        }
+
+
+        [Fact]
+        public void when_using_the_create_method_happy_flow()
+        {
+            Action act = () =>
+            {
+               MigrationConfiguration config = new MigrationConfiguration("connection string","databasename");
+                var loggerMock = new Mock<ILogger<DbMigrator>>();
+
+                DbMigrator migrator = DbMigrator.Create(migrationConfiguration: config, logger: loggerMock.Object);
+            };
+
+            _ = act.Should().NotThrow<ArgumentNullException>();
+            _ = act.Should().NotThrow<Exception>();
+        }
+
+        [Fact]
+        public void when_using_the_create_method_the_ILogger_schould_be_provided()
+        {
+            Action act = () =>
+            {
+                MigrationConfiguration config = new MigrationConfiguration("connection string", "databasename");
+
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+                DbMigrator migrator = DbMigrator.Create(migrationConfiguration: config, logger: null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             };
 
             _ = act.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
+        public void when_using_the_create_method_the_migrationconfiguration_schould_be_provided()
+        {
+            Action act = () =>
+            {
+                var loggerMock = new Mock<ILogger<DbMigrator>>();
+
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+                DbMigrator migrator = DbMigrator.Create(migrationConfiguration: null, logger: loggerMock.Object);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+            };
+
+            _ = act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void when_using_the_CreateForLocalIntegrationTesting_method_happy_flow()
+        {
+            Action act = () =>
+            {
+                MigrationConfiguration config = new MigrationConfiguration("connection string", "databasename");
+                var loggerMock = new Mock<ILogger<DbMigrator>>();
+                Mock<IDataTimeHelper> dataTimeHelperMock = new Mock<IDataTimeHelper>();
+
+                DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+                    , logger: loggerMock.Object
+                    , dataTimeHelperMock: dataTimeHelperMock.Object);
+            };
+
+            _ = act.Should().NotThrow<ArgumentNullException>();
+            _ = act.Should().NotThrow<Exception>();
+        }
+
+        [Fact]
+        public void when_using_the_CreateForLocalIntegrationTesting_method_the_ILogger_schould_be_provided()
+        {
+            Action act = () =>
+            {
+                MigrationConfiguration config = new MigrationConfiguration("connection string", "databasename");
+                Mock<IDataTimeHelper> dataTimeHelperMock = new Mock<IDataTimeHelper>();
+
+                DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+                    , logger: null
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+                    , dataTimeHelperMock: dataTimeHelperMock.Object);
+            };
+
+            _ = act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void when_using_the_CreateForLocalIntegrationTesting_method_the_migrationconfiguration_schould_be_provided()
+        {
+            Action act = () =>
+            {
+                var loggerMock = new Mock<ILogger<DbMigrator>>();
+                Mock<IDataTimeHelper> dataTimeHelperMock = new Mock<IDataTimeHelper>();
+
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+                DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: null
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+                    , logger: loggerMock.Object
+                    , dataTimeHelperMock: dataTimeHelperMock.Object);
+            };
+
+            _ = act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void when_using_the_CreateForLocalIntegrationTesting_method_the_dataTimeHelper_schould_be_provided()
+        {
+            Action act = () =>
+            {
+                MigrationConfiguration config = new MigrationConfiguration("connection string", "databasename");
+                var loggerMock = new Mock<ILogger<DbMigrator>>();
+
+                DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+                    , logger: loggerMock.Object
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+                    , dataTimeHelperMock: null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+            };
+
+            _ = act.Should().Throw<ArgumentNullException>();
+        }
+
+            [Fact]
         public async Task when_everything_goes_ok()
         {
             const string databaseName = "EasyDbMigrator";
@@ -102,8 +255,8 @@ namespace EasyDbMigrator
             scripts.Add(script1);
             scripts.Add(script2);
 
-            var scriptsHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = scriptsHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
+            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             Result<bool> result = new Result<bool>(isSucces: true, exception: null);
             _ = databaseConnectorMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
@@ -120,13 +273,16 @@ namespace EasyDbMigrator
 
             DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
+            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
+
             DbMigrator migrator = new(logger: loggerMock.Object
                 , migrationConfiguration: config
-                , databaseConnectorMock.Object
-                , scriptsHelperMock.Object);
+                , databaseconnector: databaseConnectorMock.Object
+                , assemblyResourceHelperMock.Object
+                , dataTimeHelper: datetimeHelperMock.Object);
 
-            _ = await migrator.TryApplyMigrationsAsync(customClass: someType //just pick this class, doesn't matter
-                    , executedDateTime: ExecutedDataTime);
+            _ = await migrator.TryApplyMigrationsAsync(customClass: someType);
 
             _ = loggerMock
                 .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -157,8 +313,8 @@ namespace EasyDbMigrator
             scripts.Add(script1);
             scripts.Add(script2);
 
-            var scriptsHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = scriptsHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
+            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             Result<bool> result = new Result<bool>(isSucces: true, exception: null);
             _ = databaseConnectorMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
@@ -175,15 +331,18 @@ namespace EasyDbMigrator
 
             DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
+            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
+
             DbMigrator migrator = new(logger: loggerMock.Object
                 , migrationConfiguration: config
-                , databaseConnectorMock.Object
-                , scriptsHelperMock.Object);
+                , databaseconnector: databaseConnectorMock.Object
+                , assemblyResourceHelper: assemblyResourceHelperMock.Object
+                , dataTimeHelper: datetimeHelperMock.Object);
 
-            _ = await migrator.TryApplyMigrationsAsync(customClass: someType //just pick this class, doesn't matter
-                    , executedDateTime: ExecutedDataTime);
+            _ = await migrator.TryApplyMigrationsAsync(customClass: someType);
 
-            _ = loggerMock //TODO when runs enable rest
+            _ = loggerMock 
                 .CheckIfLoggerWasCalled("setup database when there is none with default settings: error occurred", LogLevel.Error, Times.Exactly(1), checkExceptionNotNull: true)
                 .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
@@ -202,7 +361,7 @@ namespace EasyDbMigrator
             Type someType = typeof(DbMigratorTests);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
-            var sqlDbHelperMock = new Mock<IDatabaseConnector>();
+            var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
             Script script1 = new Script("20212230_001_Script1.sql", "some content");
             Script script2 = new Script("20212230_002_Script2.sql", "some content");
@@ -210,11 +369,11 @@ namespace EasyDbMigrator
             scripts.Add(script1);
             scripts.Add(script2);
 
-            var scriptsHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = scriptsHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
+            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             Result<bool> result = new Result<bool>(isSucces: true, exception: null);
-            _ = sqlDbHelperMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
+            _ = databaseConnectorMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
                     , It.IsAny<string>()
                     , It.IsAny<string>()))
                     .ReturnsAsync(new Result<bool>(isSucces: true, exception: null))
@@ -222,19 +381,22 @@ namespace EasyDbMigrator
             ;
 
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
-            _ = sqlDbHelperMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTime>())).ReturnsAsync(resultRunMigrations);
 
             DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
+            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
+
             DbMigrator migrator = new(logger: loggerMock.Object
                 , migrationConfiguration: config
-                , sqlDbHelperMock.Object
-                , scriptsHelperMock.Object);
+                , databaseconnector: databaseConnectorMock.Object
+                , assemblyResourceHelper: assemblyResourceHelperMock.Object
+                , dataTimeHelper: datetimeHelperMock.Object);
 
-            _ = await migrator.TryApplyMigrationsAsync(customClass: someType //just pick this class, doesn't matter
-                    , executedDateTime: ExecutedDataTime);
+            _ = await migrator.TryApplyMigrationsAsync(customClass: someType);
 
             _ = loggerMock
                .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -256,7 +418,6 @@ namespace EasyDbMigrator
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-
             Script script1 = new Script("20212230_001_Script1.sql", "some content");
             Script script2 = new Script("20212230_002_Script2.sql", "some content");
             Script script3 = new Script("20212230_003_Script3.sql", "some content");
@@ -265,8 +426,8 @@ namespace EasyDbMigrator
             scripts.Add(script2);
             scripts.Add(script3);
 
-            var scriptsHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = scriptsHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
+            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             var sqlDbHelperMock = new Mock<IDatabaseConnector>();
             _ = sqlDbHelperMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
@@ -284,13 +445,16 @@ namespace EasyDbMigrator
 
             DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
+            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
+
             DbMigrator migrator = new(logger: loggerMock.Object
                 , migrationConfiguration: config
                 , sqlDbHelperMock.Object
-                , scriptsHelperMock.Object);
+                , assemblyResourceHelperMock.Object
+                , dataTimeHelper: datetimeHelperMock.Object);
 
-            _ = await migrator.TryApplyMigrationsAsync(customClass: someType //just pick this class, doesn't matter
-                    , executedDateTime: ExecutedDataTime);
+            _ = await migrator.TryApplyMigrationsAsync(customClass: someType);
 
             _ = loggerMock
                   .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -321,7 +485,6 @@ namespace EasyDbMigrator
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-
             Script script1 = new Script("20212230_001_Script1.sql", "some content");
             Script script2 = new Script("20212230_002_Script2.sql", "some content");
             Script script3 = new Script("20212230_003_Script3.sql", "some content");
@@ -330,8 +493,8 @@ namespace EasyDbMigrator
             scripts.Add(script2);
             scripts.Add(script3);
 
-            var scriptsHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = scriptsHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
+            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             var sqlDbHelperMock = new Mock<IDatabaseConnector>();
             _ = sqlDbHelperMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
@@ -350,13 +513,16 @@ namespace EasyDbMigrator
 
             DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
+            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
+
             DbMigrator migrator = new(logger: loggerMock.Object
                 , migrationConfiguration: config
-                , sqlDbHelperMock.Object
-                , scriptsHelperMock.Object);
+                , databaseconnector: sqlDbHelperMock.Object
+                , assemblyResourceHelper: assemblyResourceHelperMock.Object
+                , dataTimeHelper: datetimeHelperMock.Object);
 
-            _ = await migrator.TryApplyMigrationsAsync(customClass: someType //just pick this class, doesn't matter
-                    , executedDateTime: ExecutedDataTime);
+            _ = await migrator.TryApplyMigrationsAsync(customClass: someType);
 
             _ = loggerMock
                   .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -367,5 +533,69 @@ namespace EasyDbMigrator
                   .CheckIfLoggerWasCalled("script: 20212230_003_Script3.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
         }
+
+        [Fact]
+        public async Task that_it_possable_to_exclude_Scripts()
+        {
+            const string databaseName = "EasyDbMigrator";
+
+            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
+                , databaseName: databaseName);
+
+            Type someType = typeof(DbMigratorTests);
+
+            var loggerMock = new Mock<ILogger<DbMigrator>>();
+            var databaseConnectorMock = new Mock<IDatabaseConnector>();
+
+            Script script1 = new Script("20212230_001_Script1.sql", "some content");
+            Script script2 = new Script("20212230_002_Script2.sql", "some content");
+            List<Script> scripts = new List<Script>();
+            scripts.Add(script1);
+            scripts.Add(script2);
+
+            var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
+            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+
+            Result<bool> result = new Result<bool>(isSucces: true, exception: null);
+            _ = databaseConnectorMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
+                    , It.IsAny<string>()
+                    , It.IsAny<string>()))
+                    .ReturnsAsync(new Result<bool>(isSucces: true, exception: null))
+                    .ReturnsAsync(new Result<bool>(isSucces: true, exception: null)); //second time this method is called
+            ;
+
+            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
+            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+                    , It.IsAny<Script>()
+                    , It.IsAny<DateTime>())).ReturnsAsync(resultRunMigrations);
+
+            DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+
+            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
+
+            DbMigrator migrator = new(logger: loggerMock.Object
+                , migrationConfiguration: config
+                , databaseconnector: databaseConnectorMock.Object
+                , assemblyResourceHelperMock.Object
+                , dataTimeHelper: datetimeHelperMock.Object);
+
+            //exclude some scripts
+            migrator.ExcludeScripts(new List<string>{"20212230_001_Script1.sql" });
+
+            _ = await migrator.TryApplyMigrationsAsync(customClass: someType);
+
+            _ = loggerMock
+                .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("Total scripts found: 2", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
+        }
+
+
+        //TODO add test that when expected scripts exclude not found stop rest of migration
     }
 }
