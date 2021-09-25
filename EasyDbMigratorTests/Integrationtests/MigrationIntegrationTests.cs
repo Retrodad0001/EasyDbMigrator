@@ -50,7 +50,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 scriptsToExclude.Add("20212230_001_CreateDB.sql");
                 migrator.ExcludeScripts(scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator.DeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
+                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));
@@ -107,7 +107,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 migrator1.ExcludeScripts(scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator1.DeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
+                bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));

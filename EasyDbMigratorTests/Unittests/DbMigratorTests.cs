@@ -621,7 +621,7 @@ namespace EasyDbMigrator
                 , assemblyResourceHelperMock.Object
                 , dataTimeHelper: datetimeHelperMock.Object);
 
-            bool succes = await migrator.DeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
+            bool succes = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
 
             _ = succes.Should().BeFalse();
 

@@ -93,7 +93,7 @@ namespace EasyDbMigrator
             return result;
         }
 
-        public async Task<bool> DeleteDatabaseIfExistAsync(string databaseName, string connectionString)
+        public async Task<bool> TryDeleteDatabaseIfExistAsync(string databaseName, string connectionString)
         {
             string query = $@"
                 IF EXISTS(SELECT * FROM master.sys.databases WHERE name='{databaseName}')
@@ -225,20 +225,18 @@ namespace EasyDbMigrator
                     , script: script
                     , executedDateTime: executedDateTime);
 
-                switch (result.Value)
+                if (result.Value == RunMigrationResult.MigrationScriptExecuted)
                 {
-                    case RunMigrationResult.MigrationScriptExecuted:
-                        _logger.Log(logLevel: LogLevel.Information, message: $"script: {script.FileName} was run");
-                        break;
-                    case RunMigrationResult.ScriptSkippedBecauseAlreadyRun:
-                        _logger.Log(logLevel: LogLevel.Information, message: $"script: {script.FileName} was not run because script was already executed");
-                        break;
-                    case RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted:
-                        _logger.Log(logLevel: LogLevel.Error, exception: result.Exception, message: $"script: {script.FileName} was not completed due to exception");
-                        skipBecauseOfErrorWithPreviousScript = true;
-                        break;
-                    default:
-                        break;
+                    _logger.Log(logLevel: LogLevel.Information, message: $"script: {script.FileName} was run");
+                }
+                else if (result.Value == RunMigrationResult.ScriptSkippedBecauseAlreadyRun)
+                {
+                    _logger.Log(logLevel: LogLevel.Information, message: $"script: {script.FileName} was not run because script was already executed");
+                }
+                else if (result.Value == RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted)
+                {
+                    _logger.Log(logLevel: LogLevel.Error, exception: result.Exception, message: $"script: {script.FileName} was not completed due to exception");
+                    skipBecauseOfErrorWithPreviousScript = true;
                 }
             }
 

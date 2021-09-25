@@ -5,6 +5,11 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
+//TODO wiki: sql resources should be embedded
+//TODO wiki: add example code integration test with xunit
+
+//TODO: PRIO check in integration test: 0001-01-01 00:00:00.0000000 !!!
+
 namespace EasyDbMigrator
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest
