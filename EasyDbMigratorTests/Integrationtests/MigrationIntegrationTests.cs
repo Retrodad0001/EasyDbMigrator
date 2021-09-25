@@ -20,9 +20,6 @@ namespace EasyDbMigratorTests.Integrationtests
     [Collection(nameof(classNotRunParallel))]
     public class MigrationIntegrationTests
     {
-
-
-
         [Fact]
         [Trait("Category", "Integrationtest")]
         public async Task the_scenario_when_nothing_goes_wrong_with_running_migrations_on_an_empty_database()
@@ -32,7 +29,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 const string connectionstring = @"Data Source = localhost,1433; User ID = sa; Password=stuffy666!; Connect Timeout = 30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False";
                 const string databaseName = "EasyDbMigrator";
 
-                await DeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
+              
 
                 MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring
                     , databaseName: databaseName);
@@ -52,10 +49,12 @@ namespace EasyDbMigratorTests.Integrationtests
                 List<string> scriptsToExclude = new List<string>();
                 scriptsToExclude.Add("20212230_001_CreateDB.sql");
                 migrator.ExcludeScripts(scriptsToExclude);
-                
-                bool succeeded = await migrator.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));
 
-                _ = succeeded.Should().BeTrue();
+                bool succeededDeleDatabase = await migrator.DeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
+                _ = succeededDeleDatabase.Should().BeTrue();
+
+                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));
+                _ = succeededRunningMigrations.Should().BeTrue();
 
                 _ = loggerMock
                     .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -89,8 +88,6 @@ namespace EasyDbMigratorTests.Integrationtests
                 const string connectionstring = @"Data Source = localhost,1433; User ID = sa; Password=stuffy666!; Connect Timeout = 30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False";
                 const string databaseName = "EasyDbMigrator";
 
-                await DeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
-
                 MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring
                     , databaseName: databaseName);
 
@@ -110,7 +107,11 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 migrator1.ExcludeScripts(scriptsToExclude);
 
-                _ = await migrator1.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));
+                bool succeededDeleDatabase = await migrator1.DeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
+                _ = succeededDeleDatabase.Should().BeTrue();
+
+                bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));
+                _ = succeededRunningMigrations.Should().BeTrue();
 
                 //now run the migrations again
                 var loggerMockSecondtRun = new Mock<ILogger<DbMigrator>>();
@@ -124,7 +125,9 @@ namespace EasyDbMigratorTests.Integrationtests
                    , dataTimeHelperMock: datetimeHelperMock2.Object);
 
                 migrator2.ExcludeScripts(scriptsToExclude);
-                _ = await migrator2.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));
+                
+               bool succeeded = await migrator2.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));
+                _ = succeeded.Should().BeTrue();
 
                 _ = loggerMockSecondtRun
                     .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -150,23 +153,5 @@ namespace EasyDbMigratorTests.Integrationtests
                 Assert.True(false, ex.ToString());
             }
         }
-
-        private async Task DeleteDatabaseIfExistAsync(string databaseName, string connectionString)
-        {
-            string query = $@"
-                IF EXISTS(SELECT * FROM master.sys.databases WHERE name='{databaseName}')
-                BEGIN               
-                    ALTER DATABASE {databaseName} 
-                    SET OFFLINE WITH ROLLBACK IMMEDIATE;
-                    ALTER DATABASE {databaseName} SET ONLINE;
-                    DROP DATABASE {databaseName};
-                END
-                ";
-            _ = await new SqlDbConnector().TryExcecuteSingleScriptAsync(connectionString: connectionString
-                , scriptName: "EasyDbMigrator.Integrationtest_dropDatabase"
-                , sqlScriptContent: query);
-        }
-
     }
-
 }

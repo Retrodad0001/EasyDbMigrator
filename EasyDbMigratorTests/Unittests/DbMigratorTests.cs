@@ -596,6 +596,39 @@ namespace EasyDbMigrator
         }
 
 
+        [Fact]
+        public async Task when_using_method_DeleteDatabaseIfExistAsync_Log_the_exception_When_something_goes_wrong()
+        {
+            const string databaseName = "EasyDbMigrator";
+            const string connectionstring = "connection";
+
+            MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring, databaseName: databaseName);
+
+            var loggerMock = new Mock<ILogger<DbMigrator>>();
+            var databaseConnectorMock = new Mock<IDatabaseConnector>();
+            var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+
+            Result<bool> result = new Result<bool>(isSucces: true, exception: null);
+            _ = databaseConnectorMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
+                    , It.IsAny<string>()
+                    , It.IsAny<string>()))
+                    .ReturnsAsync(new Result<bool>(isSucces: false, exception: new Exception()));
+
+            DbMigrator migrator = new(logger: loggerMock.Object
+                , migrationConfiguration: config
+                , databaseconnector: databaseConnectorMock.Object
+                , assemblyResourceHelperMock.Object
+                , dataTimeHelper: datetimeHelperMock.Object);
+
+            bool succes = await migrator.DeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
+
+            _ = succes.Should().BeFalse();
+
+            _ = loggerMock
+                .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync executed with error", LogLevel.Error, Times.Exactly(1), checkExceptionNotNull: true);
+        }
+
         //TODO add test that when expected scripts exclude not found stop rest of migration
     }
 }

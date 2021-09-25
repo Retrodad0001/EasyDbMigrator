@@ -92,6 +92,32 @@ namespace EasyDbMigrator
 
             return result;
         }
+
+        public async Task<bool> DeleteDatabaseIfExistAsync(string databaseName, string connectionString)
+        {
+            string query = $@"
+                IF EXISTS(SELECT * FROM master.sys.databases WHERE name='{databaseName}')
+                BEGIN               
+                    ALTER DATABASE {databaseName} 
+                    SET OFFLINE WITH ROLLBACK IMMEDIATE;
+                    ALTER DATABASE {databaseName} SET ONLINE;
+                    DROP DATABASE {databaseName};
+                END
+                ";
+
+           Result<bool> succeeded = await _databaseconnector.TryExcecuteSingleScriptAsync(connectionString: connectionString
+                , scriptName: "EasyDbMigrator.Integrationtest_dropDatabase"
+                , sqlScriptContent: query);
+
+            if (succeeded.IsFailure)
+            {
+                _logger.Log(logLevel: LogLevel.Error, exception: succeeded.Exception, "DeleteDatabaseIfExistAsync executed with error");
+                return false;
+            }
+
+            return true;
+        }
+
         public async Task<bool> TryApplyMigrationsAsync(Type customClass)
         {
             _logger.Log(logLevel: LogLevel.Information, message: $"start running migrations for database: {_migrationConfiguration.DatabaseName}");
@@ -155,7 +181,7 @@ namespace EasyDbMigrator
                 END";
 
             Result<bool> result = await _databaseconnector.TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
-                , scriptName: "EasyDbMigrator.SetupEmptyDb"
+                , scriptName: "SetupEmptyDb"
                 , sqlScriptContent: sqlScriptCreateDatabase);
 
             return result;
