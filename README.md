@@ -1,5 +1,5 @@
 # Latest news 
-The software is still under-construction so do not use it in production! 
+The software can only be used for integrationtesting. Running manual migrations and using it in CI/CD pipelines is under-construction
 
 # STATISTICS:
 
