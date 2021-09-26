@@ -31,7 +31,7 @@ It has a Command-line client for managing migrations and a framework written for
     
 ## Wat we want to accomplish ?
 
-1. Make it easy to integrate SQL db migrations in your integration tests written in .NET or PowerShell
+1. Make it easy to integrate SQL db migrations in your integration tests written in .NET
 2. Make it easy to integrate SQL db migrations in your CI/CD flows
 3. Make it easy to integrate SQL db migrations in your manual db migration strategy
 
