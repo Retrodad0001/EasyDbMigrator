@@ -64,7 +64,7 @@ It has a Command-line client for managing migrations and a framework written for
             bool succesApplyMigrations = await migrator.TryApplyMigrationsAsync(typeof(MigrationLocation));
             _ = succesApplyMigrations.Should().BeTrue();
 
-            //download the code if u want to see some real examples or integration testing with easyDbMigrator
+            //download the code if u want to see examples of integration testing with easyDbMigrator
         }
 
 ## FAQ
