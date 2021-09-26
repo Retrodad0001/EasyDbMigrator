@@ -15,9 +15,7 @@ The software can only be used for integrationtesting. Running manual migrations 
 |         |       |       |        |
 | ------- | ----- | ----- | -----  |
 | `EasyDbMigrator` | core & integration testing |[![NuGet](https://img.shields.io/nuget/v/Retrodad.EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/) | [![Nuget](https://img.shields.io/nuget/dt/Retrodad.EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/) |
-| `EasyDbMigrator runner` | manual running migrations and CD pipelines  | TODO | TODO |
-
-
+| `EasyDbMigrator runner` | running migrations manual and CD pipelines support  | TODO | TODO |
 
 # EasyDBMigrator - making database migrations easier
 
@@ -31,9 +29,9 @@ It has a Command-line client for managing migrations and a framework written for
     
 ## Wat we want to accomplish ?
 
-1. Make it easy to integrate SQL db migrations in your integration tests written in .NET
-2. Make it easy to integrate SQL db migrations in your CI/CD flows
-3. Make it easy to integrate SQL db migrations in your manual db migration strategy
+1. Make it easy to integrate SQL migrations in your local integration tests (written in .NET)
+2. Make it easy to integrate SQL migrations in your CI/CD flows (runner)
+3. Make it easy to perform manual SQL migration
 
 ## Get started with EasyDBMigrator :
 
