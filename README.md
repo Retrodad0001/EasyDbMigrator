@@ -23,7 +23,7 @@ The software can only be used for integrationtesting. Running manual migrations 
 
 ## What is EasyDBMigrator?
 
-EasyDBMigrator is an open-source sql database migration framework & Tool. It strongly favors simplicity and easy to use for automatic CI/CD strategies. 
+EasyDBMigrator is an open-source sql database migration framework & Tool. It strongly favors simplicity and easy to use for automatic CI/CD strategies and local integration testing scenario's. 
 
 Migrations can be written in SQL (T-SQL). 
 
