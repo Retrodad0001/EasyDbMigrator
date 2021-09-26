@@ -36,13 +36,41 @@ It has a Command-line client for managing migrations and a framework written for
 3. Make it easy to integrate SQL db migrations in your manual db migration strategy
 
 ## Get started with EasyDBMigrator :
-TODO
+
+#using easdbMigrator for integrationtesting:
+
+        private async Task RunMigrations()
+        {
+            //Make sure u use the correct naming in your scripts like:
+            // 20210926_001_AddEquipmentTable.sql --> script are ordered by date and then per sequence number. in this case '001' is the sequence number
+            //Make sure to set the BUILD-ACTION property of every migration sql script to EMBEDDED RESOURCE
+            const string databaseame = "WorkoutIntegrationTests";
+            
+            //Make sure that the 'Database =  xxxx;' param is excluded in the connectionstring 
+            const string connectionstring = "some fancy connectionstring without database param";
+            MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring
+                , databaseName: databaseame);
+
+            //handy until for writing the logging output from EasyDbMigratior to the xUnit output window
+            //U don't need to use this trick and just mock out the ILogger when u don't want to use this or when u use something else than xunit
+            var logger = XUnitLoghelper.CreateLogger<DatabaseTests>(_testOutputHelper);
+            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+
+            DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+                , logger: logger
+                , dataTimeHelperMock: datetimeHelperMock.Object);
+
+            bool succesDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: databaseame, connectionString: _connectionStringForDBMigrator);
+            _ = succesDeleteDatabase.Should().BeTrue();
+            
+            bool succesApplyMigrations = await migrator.TryApplyMigrationsAsync(typeof(MigrationLocation));
+            _ = succesApplyMigrations.Should().BeTrue();
+
+            //download the code if u want to see some real examples or integration testing with easyDbMigrator
+        }
 
 ## FAQ
-TODO
 
-## Get Help, Report an issue
-TODO
 
 ## Alternatives
 
