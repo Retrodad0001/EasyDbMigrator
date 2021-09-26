@@ -37,7 +37,7 @@ It has a Command-line client for managing migrations and a framework written for
 
 ## Get started with EasyDBMigrator :
 
-#using easdbMigrator for integrationtesting:
+### using easdbMigrator for integrationtesting:
 
         private async Task RunMigrations()
         {
