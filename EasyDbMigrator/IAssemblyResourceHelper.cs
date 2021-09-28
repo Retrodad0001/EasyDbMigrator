@@ -6,6 +6,6 @@ namespace EasyDbMigrator
 {
     public interface IAssemblyResourceHelper
     {
-        Task<List<Script>> TryConverManifestResourceStreamsToScriptsAsync(Type customclass);
+        Task<List<SqlScript>> TryConverManifestResourceStreamsToScriptsAsync(Type customclass);
     }
 }

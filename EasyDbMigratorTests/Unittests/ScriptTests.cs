@@ -20,7 +20,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                Script sut = new Script(filename: filename, content: "xx");
+                SqlScript sut = new SqlScript(filename: filename, content: "xx");
             };
 
             if (shouldThrowException)
@@ -36,7 +36,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                Script sut = new Script(filename: "xx", content: content);
+                SqlScript sut = new SqlScript(filename: "xx", content: content);
             };
 
             if (shouldThrowException)

@@ -11,14 +11,14 @@ namespace EasyDbMigratorTests.Integrationtests
     public class DbTestHelper
     {
         public bool CheckMigrationsTable(string connectionString,
-            List<VersioningTableRow> expectedRows
+            List<DbMigrationsRunRow> expectedRows
             , string testdbName)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                List<VersioningTableRow> actual = (List<VersioningTableRow>)connection.Query<VersioningTableRow>(@$"
+                List<DbMigrationsRunRow> actual = (List<DbMigrationsRunRow>)connection.Query<DbMigrationsRunRow>(@$"
                     use {testdbName}
                     SELECT Id, Executed, Filename, Version 
                     FROM DbMigrationsRun");

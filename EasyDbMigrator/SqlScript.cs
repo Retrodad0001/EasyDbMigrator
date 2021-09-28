@@ -3,14 +3,14 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigrator
 {
-    public record Script
+    public record SqlScript
     {
         public string FileName { get; private set; }
         public string Content { get; private set; }
         public DateTime DatePartOfName { get; private set; }
         public int SequenceNumberPart { get; private set; }
 
-        public Script(string filename, string content)
+        public SqlScript(string filename, string content)
         {
             if (string.IsNullOrWhiteSpace(filename))
             {

@@ -32,6 +32,7 @@ namespace EasyDbMigrator
             return $"isSucces: {IsSuccess} exception: {Exception}";
         }
     }
+
 }
 
 

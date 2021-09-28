@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace EasyDbMigrator
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
-    public class SqlDbConnector : IDatabaseConnector
+    public class SqlDBConnector : IDatabaseConnector
     {
         public async Task<Result<bool>> TryExcecuteSingleScriptAsync(string connectionString, string scriptName, string sqlScriptContent)
         {
@@ -33,7 +33,7 @@ namespace EasyDbMigrator
         }
 
         public async Task<Result<RunMigrationResult>> RunDbMigrationScriptWhenNotRunnedBeforeAsync(MigrationConfiguration migrationConfiguration
-            , Script script
+            , SqlScript script
             , DateTime executedDateTime)
         {
             SqlTransaction? transaction = null;

@@ -46,7 +46,7 @@ namespace EasyDbMigrator
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = new(logger: loggerMock.Object
                     , migrationConfiguration: new MigrationConfiguration("connection-string", "databasename")
-                    , databaseconnector: new SqlDbConnector()
+                    , databaseconnector: new SqlDBConnector()
                     , assemblyResourceHelper: null
                     , dataTimeHelper: datetimeHelperMock.Object);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -66,7 +66,7 @@ namespace EasyDbMigrator
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = new(logger: null
                     , migrationConfiguration: new MigrationConfiguration("connection-string", "databasename")
-                    , databaseconnector: new SqlDbConnector()
+                    , databaseconnector: new SqlDBConnector()
                     , assemblyResourceHelper: new AssemblyResourceHelper()
                     , dataTimeHelper: datetimeHelperMock.Object);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -87,7 +87,7 @@ namespace EasyDbMigrator
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = new(logger: loggerMock.Object
                     , migrationConfiguration: new MigrationConfiguration("connection-string", "databasename")
-                    , databaseconnector: new SqlDbConnector()
+                    , databaseconnector: new SqlDBConnector()
                     , assemblyResourceHelper: new AssemblyResourceHelper()
                     , dataTimeHelper: null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -110,7 +110,7 @@ namespace EasyDbMigrator
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                     , migrationConfiguration: null
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-                    , databaseconnector: new SqlDbConnector()
+                    , databaseconnector: new SqlDBConnector()
                     , assemblyResourceHelper: new AssemblyResourceHelper()
                     , dataTimeHelper: datetimeHelperMock.Object);
             };
@@ -249,14 +249,14 @@ namespace EasyDbMigrator
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            SqlScript script1 = new SqlScript("20212230_001_Script1.sql", "some content");
+            SqlScript script2 = new SqlScript("20212230_002_Script2.sql", "some content");
+            List<SqlScript> scripts = new List<SqlScript>();
             scripts.Add(script1);
             scripts.Add(script2);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<SqlScript>>(scripts));
 
             Result<bool> result = new Result<bool>(isSucces: true, exception: null);
             _ = databaseConnectorMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
@@ -268,7 +268,7 @@ namespace EasyDbMigrator
 
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
-                    , It.IsAny<Script>()
+                    , It.IsAny<SqlScript>()
                     , It.IsAny<DateTime>())).ReturnsAsync(resultRunMigrations);
 
             DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
@@ -307,14 +307,14 @@ namespace EasyDbMigrator
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            SqlScript script1 = new SqlScript("20212230_001_Script1.sql", "some content");
+            SqlScript script2 = new SqlScript("20212230_002_Script2.sql", "some content");
+            List<SqlScript> scripts = new List<SqlScript>();
             scripts.Add(script1);
             scripts.Add(script2);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<SqlScript>>(scripts));
 
             Result<bool> result = new Result<bool>(isSucces: true, exception: null);
             _ = databaseConnectorMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
@@ -326,7 +326,7 @@ namespace EasyDbMigrator
 
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
-                    , It.IsAny<Script>()
+                    , It.IsAny<SqlScript>()
                     , It.IsAny<DateTime>())).ReturnsAsync(resultRunMigrations);
 
             DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
@@ -363,14 +363,14 @@ namespace EasyDbMigrator
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            SqlScript script1 = new SqlScript("20212230_001_Script1.sql", "some content");
+            SqlScript script2 = new SqlScript("20212230_002_Script2.sql", "some content");
+            List<SqlScript> scripts = new List<SqlScript>();
             scripts.Add(script1);
             scripts.Add(script2);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<SqlScript>>(scripts));
 
             Result<bool> result = new Result<bool>(isSucces: true, exception: null);
             _ = databaseConnectorMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
@@ -382,7 +382,7 @@ namespace EasyDbMigrator
 
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
-                    , It.IsAny<Script>()
+                    , It.IsAny<SqlScript>()
                     , It.IsAny<DateTime>())).ReturnsAsync(resultRunMigrations);
 
             DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
@@ -418,16 +418,16 @@ namespace EasyDbMigrator
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
-            Script script3 = new Script("20212230_003_Script3.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            SqlScript script1 = new SqlScript("20212230_001_Script1.sql", "some content");
+            SqlScript script2 = new SqlScript("20212230_002_Script2.sql", "some content");
+            SqlScript script3 = new SqlScript("20212230_003_Script3.sql", "some content");
+            List<SqlScript> scripts = new List<SqlScript>();
             scripts.Add(script1);
             scripts.Add(script2);
             scripts.Add(script3);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<SqlScript>>(scripts));
 
             var sqlDbHelperMock = new Mock<IDatabaseConnector>();
             _ = sqlDbHelperMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
@@ -438,7 +438,7 @@ namespace EasyDbMigrator
             ;
 
             _ = sqlDbHelperMock.SetupSequence(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
-                    , It.IsAny<Script>()
+                    , It.IsAny<SqlScript>()
                     , It.IsAny<DateTime>()))
                 .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted, exception: null))
                 .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted, exception: new Exception()));
@@ -468,7 +468,7 @@ namespace EasyDbMigrator
 
             //check that the 3rd script is skipped because of the error in the previous script so we check here that max 2 db calls are made
             sqlDbHelperMock.Verify(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
-                , It.IsAny<Script>()
+                , It.IsAny<SqlScript>()
                 , It.IsAny<DateTime>())
             , times: Times.Exactly(2));
         }
@@ -485,16 +485,16 @@ namespace EasyDbMigrator
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
-            Script script3 = new Script("20212230_003_Script3.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            SqlScript script1 = new SqlScript("20212230_001_Script1.sql", "some content");
+            SqlScript script2 = new SqlScript("20212230_002_Script2.sql", "some content");
+            SqlScript script3 = new SqlScript("20212230_003_Script3.sql", "some content");
+            List<SqlScript> scripts = new List<SqlScript>();
             scripts.Add(script1);
             scripts.Add(script2);
             scripts.Add(script3);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<SqlScript>>(scripts));
 
             var sqlDbHelperMock = new Mock<IDatabaseConnector>();
             _ = sqlDbHelperMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
@@ -505,7 +505,7 @@ namespace EasyDbMigrator
             ;
 
             _ = sqlDbHelperMock.SetupSequence(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
-                    , It.IsAny<Script>()
+                    , It.IsAny<SqlScript>()
                     , It.IsAny<DateTime>()))
                     .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted, exception: null))
                     .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun, exception: null))
@@ -547,14 +547,14 @@ namespace EasyDbMigrator
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            SqlScript script1 = new SqlScript("20212230_001_Script1.sql", "some content");
+            SqlScript script2 = new SqlScript("20212230_002_Script2.sql", "some content");
+            List<SqlScript> scripts = new List<SqlScript>();
             scripts.Add(script1);
             scripts.Add(script2);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<SqlScript>>(scripts));
 
             Result<bool> result = new Result<bool>(isSucces: true, exception: null);
             _ = databaseConnectorMock.SetupSequence(x => x.TryExcecuteSingleScriptAsync(It.IsAny<string>()
@@ -566,7 +566,7 @@ namespace EasyDbMigrator
 
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
-                    , It.IsAny<Script>()
+                    , It.IsAny<SqlScript>()
                     , It.IsAny<DateTime>())).ReturnsAsync(resultRunMigrations);
 
             DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);

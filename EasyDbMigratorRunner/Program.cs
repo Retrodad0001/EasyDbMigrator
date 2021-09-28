@@ -13,16 +13,13 @@ namespace EasyDbMigratorRunner
 #pragma warning restore CA1801 // Review unused parameters
         {
             ConsoleLoggerOptions options = new();
-
             using ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
             {
                 _ = builder.AddConsole();
             });
 
             ILogger logger = loggerFactory.CreateLogger<DbMigrator>();
-
             MigrationConfiguration config = new MigrationConfiguration(connectionString: string.Empty, databaseName: string.Empty);
-
             DbMigrator migrator = DbMigrator.Create(migrationConfiguration: config, logger: logger);
         }
     }

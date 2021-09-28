@@ -1,6 +1,6 @@
 ﻿namespace EasyDbMigrator
 {
-    //TODO HIGH: test add test check connection string correct format
+    //TODO low: test add test check connection string correct format
 
     public class MigrationConfiguration
     {

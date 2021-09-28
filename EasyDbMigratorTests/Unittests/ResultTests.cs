@@ -10,9 +10,7 @@ namespace EasyDbMigratorTests.Unittests
     public class ResultTests
     {
         [ExcludeFromCodeCoverage]
-        private class MyCustomTypeUsedInResult
-        {
-        }
+        private class MyCustomTypeUsedInResult {  }
 
         [Fact]
         public void can_create_succes_result_with_custom_type()

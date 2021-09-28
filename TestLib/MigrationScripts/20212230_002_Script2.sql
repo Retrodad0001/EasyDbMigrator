@@ -1,4 +1,5 @@
 ﻿USE EasyDbMigrator
+
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='bb' AND xtype='U')
 BEGIN
    CREATE TABLE bb 

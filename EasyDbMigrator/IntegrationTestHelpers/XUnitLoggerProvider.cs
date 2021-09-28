@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Xunit.Abstractions;
 
+
 namespace WorkoutIntegrationTest
 {
     [ExcludeFromCodeCoverage]

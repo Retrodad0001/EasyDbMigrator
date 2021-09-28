@@ -58,7 +58,7 @@ namespace EasyDbMigrator
 
             DbMigrator result = new DbMigrator(logger: logger
                 , migrationConfiguration: migrationConfiguration
-                , databaseconnector: new SqlDbConnector()
+                , databaseconnector: new SqlDBConnector()
                 , assemblyResourceHelper: new AssemblyResourceHelper()
                 , dataTimeHelper: new DataTimeHelper());
 
@@ -86,7 +86,7 @@ namespace EasyDbMigrator
 
             DbMigrator result = new DbMigrator(logger: logger
                , migrationConfiguration: migrationConfiguration
-               , databaseconnector: new SqlDbConnector()
+               , databaseconnector: new SqlDBConnector()
                , assemblyResourceHelper: new AssemblyResourceHelper()
                , dataTimeHelper: dataTimeHelperMock);
 
@@ -144,9 +144,9 @@ namespace EasyDbMigrator
 
                 if (createVersiongTableSucceeded.IsSuccess)
                 {
-                    List<Script> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(customclass: customClass);
-                    List<Script> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptList);
-                    List<Script> orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExludedScripts);
+                    List<SqlScript> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(customclass: customClass);
+                    List<SqlScript> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptList);
+                    List<SqlScript> orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExludedScripts);
 
                     _logger.Log(logLevel: LogLevel.Information, message: $"Total scripts found: {unOrderedScripts.Count}");
 
@@ -208,10 +208,10 @@ namespace EasyDbMigrator
             return result;
         }
 
-        private async Task<bool> TryRunAllMigrationScriptsAsync(MigrationConfiguration migrationConfiguration, List<Script> orderedScripts)
+        private async Task<bool> TryRunAllMigrationScriptsAsync(MigrationConfiguration migrationConfiguration, List<SqlScript> orderedScripts)
         {
             bool skipBecauseOfErrorWithPreviousScript = false;
-            foreach (Script script in orderedScripts)
+            foreach (SqlScript script in orderedScripts)
             {
                 if (skipBecauseOfErrorWithPreviousScript)
                 {
@@ -246,13 +246,13 @@ namespace EasyDbMigrator
                 return true;
         }
 
-        private List<Script> RemoveExcludedScripts(List<Script> scripts, List<string> excludedscripts)
+        private List<SqlScript> RemoveExcludedScripts(List<SqlScript> scripts, List<string> excludedscripts)
         {
             var result = scripts.Where(p => !excludedscripts.Any(x => x == p.FileName)).ToList();
             return result;
         }
 
-        private List<Script> SetScriptsInCorrectSequence(List<Script> scripts)
+        private List<SqlScript> SetScriptsInCorrectSequence(List<SqlScript> scripts)
         {
             return scripts.OrderBy(s => s.DatePartOfName)
                 .ThenBy(s => s.SequenceNumberPart).ToList();

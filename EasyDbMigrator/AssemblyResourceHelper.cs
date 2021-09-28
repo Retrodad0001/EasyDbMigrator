@@ -28,7 +28,7 @@ namespace EasyDbMigrator
             return resourcenames;
         }
 
-        public async Task<List<Script>> TryConverManifestResourceStreamsToScriptsAsync(Type customclass)
+        public async Task<List<SqlScript>> TryConverManifestResourceStreamsToScriptsAsync(Type customclass)
         {
             Assembly? assembly = Assembly.GetAssembly(customclass);
 
@@ -37,7 +37,7 @@ namespace EasyDbMigrator
 
             string[] filenames = TryGetListOfResourceNamesFromAssemblyByType(customclass);
 
-            List<Script> scripts = new List<Script>();
+            List<SqlScript> scripts = new List<SqlScript>();
             foreach (string filename in filenames)
             {
                 using (Stream? stream = assembly.GetManifestResourceStream(filename))
@@ -50,7 +50,7 @@ namespace EasyDbMigrator
                         string filenameWithNoNamespaces = RemoveTheNamespaceFromName(filename);
 
                         string sqlScriptContent = await reader.ReadToEndAsync();
-                        Script newSript = new Script(filename: filenameWithNoNamespaces, content: sqlScriptContent);
+                        SqlScript newSript = new SqlScript(filename: filenameWithNoNamespaces, content: sqlScriptContent);
                         scripts.Add(newSript);
                     }
                 }

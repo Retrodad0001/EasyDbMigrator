@@ -53,7 +53,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
-                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));
+                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(customClass: typeof(HereScriptsCanBeFound));
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 _ = loggerMock
@@ -62,9 +62,9 @@ namespace EasyDbMigratorTests.Integrationtests
                     .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
 
-                List<VersioningTableRow> expectedRows = new List<VersioningTableRow>();
-                expectedRows.Add(new VersioningTableRow(id: 1, executed: ExecutedDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
-                expectedRows.Add(new VersioningTableRow(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
+                List<DbMigrationsRunRow> expectedRows = new List<DbMigrationsRunRow>();
+                expectedRows.Add(new DbMigrationsRunRow(id: 1, executed: ExecutedDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
+                expectedRows.Add(new DbMigrationsRunRow(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
 
                 _ = new DbTestHelper().CheckMigrationsTable(connectionString: connectionstring
                   , expectedRows: expectedRows
@@ -110,7 +110,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
-                bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));
+                bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(customClass: typeof(HereScriptsCanBeFound));
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 //now run the migrations again
@@ -126,7 +126,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 migrator2.ExcludeScripts(scriptsToExclude);
                 
-               bool succeeded = await migrator2.TryApplyMigrationsAsync(customClass: typeof(SomeCustomClass));
+               bool succeeded = await migrator2.TryApplyMigrationsAsync(customClass: typeof(HereScriptsCanBeFound));
                 _ = succeeded.Should().BeTrue();
 
                 _ = loggerMockSecondtRun
@@ -137,9 +137,9 @@ namespace EasyDbMigratorTests.Integrationtests
                     .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
 
                 //version-table should not be updated for the second time
-                List<VersioningTableRow> expectedRows = new List<VersioningTableRow>();
-                expectedRows.Add(new VersioningTableRow(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
-                expectedRows.Add(new VersioningTableRow(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
+                List<DbMigrationsRunRow> expectedRows = new List<DbMigrationsRunRow>();
+                expectedRows.Add(new DbMigrationsRunRow(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
+                expectedRows.Add(new DbMigrationsRunRow(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
 
                 _ = new DbTestHelper().CheckMigrationsTable(connectionString: connectionstring
                  , expectedRows: expectedRows
