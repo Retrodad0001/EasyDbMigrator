@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 
-
 namespace EasyDbMigratorTests.Integrationtests
 {
     [ExcludeFromCodeCoverage] //this class is used for testing only

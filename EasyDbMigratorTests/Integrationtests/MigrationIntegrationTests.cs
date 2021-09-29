@@ -29,8 +29,6 @@ namespace EasyDbMigratorTests.Integrationtests
                 const string connectionstring = @"Data Source = localhost,1433; User ID = sa; Password=stuffy666!; Connect Timeout = 30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False";
                 const string databaseName = "EasyDbMigrator";
 
-              
-
                 MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring
                     , databaseName: databaseName);
 
@@ -40,7 +38,6 @@ namespace EasyDbMigratorTests.Integrationtests
                 DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
                 _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
-
                 
                 DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
                     , logger: loggerMock.Object
@@ -48,12 +45,12 @@ namespace EasyDbMigratorTests.Integrationtests
                
                 List<string> scriptsToExclude = new List<string>();
                 scriptsToExclude.Add("20212230_001_CreateDB.sql");
-                migrator.ExcludeScripts(scriptsToExclude);
+                migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
-                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(customClass: typeof(HereScriptsCanBeFound));
+                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereScriptsCanBeFound));
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 _ = loggerMock
@@ -105,12 +102,12 @@ namespace EasyDbMigratorTests.Integrationtests
                 List<string> scriptsToExclude = new List<string>();
                 scriptsToExclude.Add("20212230_001_CreateDB.sql");
 
-                migrator1.ExcludeScripts(scriptsToExclude);
+                migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
-                bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(customClass: typeof(HereScriptsCanBeFound));
+                bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereScriptsCanBeFound));
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 //now run the migrations again
@@ -124,9 +121,9 @@ namespace EasyDbMigratorTests.Integrationtests
                    , logger: loggerMockSecondtRun.Object
                    , dataTimeHelperMock: datetimeHelperMock2.Object);
 
-                migrator2.ExcludeScripts(scriptsToExclude);
+                migrator2.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
                 
-               bool succeeded = await migrator2.TryApplyMigrationsAsync(customClass: typeof(HereScriptsCanBeFound));
+               bool succeeded = await migrator2.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereScriptsCanBeFound));
                 _ = succeeded.Should().BeTrue();
 
                 _ = loggerMockSecondtRun

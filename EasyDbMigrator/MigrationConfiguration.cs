@@ -1,11 +1,8 @@
 ﻿namespace EasyDbMigrator
 {
-    //TODO low: test add test check connection string correct format
-
     public class MigrationConfiguration
     {
         public string ConnectionString { get; }
-
         public string DatabaseName { get; }
 
         public MigrationConfiguration(string connectionString, string databaseName)

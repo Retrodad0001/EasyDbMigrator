@@ -6,36 +6,34 @@ using System.Reflection;
 using System.Threading.Tasks;
 
 //TODO wiki: sql resources should be embedded
-//TODO wiki: add example code integration test with xunit
-
-//TODO: PRIO check in integration test: 0001-01-01 00:00:00.0000000 !!!
+//TODO ISSUE 10
 
 namespace EasyDbMigrator
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest
     public class AssemblyResourceHelper : IAssemblyResourceHelper
     {
-        public string[] TryGetListOfResourceNamesFromAssemblyByType(Type customClass)
+        public string[] TryGetListOfResourceNamesFromAssembly(Type typeOfClassWhereScriptsAreLocated)
         {
-            Assembly? assembly = Assembly.GetAssembly(customClass);
+            Assembly? assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
 
             if (assembly == null)
             {
-                throw new InvalidOperationException($"assembly is null for custom-class: {customClass}");
+                throw new InvalidOperationException($"assembly is null for custom-class: {typeOfClassWhereScriptsAreLocated}");
             }
 
             string[] resourcenames = assembly.GetManifestResourceNames();
             return resourcenames;
         }
 
-        public async Task<List<SqlScript>> TryConverManifestResourceStreamsToScriptsAsync(Type customclass)
+        public async Task<List<SqlScript>> TryConverManifestResourceStreamsToScriptsAsync(Type typeOfClassWhereScriptsAreLocated)
         {
-            Assembly? assembly = Assembly.GetAssembly(customclass);
+            Assembly? assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
 
             if (assembly is null)
-                throw new InvalidOperationException($"assembly is null for custom-class : {customclass}");
+                throw new InvalidOperationException($"assembly is null for custom-class : {typeOfClassWhereScriptsAreLocated}");
 
-            string[] filenames = TryGetListOfResourceNamesFromAssemblyByType(customclass);
+            string[] filenames = TryGetListOfResourceNamesFromAssembly(typeOfClassWhereScriptsAreLocated);
 
             List<SqlScript> scripts = new List<SqlScript>();
             foreach (string filename in filenames)

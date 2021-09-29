@@ -44,6 +44,12 @@ namespace EasyDbMigrator
             _dataTimeHelper = dataTimeHelper;
         }
 
+        /// <summary>
+        /// Create DBMigration object so it can be used in own code
+        /// </summary>
+        /// <param name="migrationConfiguration">the configuration settings DBMigrator uses to perform its tasks</param>
+        /// <param name="logger">the ILogger logging object u want that the DBMigrator should use</param>
+        /// <returns></returns>
         public static DbMigrator Create(MigrationConfiguration migrationConfiguration, ILogger logger)
         {
             if (migrationConfiguration is null)
@@ -58,13 +64,20 @@ namespace EasyDbMigrator
 
             DbMigrator result = new DbMigrator(logger: logger
                 , migrationConfiguration: migrationConfiguration
-                , databaseconnector: new SqlDBConnector()
+                , databaseconnector: new SqlDbConnector()
                 , assemblyResourceHelper: new AssemblyResourceHelper()
                 , dataTimeHelper: new DataTimeHelper());
 
             return result;
         }
 
+        /// <summary>
+        /// Create DBMigration object so it can be used for integration testing
+        /// </summary>
+        /// <param name="migrationConfiguration">the configuration settings DBMigrator uses to perform its tasks</param>
+        /// <param name="logger">the ILogger logging object u want that the DBMigrator should use</param>
+        /// <param name="dataTimeHelperMock">used for mocking and testing time specific scenario's </param>
+        /// <returns></returns>
         public static DbMigrator CreateForLocalIntegrationTesting(MigrationConfiguration migrationConfiguration
             , ILogger logger
             , IDataTimeHelper dataTimeHelperMock)
@@ -86,13 +99,21 @@ namespace EasyDbMigrator
 
             DbMigrator result = new DbMigrator(logger: logger
                , migrationConfiguration: migrationConfiguration
-               , databaseconnector: new SqlDBConnector()
+               , databaseconnector: new SqlDbConnector()
                , assemblyResourceHelper: new AssemblyResourceHelper()
                , dataTimeHelper: dataTimeHelperMock);
 
             return result;
         }
 
+        /// <summary>
+        /// If the database exist( specified by the param databasename) 
+        /// it will rollback all the transactions and drop the database. 
+        /// Use this only for testing in non-production environments !
+        /// </summary>
+        /// <param name="databaseName">the name of the database u want to drop</param>
+        /// <param name="connectionString">the connectionstring to the database-server</param>
+        /// <returns></returns>
         public async Task<bool> TryDeleteDatabaseIfExistAsync(string databaseName, string connectionString)
         {
             string query = $@"
@@ -118,7 +139,13 @@ namespace EasyDbMigrator
             return true;
         }
 
-        public async Task<bool> TryApplyMigrationsAsync(Type customClass)
+        /// <summary>
+        /// Run all the migration scripts(embedded resources) specified in the 
+        /// assembly where the type (see param typeOfClassWhereScriptsAreLocated) exist
+        /// </summary>
+        /// <param name="typeWhereMigrationsScriptsExists"></param>
+        /// <returns></returns>
+        public async Task<bool> TryApplyMigrationsAsync(Type typeOfClassWhereScriptsAreLocated)
         {
             _logger.Log(logLevel: LogLevel.Information, message: $"start running migrations for database: {_migrationConfiguration.DatabaseName}");
             
@@ -144,7 +171,7 @@ namespace EasyDbMigrator
 
                 if (createVersiongTableSucceeded.IsSuccess)
                 {
-                    List<SqlScript> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(customclass: customClass);
+                    List<SqlScript> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated);
                     List<SqlScript> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptList);
                     List<SqlScript> orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExludedScripts);
 
@@ -166,9 +193,13 @@ namespace EasyDbMigrator
             return true;
         }
 
-        public void ExcludeScripts(List<string> scriptsToExclude)
+        /// <summary>
+        /// Specificity the scripts (by name) what u want to exclude from the migration run
+        /// </summary>
+        /// <param name="scriptsToExclude"></param>
+        public void ExcludeTheseScriptsInRun(List<string> scriptsToExcludeByname)
         {
-            _excludedScriptList.AddRange(scriptsToExclude);
+            _excludedScriptList.AddRange(scriptsToExcludeByname);
         }
 
         private async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace EasyDbMigrator
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
-    public class SqlDBConnector : IDatabaseConnector
+    public class SqlDbConnector : IDatabaseConnector
     {
         public async Task<Result<bool>> TryExcecuteSingleScriptAsync(string connectionString, string scriptName, string sqlScriptContent)
         {

@@ -7,9 +7,7 @@ namespace EasyDbMigrator
     {
         public bool IsFailure => !IsSuccess;
         public bool IsSuccess { get; private set; }
-
         public Exception? Exception { get; private set; }
-
         public T? Value { get; private set; }
 
         public Result(bool isSucces, Exception? exception = null)

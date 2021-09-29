@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Xunit.Abstractions;
 
-
 namespace WorkoutIntegrationTest
 {
     [ExcludeFromCodeCoverage]
@@ -42,17 +41,14 @@ namespace WorkoutIntegrationTest
             _scopeProvider = scopeProvider;
             _categoryName = categoryName;
         }
-
         public bool IsEnabled(LogLevel logLevel)
         {
             return logLevel != LogLevel.None;
         }
-
         public IDisposable BeginScope<TState>(TState state)
         {
             return _scopeProvider.Push(state);
         }
-
         public void Log<TState>(LogLevel logLevel
             , EventId eventId
             , TState state
@@ -77,7 +73,6 @@ namespace WorkoutIntegrationTest
 
             _testOutputHelper.WriteLine(sb.ToString());
         }
-
         private static string GetLogLevelString(LogLevel logLevel)
         {
             return logLevel switch
