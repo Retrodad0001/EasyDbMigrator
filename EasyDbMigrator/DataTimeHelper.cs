@@ -6,9 +6,9 @@ namespace EasyDbMigrator
     [ExcludeFromCodeCoverage] //tested in integrationtest
     public class DataTimeHelper : IDataTimeHelper
     {
-        public DateTime GetCurrentUtcTime()
+        public DateTimeOffset GetCurrentUtcTime()
         {
-            return DateTime.UtcNow;
+            return DateTimeOffset.UtcNow;
         }
     }
 }

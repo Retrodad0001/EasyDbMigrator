@@ -226,7 +226,7 @@ namespace EasyDbMigrator
                     CREATE TABLE DbMigrationsRun 
                     (
                         Id int IDENTITY(1,1) PRIMARY KEY,
-                        Executed Datetime2 NOT NULL,
+                        Executed datetimeoffset NOT NULL,
                         Filename nvarchar(100) NOT NULL UNIQUE,
                         Version nvarchar(10) NOT NULL
                     )
@@ -250,7 +250,7 @@ namespace EasyDbMigrator
                     continue;
                 }
 
-                DateTime executedDateTime = _dataTimeHelper.GetCurrentUtcTime();
+                DateTimeOffset executedDateTime = _dataTimeHelper.GetCurrentUtcTime();
 
                 Result<RunMigrationResult> result = await _databaseconnector.RunDbMigrationScriptWhenNotRunnedBeforeAsync(migrationConfiguration: migrationConfiguration
                     , script: script

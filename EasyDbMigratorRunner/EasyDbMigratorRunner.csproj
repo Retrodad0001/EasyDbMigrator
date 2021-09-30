@@ -14,9 +14,10 @@
     <PackageReleaseNotes>For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator
 </PackageReleaseNotes>
     <StartupObject>EasyDbMigratorRunner.Program</StartupObject>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
-    <FileVersion>1.0.0.1</FileVersion>
-    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.8</AssemblyVersion>
+    <FileVersion>1.0.0.8</FileVersion>
+    <Version>1.0.8</Version>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
 
   <ItemGroup>

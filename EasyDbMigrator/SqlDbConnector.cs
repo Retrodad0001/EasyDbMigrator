@@ -34,7 +34,7 @@ namespace EasyDbMigrator
 
         public async Task<Result<RunMigrationResult>> RunDbMigrationScriptWhenNotRunnedBeforeAsync(MigrationConfiguration migrationConfiguration
             , SqlScript script
-            , DateTime executedDateTime)
+            , DateTimeOffset executedDateTime)
         {
             SqlTransaction? transaction = null;
             try
@@ -57,7 +57,7 @@ namespace EasyDbMigrator
                     return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun);
                 }
 
-                string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss.fffffff zzz");
                 string updateVersioningTableScript = $@" 
                             USE {migrationConfiguration.DatabaseName} 
                             INSERT INTO DbMigrationsRun (Executed, Filename, version)

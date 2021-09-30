@@ -73,6 +73,8 @@ It has a Command-line client for managing migrations and a framework written for
 ## Alternatives
 https://github.com/chucknorris/roundhouse
 
+https://github.com/erikbra/grate
+
 https://github.com/fluentmigrator/fluentmigrator
 
 ## License

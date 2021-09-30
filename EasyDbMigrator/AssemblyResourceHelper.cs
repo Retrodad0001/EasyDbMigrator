@@ -5,9 +5,6 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
-//TODO wiki: sql resources should be embedded
-//TODO ISSUE 10
-
 namespace EasyDbMigrator
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest

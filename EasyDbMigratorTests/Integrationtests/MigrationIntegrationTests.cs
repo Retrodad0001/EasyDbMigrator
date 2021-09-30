@@ -35,7 +35,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
-                DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+                DateTimeOffset ExecutedDataTime = DateTime.UtcNow;
 
                 _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
                 
@@ -91,7 +91,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
                 Mock<IDataTimeHelper> datetimeHelperMock1 = new Mock<IDataTimeHelper>();
-                DateTime ExecutedFirsttimeDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+                DateTimeOffset ExecutedFirsttimeDataTime = DateTimeOffset.UtcNow;
 
                 _ = datetimeHelperMock1.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedFirsttimeDataTime);
 

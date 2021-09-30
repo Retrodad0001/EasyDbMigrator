@@ -4,6 +4,6 @@ namespace EasyDbMigrator
 {
     public interface IDataTimeHelper
     {
-        DateTime GetCurrentUtcTime();
+        DateTimeOffset GetCurrentUtcTime();
     }
 }
