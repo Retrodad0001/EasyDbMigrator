@@ -21,7 +21,7 @@ namespace EasyDbMigrator
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
-                DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+                DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
                 DbMigrator migrator = new(logger: loggerMock.Object
                     , migrationConfiguration: new MigrationConfiguration("connection-string", "databasename")
@@ -42,7 +42,7 @@ namespace EasyDbMigrator
             {
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
-                DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+                DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = new(logger: loggerMock.Object
                     , migrationConfiguration: new MigrationConfiguration("connection-string", "databasename")
@@ -61,7 +61,7 @@ namespace EasyDbMigrator
             Action act = () =>
             {
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
-                DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+                DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = new(logger: null
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -80,7 +80,7 @@ namespace EasyDbMigrator
             Action act = () =>
             {
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
-                DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+                DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -101,7 +101,7 @@ namespace EasyDbMigrator
             Action act = () =>
             {
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
-                DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+                DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
                 _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();

@@ -8,7 +8,7 @@ namespace EasyDbMigrator
     {
         public DateTimeOffset GetCurrentUtcTime()
         {
-            return DateTimeOffset.UtcNow;
+            return DateTime.UtcNow;
         }
     }
 }

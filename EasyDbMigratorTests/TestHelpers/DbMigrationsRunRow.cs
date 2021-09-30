@@ -11,6 +11,12 @@ namespace EasyDbMigratorTests
         public string Filename { get; }
         public string Version { get; }
 
+        public DbMigrationsRunRow()
+        {
+
+        }
+
+
         public DbMigrationsRunRow(int id, DateTimeOffset executed, string filename, string version)
         {
             Id = id;
