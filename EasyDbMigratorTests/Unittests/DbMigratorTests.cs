@@ -267,9 +267,9 @@ namespace EasyDbMigrator
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<SqlScript>()
-                    , It.IsAny<DateTime>())).ReturnsAsync(resultRunMigrations);
+                    , It.IsAny<DateTimeOffset>())).ReturnsAsync(resultRunMigrations);
 
-            DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+            DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
@@ -325,9 +325,9 @@ namespace EasyDbMigrator
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<SqlScript>()
-                    , It.IsAny<DateTime>())).ReturnsAsync(resultRunMigrations);
+                    , It.IsAny<DateTimeOffset>())).ReturnsAsync(resultRunMigrations);
 
-            DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+            DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
@@ -382,9 +382,9 @@ namespace EasyDbMigrator
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<SqlScript>()
-                    , It.IsAny<DateTime>())).ReturnsAsync(resultRunMigrations);
+                    , It.IsAny<DateTimeOffset>())).ReturnsAsync(resultRunMigrations);
 
-            DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+            DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
@@ -438,11 +438,11 @@ namespace EasyDbMigrator
 
             _ = sqlDbHelperMock.SetupSequence(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<SqlScript>()
-                    , It.IsAny<DateTime>()))
+                    , It.IsAny<DateTimeOffset>()))
                 .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted, exception: null))
                 .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted, exception: new Exception()));
 
-            DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+            DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
@@ -468,7 +468,7 @@ namespace EasyDbMigrator
             //check that the 3rd script is skipped because of the error in the previous script so we check here that max 2 db calls are made
             sqlDbHelperMock.Verify(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<SqlScript>()
-                , It.IsAny<DateTime>())
+                , It.IsAny<DateTimeOffset>())
             , times: Times.Exactly(2));
         }
 
@@ -505,12 +505,12 @@ namespace EasyDbMigrator
 
             _ = sqlDbHelperMock.SetupSequence(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<SqlScript>()
-                    , It.IsAny<DateTime>()))
+                    , It.IsAny<DateTimeOffset>()))
                     .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted, exception: null))
                     .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun, exception: null))
                     .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted, exception: null));
 
-            DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+            DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
@@ -567,7 +567,7 @@ namespace EasyDbMigrator
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<SqlScript>()
-                    , It.IsAny<DateTime>())).ReturnsAsync(resultRunMigrations);
+                    , It.IsAny<DateTimeOffset>())).ReturnsAsync(resultRunMigrations);
 
             DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
