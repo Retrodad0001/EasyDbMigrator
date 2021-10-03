@@ -1,7 +1,7 @@
 # Latest news 
 The software can only be used for integrationtesting. Running manual migrations and using it in CI/CD pipelines is under-construction
 
-# STATISTICS:
+# INFO:
 
 ## Builds:
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/CI.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/CI.yml)
@@ -16,7 +16,11 @@ The software can only be used for integrationtesting. Running manual migrations 
 
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/securitycodescan-analysis.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/securitycodescan-analysis.yml)
 
+### code statistics:
+
 [![codecov](https://codecov.io/gh/Retrodad0001/easydbmigrator/branch/master/graph/badge.svg?token=JWYWLP98IW)](https://codecov.io/gh/Retrodad0001/easydbmigrator)
+
+### More info:
 
 |         |       |       |        |
 | ------- | ----- | ----- | -----  |
