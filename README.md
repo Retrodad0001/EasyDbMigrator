@@ -42,10 +42,12 @@ It has a Command-line client for managing migrations and a framework written for
             //Make sure to set the BUILD-ACTION property of every migration sql script to EMBEDDED RESOURCE
             const string databaseame = "WorkoutIntegrationTests";
             
-            //Make sure that the 'Database =  xxxx;' param is excluded in the connectionstring 
+            //Make sure that the 'Database =  xxxx;' param is excluded in the connectionstring
+            //In this example i want to use version 1.0.0 of the api ---> apiVersion: ApiVersion.Version1_0_0
             const string connectionstring = "some fancy connectionstring without database param";
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring
-                , databaseName: databaseame);
+            MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
+                    , connectionString: connectionstring
+                    , databaseName: databaseName);
 
             //handy until for writing the logging output from EasyDbMigratior to the xUnit output window
             //U don't need to use this trick and just mock out the ILogger when u don't want to use this or when u use something else than xunit

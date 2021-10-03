@@ -19,7 +19,9 @@ namespace EasyDbMigratorRunner
             });
 
             ILogger logger = loggerFactory.CreateLogger<DbMigrator>();
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: string.Empty, databaseName: string.Empty);
+            MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
+                , connectionString: string.Empty
+                , databaseName: string.Empty);
             DbMigrator migrator = DbMigrator.Create(migrationConfiguration: config, logger: logger);
         }
     }

@@ -4,6 +4,6 @@
     {
         MigrationScriptExecuted,
         ScriptSkippedBecauseAlreadyRun,
-        ExceptionWasThownWhenScriptWasExecuted,
+        ExceptionWasThownWhenScriptWasExecuted
     }
 }
