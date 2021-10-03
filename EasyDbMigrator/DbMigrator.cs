@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator
 {
-
     public class DbMigrator
     {
         private readonly ILogger _logger;
@@ -149,16 +148,13 @@ namespace EasyDbMigrator
         {
             bool result = false;
 
-            switch (_migrationConfiguration.apiVersion)
+            if (_migrationConfiguration.apiVersion == ApiVersion.Version1_0_0)
             {
-                case ApiVersion.Version1_0_0:
-                    result = await RunStuffV1Async(typeOfClassWhereScriptsAreLocated);
-                    break;
-                case ApiVersion.Version1_1_0:
-                    result = await RunStuffV2Async(typeOfClassWhereScriptsAreLocated);
-                    break;
-                default:
-                    break;
+              result = await RunStuffV1Async(typeOfClassWhereScriptsAreLocated);
+            }
+            else if (_migrationConfiguration.apiVersion == ApiVersion.Version1_1_0)
+            { 
+              result = await RunStuffV2Async(typeOfClassWhereScriptsAreLocated);
             }
 
             return result;
@@ -321,20 +317,18 @@ namespace EasyDbMigrator
                     , script: script
                     , executedDateTime: executedDateTime);
 
-                switch (result.Value)
+                if (result.Value == RunMigrationResult.MigrationScriptExecuted)
                 {
-                    case RunMigrationResult.MigrationScriptExecuted:
-                        _logger.Log(logLevel: LogLevel.Information, message: $"script: {script.FileName} was run");
-                        break;
-                    case RunMigrationResult.ScriptSkippedBecauseAlreadyRun:
-                        _logger.Log(logLevel: LogLevel.Information, message: $"script: {script.FileName} was not run because script was already executed");
-                        break;
-                    case RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted:
-                        _logger.Log(logLevel: LogLevel.Error, exception: result.Exception, message: $"script: {script.FileName} was not completed due to exception");
-                        skipBecauseOfErrorWithPreviousScript = true;
-                        break;
-                    default:
-                        break;
+                    _logger.Log(logLevel: LogLevel.Information, message: $"script: {script.FileName} was run");
+                }
+                else if (result.Value == RunMigrationResult.ScriptSkippedBecauseAlreadyRun)
+                {
+                    _logger.Log(logLevel: LogLevel.Information, message: $"script: {script.FileName} was not run because script was already executed");
+                }
+                else if (result.Value == RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted)
+                {
+                    _logger.Log(logLevel: LogLevel.Error, exception: result.Exception, message: $"script: {script.FileName} was not completed due to exception");
+                    skipBecauseOfErrorWithPreviousScript = true;
                 }
             }
 
@@ -349,7 +343,6 @@ namespace EasyDbMigrator
             var result = scripts.Where(p => !excludedscripts.Any(x => x == p.FileName)).ToList();
             return result;
         }
-
         private List<SqlScript> SetScriptsInCorrectSequence(List<SqlScript> scripts)
         {
             return scripts.OrderBy(s => s.DatePartOfName)
