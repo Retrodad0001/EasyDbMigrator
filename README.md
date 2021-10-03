@@ -8,7 +8,13 @@ The software can only be used for integrationtesting. Running manual migrations 
 
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/Deploy.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/Deploy.yml)
 
+### Security builds:
+
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml)
+
+[![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/shiftleft-analysis.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/shiftleft-analysis.yml)
+
+[![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/securitycodescan-analysis.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/securitycodescan-analysis.yml)
 
 [![codecov](https://codecov.io/gh/Retrodad0001/easydbmigrator/branch/master/graph/badge.svg?token=JWYWLP98IW)](https://codecov.io/gh/Retrodad0001/easydbmigrator)
 
