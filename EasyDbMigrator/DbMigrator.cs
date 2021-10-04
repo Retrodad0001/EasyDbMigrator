@@ -131,10 +131,11 @@ namespace EasyDbMigrator
 
             if (succeeded.IsFailure)
             {
-                _logger.Log(logLevel: LogLevel.Error, exception: succeeded.Exception, "DeleteDatabaseIfExistAsync executed with error");
+                _logger.Log(logLevel: LogLevel.Error, exception: succeeded.Exception, message: "DeleteDatabaseIfExistAsync executed with error");
                 return false;
             }
 
+            _logger.Log(logLevel: LogLevel.Information, message: "DeleteDatabaseIfExistAsync has executed");
             return true;
         }
 
