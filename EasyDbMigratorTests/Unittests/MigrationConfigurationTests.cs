@@ -16,12 +16,9 @@ namespace EasyDbMigratorTests.Unittests
         [InlineData(" ", true)]
         public void the_parameter_databasename_should_have_only_one_word(string databasename, bool shouldThrowException)
         {
-            ApiVersion apiVersion = ApiVersion.Version1_0_0;
-
             Action act = () =>
             {
-                MigrationConfiguration sut = new MigrationConfiguration(apiVersion: apiVersion
-                    , connectionString: "connection string"
+                MigrationConfiguration sut = new MigrationConfiguration(connectionString: "connection string"
                     , databaseName: databasename);
             };
 
@@ -36,11 +33,9 @@ namespace EasyDbMigratorTests.Unittests
         [InlineData(" ", true)]
         public void the_parameter_connectionsring_should_be_correct(string connentionsting, bool shouldThrowException)
         {
-            ApiVersion apiVersion = ApiVersion.Version1_0_0;
             Action act = () =>
             {
-                MigrationConfiguration sut = new MigrationConfiguration(apiVersion: apiVersion
-                    ,connectionString: connentionsting
+                MigrationConfiguration sut = new MigrationConfiguration(connectionString: connentionsting
                     ,databaseName: "databasename");
             };
 

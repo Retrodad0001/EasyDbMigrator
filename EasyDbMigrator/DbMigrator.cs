@@ -146,22 +146,6 @@ namespace EasyDbMigrator
         /// <returns></returns>
         public async Task<bool> TryApplyMigrationsAsync(Type typeOfClassWhereScriptsAreLocated)
         {
-            bool result = false;
-
-            if (_migrationConfiguration.apiVersion == ApiVersion.Version1_0_0)
-            {
-              result = await RunStuffV1Async(typeOfClassWhereScriptsAreLocated);
-            }
-            else if (_migrationConfiguration.apiVersion == ApiVersion.Version1_1_0)
-            { 
-              result = await RunStuffV2Async(typeOfClassWhereScriptsAreLocated);
-            }
-
-            return result;
-        }
-
-        public async Task<bool> RunStuffV1Async(Type typeOfClassWhereScriptsAreLocated)
-        {
             _logger.Log(logLevel: LogLevel.Information, message: $"start running migrations for database: {_migrationConfiguration.DatabaseName}");
 
             Result<bool> setupDatabaseSucceeded;
@@ -206,53 +190,7 @@ namespace EasyDbMigrator
             _logger.Log(logLevel: LogLevel.Information, message: "Whole migration process executed successfully");
             return true;
         }
-
-        public async Task<bool> RunStuffV2Async(Type typeOfClassWhereScriptsAreLocated)
-        {
-            _logger.Log(logLevel: LogLevel.Information, message: $"start running migrations for database: {_migrationConfiguration.DatabaseName}");
-
-            Result<bool> setupDatabaseSucceeded;
-            Result<bool> createVersiongTableSucceeded = new(isSucces: false);
-            bool migrationRunwithoutUnknownExceptions = false;
-
-            setupDatabaseSucceeded = await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: _migrationConfiguration);
-
-            if (setupDatabaseSucceeded.IsFailure)
-                _logger.Log(logLevel: LogLevel.Error, exception: setupDatabaseSucceeded.Exception, @"setup database when there is none with default settings: error occurred");
-            else
-                _logger.Log(logLevel: LogLevel.Information, message: @"setup database when there is none with default settings executed successfully");
-
-            if (setupDatabaseSucceeded.IsSuccess)
-            {
-                createVersiongTableSucceeded = await TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: _migrationConfiguration);
-
-                if (createVersiongTableSucceeded.IsFailure)
-                    _logger.Log(logLevel: LogLevel.Error, exception: createVersiongTableSucceeded.Exception, @"setup DbMigrationsRun when there is none executed with errors");
-                else
-                    _logger.Log(logLevel: LogLevel.Information, message: @"setup DbMigrationsRun when there is none executed successfully");
-
-                if (createVersiongTableSucceeded.IsSuccess)
-                {
-                    List<SqlScript> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated);
-                    List<SqlScript> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptList);
-                    List<SqlScript> orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExludedScripts);
-
-                    _logger.Log(logLevel: LogLevel.Information, message: $"Total scripts found: {unOrderedScripts.Count}");
-
-                    migrationRunwithoutUnknownExceptions = await TryRunAllMigrationScriptsAsync(migrationConfiguration: _migrationConfiguration
-                        , orderedScripts: orderedScriptsWithoutExcludedScripts);
-                }
-            }
-
-            if (setupDatabaseSucceeded.IsFailure || createVersiongTableSucceeded.IsFailure || !migrationRunwithoutUnknownExceptions)
-            {
-                _logger.Log(logLevel: LogLevel.Error, exception: null, message: "Whole migration process executed with errors");
-                return false;
-            }
-
-            _logger.Log(logLevel: LogLevel.Information, message: "Whole migration process executed successfully");
-            return true;
-        }
+          
 
         /// <summary>
         /// Specificity the scripts (by name) what u want to exclude from the migration run

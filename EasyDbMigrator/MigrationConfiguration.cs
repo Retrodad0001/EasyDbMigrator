@@ -3,11 +3,10 @@
 
     public class MigrationConfiguration
     {
-        public ApiVersion apiVersion { get; private set; }
         public string ConnectionString { get; private set; }
         public string DatabaseName { get; private set; }
 
-        public MigrationConfiguration(ApiVersion apiVersion, string connectionString, string databaseName)
+        public MigrationConfiguration(string connectionString, string databaseName)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -21,7 +20,6 @@
 
             CheckCorrectDatabaseName(databaseName);
 
-            this.apiVersion = apiVersion;
             ConnectionString = connectionString;
             DatabaseName = databaseName;
         }

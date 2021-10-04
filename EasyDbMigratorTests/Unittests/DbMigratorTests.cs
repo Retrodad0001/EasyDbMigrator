@@ -11,22 +11,20 @@ using Xunit;
 namespace EasyDbMigrator
 {
     [ExcludeFromCodeCoverage]
-    public class DbMigratorTests_V1_0_0
+    public class DbMigratorTests
     {
         [Fact]
-        public void when_constructing_the_parameter_connector_schould_be_provided_V1_0_0()
+        public void when_constructing_the_parameter_connector_schould_be_provided()
         {
             Action act = () =>
             {
 
-                ApiVersion apiVersion = ApiVersion.Version1_0_0;
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
                 DbMigrator migrator = new(logger: loggerMock.Object
-                    , migrationConfiguration: new MigrationConfiguration(apiVersion: apiVersion
-                    , connectionString:"connection-string"
+                    , migrationConfiguration: new MigrationConfiguration(connectionString: "connection-string"
                     , databaseName: "databasename")
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                     , databaseconnector: null
@@ -39,7 +37,7 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public void when_constructing_the_parameter_assemblyResourceHelper_schould_be_provided_V1_0_0()
+        public void when_constructing_the_parameter_assemblyResourceHelper_schould_be_provided()
         {
             Action act = () =>
             {
@@ -47,8 +45,7 @@ namespace EasyDbMigrator
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
                 DbMigrator migrator = new(logger: loggerMock.Object
-                    , migrationConfiguration: new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                        , connectionString: "connection-string"
+                    , migrationConfiguration: new MigrationConfiguration(connectionString: "connection-string"
                         , databaseName: "databasename")
                     , databaseconnector: new SqlDbConnector()
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -61,7 +58,7 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public void when_constructing_the_parameter_logger_schould_be_provided_V1_0_0()
+        public void when_constructing_the_parameter_logger_schould_be_provided()
         {
             Action act = () =>
             {
@@ -70,8 +67,7 @@ namespace EasyDbMigrator
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = new(logger: null
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-                    , migrationConfiguration: new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                        , connectionString: "connection-string"
+                    , migrationConfiguration: new MigrationConfiguration(connectionString: "connection-string"
                         , databaseName: "databasename")
                     , databaseconnector: new SqlDbConnector()
                     , assemblyResourceHelper: new AssemblyResourceHelper()
@@ -82,7 +78,7 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public void when_constructing_the_parameter_dataTimeHelper_schould_be_provided_V1_0_0()
+        public void when_constructing_the_parameter_dataTimeHelper_schould_be_provided()
         {
             Action act = () =>
             {
@@ -90,8 +86,7 @@ namespace EasyDbMigrator
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 DbMigrator migrator = new(logger: loggerMock.Object
-                    , migrationConfiguration: new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                        , connectionString: "connection-string"
+                    , migrationConfiguration: new MigrationConfiguration(connectionString: "connection-string"
                         , databaseName: "databasename")
                     , databaseconnector: new SqlDbConnector()
                     , assemblyResourceHelper: new AssemblyResourceHelper()
@@ -104,7 +99,7 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public void when_constructing_migrations_the_migrationConfiguration_should_be_provided_V1_0_0()
+        public void when_constructing_migrations_the_migrationConfiguration_should_be_provided()
         {
             Action act = () =>
             {
@@ -126,13 +121,12 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public void when_using_the_create_method_happy_flow_V1_0_0()
+        public void when_using_the_create_method_happy_flow()
         {
             Action act = () =>
             {
-               MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                   , connectionString : "connection string"
-                   , databaseName: "databasename");
+                MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
+                    , databaseName: "databasename");
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
                 DbMigrator migrator = DbMigrator.Create(migrationConfiguration: config, logger: loggerMock.Object);
@@ -143,12 +137,11 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public void when_using_the_create_method_the_ILogger_schould_be_provided_V1_0_0()
+        public void when_using_the_create_method_the_ILogger_schould_be_provided()
         {
             Action act = () =>
             {
-                MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                    , connectionString :"connection string"
+                MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
                     , databaseName: "databasename");
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -160,7 +153,7 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public void when_using_the_create_method_the_migrationconfiguration_schould_be_provided_V1_0_0()
+        public void when_using_the_create_method_the_migrationconfiguration_schould_be_provided()
         {
             Action act = () =>
             {
@@ -175,15 +168,14 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public void when_using_the_CreateForLocalIntegrationTesting_method_happy_flow_V1_0_0()
+        public void when_using_the_CreateForLocalIntegrationTesting_method_happy_flow()
         {
             Action act = () =>
             {
-                MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                    , connectionString: "connection string"
+                MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
                     , databaseName: "databasename");
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
-               
+
                 Mock<IDataTimeHelper> dataTimeHelperMock = new Mock<IDataTimeHelper>();
                 DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
                     , logger: loggerMock.Object
@@ -195,12 +187,11 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public void when_using_the_CreateForLocalIntegrationTesting_method_the_ILogger_schould_be_provided_V1_0_0()
+        public void when_using_the_CreateForLocalIntegrationTesting_method_the_ILogger_schould_be_provided()
         {
             Action act = () =>
             {
-                MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                    , connectionString: "connection string"
+                MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
                     , databaseName: "databasename");
                 Mock<IDataTimeHelper> dataTimeHelperMock = new Mock<IDataTimeHelper>();
 
@@ -215,7 +206,7 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public void when_using_the_CreateForLocalIntegrationTesting_method_the_migrationconfiguration_schould_be_provided_V1_0_0()
+        public void when_using_the_CreateForLocalIntegrationTesting_method_the_migrationconfiguration_schould_be_provided()
         {
             Action act = () =>
             {
@@ -233,14 +224,13 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public void when_using_the_CreateForLocalIntegrationTesting_method_the_dataTimeHelper_schould_be_provided_V1_0_0()
+        public void when_using_the_CreateForLocalIntegrationTesting_method_the_dataTimeHelper_schould_be_provided()
         {
             Action act = () =>
             {
-                MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                    , connectionString: "connection string"
+                MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
                     , databaseName: "databasename");
-                
+
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
                     , logger: loggerMock.Object
@@ -252,16 +242,15 @@ namespace EasyDbMigrator
             _ = act.Should().Throw<ArgumentNullException>();
         }
 
-            [Fact]
-        public async Task when_everything_goes_ok_V1_0_0()
+        [Fact]
+        public async Task when_everything_goes_ok()
         {
             const string databaseName = "EasyDbMigrator";
 
-            MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                , connectionString: "connection"
+            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
                 , databaseName: databaseName);
 
-            Type someType = typeof(DbMigratorTests_V1_0_0);
+            Type someType = typeof(DbMigratorTests);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
@@ -312,15 +301,14 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public async Task when_creating_new_database_fails_V1_0_0()
+        public async Task when_creating_new_database_fails()
         {
             const string databaseName = "EasyDbMigrator";
 
-            MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                , connectionString: "connection"
+            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
                 , databaseName: databaseName);
 
-            Type someType = typeof(DbMigratorTests_V1_0_0);
+            Type someType = typeof(DbMigratorTests);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
@@ -370,15 +358,14 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public async Task when_creating_new_versioningtable_fails_V1_0_0()
+        public async Task when_creating_new_versioningtable_fails()
         {
             const string databaseName = "EasyDbMigrator";
 
-            MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                , connectionString: "connection"
+            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
                 , databaseName: databaseName);
 
-            Type someType = typeof(DbMigratorTests_V1_0_0);
+            Type someType = typeof(DbMigratorTests);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
@@ -427,15 +414,14 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public async Task when_some_script_failes_to_run_skip_the_rest_of_the_scripts_V1_0_0()
+        public async Task when_some_script_failes_to_run_skip_the_rest_of_the_scripts()
         {
             const string databaseName = "EasyDbMigrator";
 
-            MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                , connectionString: "connection"
+            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
                 , databaseName: databaseName);
 
-            Type someType = typeof(DbMigratorTests_V1_0_0);
+            Type someType = typeof(DbMigratorTests);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
@@ -495,15 +481,14 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public async Task when_some_scripts_already_executed_skip_them_V1_0_0()
+        public async Task when_some_scripts_already_executed_skip_them()
         {
             const string databaseName = "EasyDbMigrator";
 
-            MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                , connectionString: "connection"
+            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
                 , databaseName: databaseName);
 
-            Type someType = typeof(DbMigratorTests_V1_0_0);
+            Type someType = typeof(DbMigratorTests);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
@@ -558,15 +543,14 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public async Task that_it_possable_to_exclude_Scripts_V1_0_0()
+        public async Task that_it_possable_to_exclude_Scripts()
         {
             const string databaseName = "EasyDbMigrator";
 
-            MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                , connectionString: "connection"
+            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
                 , databaseName: databaseName);
 
-            Type someType = typeof(DbMigratorTests_V1_0_0);
+            Type someType = typeof(DbMigratorTests);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
@@ -605,7 +589,7 @@ namespace EasyDbMigrator
                 , dataTimeHelper: datetimeHelperMock.Object);
 
             //exclude some scripts
-            migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: new List<string>{"20212230_001_Script1.sql" });
+            migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: new List<string> { "20212230_001_Script1.sql" });
 
             _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType);
 
@@ -620,13 +604,12 @@ namespace EasyDbMigrator
         }
 
         [Fact]
-        public async Task when_using_method_DeleteDatabaseIfExistAsync_Log_the_exception_When_something_goes_wrong_V1_0_0()
+        public async Task when_using_method_DeleteDatabaseIfExistAsync_Log_the_exception_When_something_goes_wrong()
         {
             const string databaseName = "EasyDbMigrator";
             const string connectionstring = "connection";
 
-            MigrationConfiguration config = new MigrationConfiguration(apiVersion: ApiVersion.Version1_0_0
-                ,connectionString: connectionstring
+            MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring
                 , databaseName: databaseName);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
