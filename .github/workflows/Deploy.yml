@@ -20,7 +20,7 @@ jobs:
            dotnet-version: 5.0.x
 
       # Publish
-      - name: publish on version change
+      - name: publish nuget when newer version
         id: publish_nuget
         uses: rohith/publish-nuget@v2
         with:

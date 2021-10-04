@@ -7,22 +7,37 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  Build:
+    name: debug build, test and send code coverage
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
+    - name: Check out Repo
     - uses: actions/checkout@v2
+    
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+    
     - name: Restore dependencies
       run: dotnet restore
+    
     - name: Build debug version
       run: dotnet build --configuration Debug --no-restore
-    - name: Run unittest and codecoverage
+    
+    - name: Run unittest with codecoverage
       run: dotnet test --no-build --verbosity normal --filter Category!=Integrationtest /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+    
     - name: Upload code coverage to Codecov
       uses: codecov/codecov-action@v1
+
+  #Stuff:
+  #  name: debug build, test and send code coverage
+  #  runs-on: ubuntu-latest
+  #  timeout-minutes: 10
+
+  #  steps:
+  #  - name: Check out Repo
+  #  - uses: actions/checkout@v2
