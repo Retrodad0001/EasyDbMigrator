@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigratorTests.Integrationtests
 {
-    [ExcludeFromCodeCoverage] //this class is used for testing only
+    [ExcludeFromCodeCoverage]
     public class DbTestHelper
     {
         public bool CheckMigrationsTable(string connectionString,
