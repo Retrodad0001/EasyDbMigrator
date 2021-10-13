@@ -31,7 +31,7 @@ It has a Command-line client for managing migrations and a framework written for
 1. Make it easy to integrate SQL migrations in your local integration tests (written in .NET)
 2. Make it easy to integrate SQL migrations in your CI/CD flows (runner)
 3. Make it easy to perform manual SQL migration
-4. Provide examples and stimulate discussions about writing integration testing in code (so please send me feedback or start a good discussion)
+4. Provide examples and stimulate discussions about writing integration tests in code (so please send me feedback or start a good discussion)
 
 ## Get started with EasyDBMigrator :
 
