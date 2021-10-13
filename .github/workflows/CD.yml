@@ -10,7 +10,10 @@ jobs:
   BuildAndTest:
     name: build, test and codecoverage
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        dotnet-version: ['3.1.x', '5.0.x' ]
 
     steps:
     - name: Check out Repo
