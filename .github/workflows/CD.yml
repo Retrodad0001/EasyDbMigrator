@@ -13,16 +13,16 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        dotnet-version: ['3.1.x', '5.0.x' ]
+        dotnet-version: ['5.0.x' ,'3.1.x']
 
     steps:
     - name: Check out Repo
       uses: actions/checkout@v2
 
-    - name: Setup .NET
+    - name: Setup .NET SDK ${{ matrix.dotnet-version }}
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.x
+          dotnet-version: ${{ matrix.dotnet-version }}
     
     - name: Restore dependencies
       run: dotnet restore
