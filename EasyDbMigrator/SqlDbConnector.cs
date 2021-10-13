@@ -19,7 +19,7 @@ namespace EasyDbMigrator
                 }
 
                 using SqlConnection connection = new SqlConnection(connectionString);
-                using SqlCommand command = new(sqlScriptContent, connection);
+                using SqlCommand command = new SqlCommand(sqlScriptContent, connection);
 
                 await command.Connection.OpenAsync();
                 _ = await command.ExecuteNonQueryAsync();
@@ -49,10 +49,10 @@ namespace EasyDbMigrator
                          WHERE Filename = '{script.FileName}'
                         ";
 
-                using SqlCommand cmdcheckNotExecuted = new(checkIfScriptHasExecuted, connection);
+                using SqlCommand cmdcheckNotExecuted = new SqlCommand(checkIfScriptHasExecuted, connection);
                 var result = _ = await cmdcheckNotExecuted.ExecuteScalarAsync();
 
-                if (result is not null)
+                if (result != null)
                 {
                     return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun);
                 }
@@ -66,8 +66,8 @@ namespace EasyDbMigrator
 
                 transaction = connection.BeginTransaction(IsolationLevel.Serializable, "EasyDbMigrator");
 
-                using SqlCommand cmdScript = new(script.Content, connection, transaction);
-                using SqlCommand cmdUpdateVersioningTable = new(updateVersioningTableScript, connection, transaction);
+                using SqlCommand cmdScript = new SqlCommand(script.Content, connection, transaction);
+                using SqlCommand cmdUpdateVersioningTable = new SqlCommand(updateVersioningTableScript, connection, transaction);
 
                 _ = await cmdScript.ExecuteNonQueryAsync();
                 _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync();

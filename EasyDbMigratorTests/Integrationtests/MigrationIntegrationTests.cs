@@ -65,9 +65,7 @@ namespace EasyDbMigratorTests.Integrationtests
                   , testdbName: databaseName);
 
             }
-#pragma warning disable CA1031 // Do not catch general exception types, for sake of testing this is no problem
             catch (Exception ex)
-#pragma warning restore CA1031
             {
                 Assert.True(false, ex.ToString());
             }
@@ -140,9 +138,7 @@ namespace EasyDbMigratorTests.Integrationtests
                  , testdbName: databaseName);
 
             }
-#pragma warning disable CA1031 // Do not catch general exception types, for sake of testing this is no problem
             catch (Exception ex)
-#pragma warning restore CA1031
             {
                 Assert.True(false, ex.ToString());
             }

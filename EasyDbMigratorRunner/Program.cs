@@ -8,11 +8,9 @@ namespace EasyDbMigratorRunner
     [ExcludeFromCodeCoverage]
     public class Program
     {
-#pragma warning disable CA1801 // Review unused parameters
-        public static void Main(string[] args)
-#pragma warning restore CA1801 // Review unused parameters
+        public static void Main(/**string[] args**/)
         {
-            ConsoleLoggerOptions options = new();
+            ConsoleLoggerOptions options = new ConsoleLoggerOptions();
             using ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
             {
                 _ = builder.AddConsole();

@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigrator
 {
-    public record SqlScript
+    public class SqlScript
     {
         public string FileName { get; private set; }
         public string Content { get; private set; }

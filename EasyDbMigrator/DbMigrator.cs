@@ -150,7 +150,7 @@ namespace EasyDbMigrator
             _logger.Log(logLevel: LogLevel.Information, message: $"start running migrations for database: {_migrationConfiguration.DatabaseName}");
 
             Result<bool> setupDatabaseSucceeded;
-            Result<bool> createVersiongTableSucceeded = new(isSucces: false);
+            Result<bool> createVersiongTableSucceeded = new Result<bool>(isSucces: false);
             bool migrationRunwithoutUnknownExceptions = false;
 
             setupDatabaseSucceeded = await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: _migrationConfiguration);

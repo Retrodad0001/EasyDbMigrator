@@ -40,7 +40,7 @@ namespace EasyDbMigrator
                     if (stream is null)
                         throw new InvalidOperationException($"steam cannot be null for resource name: {filename}");
 
-                    using (StreamReader reader = new(stream))
+                    using (StreamReader reader = new StreamReader(stream))
                     {
                         string filenameWithNoNamespaces = RemoveTheNamespaceFromName(filename);
 

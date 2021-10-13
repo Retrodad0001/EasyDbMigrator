@@ -23,7 +23,7 @@ namespace EasyDbMigrator
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
-                DbMigrator migrator = new(logger: loggerMock.Object
+                DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                     , migrationConfiguration: new MigrationConfiguration(connectionString: "connection-string"
                     , databaseName: "databasename")
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -44,7 +44,7 @@ namespace EasyDbMigrator
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
-                DbMigrator migrator = new(logger: loggerMock.Object
+                DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                     , migrationConfiguration: new MigrationConfiguration(connectionString: "connection-string"
                         , databaseName: "databasename")
                     , databaseconnector: new SqlDbConnector()
@@ -65,7 +65,7 @@ namespace EasyDbMigrator
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-                DbMigrator migrator = new(logger: null
+                DbMigrator migrator = new DbMigrator(logger: null
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                     , migrationConfiguration: new MigrationConfiguration(connectionString: "connection-string"
                         , databaseName: "databasename")
@@ -85,7 +85,7 @@ namespace EasyDbMigrator
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
-                DbMigrator migrator = new(logger: loggerMock.Object
+                DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                     , migrationConfiguration: new MigrationConfiguration(connectionString: "connection-string"
                         , databaseName: "databasename")
                     , databaseconnector: new SqlDbConnector()
@@ -108,7 +108,7 @@ namespace EasyDbMigrator
                 _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
-                DbMigrator migrator = new(logger: loggerMock.Object
+                DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                     , migrationConfiguration: null
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -282,7 +282,7 @@ namespace EasyDbMigrator
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new(logger: loggerMock.Object
+            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                 , migrationConfiguration: config
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelperMock.Object
@@ -340,7 +340,7 @@ namespace EasyDbMigrator
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new(logger: loggerMock.Object
+            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                 , migrationConfiguration: config
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
@@ -397,7 +397,7 @@ namespace EasyDbMigrator
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new(logger: loggerMock.Object
+            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                 , migrationConfiguration: config
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
@@ -455,7 +455,7 @@ namespace EasyDbMigrator
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new(logger: loggerMock.Object
+            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                 , migrationConfiguration: config
                 , sqlDbHelperMock.Object
                 , assemblyResourceHelperMock.Object
@@ -523,7 +523,7 @@ namespace EasyDbMigrator
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new(logger: loggerMock.Object
+            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                 , migrationConfiguration: config
                 , databaseconnector: sqlDbHelperMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
@@ -582,7 +582,7 @@ namespace EasyDbMigrator
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new(logger: loggerMock.Object
+            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                 , migrationConfiguration: config
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelperMock.Object
@@ -623,7 +623,7 @@ namespace EasyDbMigrator
                     , It.IsAny<string>()))
                     .ReturnsAsync(new Result<bool>(isSucces: false, exception: new Exception()));
 
-            DbMigrator migrator = new(logger: loggerMock.Object
+            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                 , migrationConfiguration: config
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelperMock.Object
@@ -657,7 +657,7 @@ namespace EasyDbMigrator
                     , It.IsAny<string>()))
                     .ReturnsAsync(new Result<bool>(isSucces: true));
 
-            DbMigrator migrator = new(logger: loggerMock.Object
+            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                 , migrationConfiguration: config
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelperMock.Object
