@@ -2,6 +2,7 @@
 
 ## working on : milestone:1.2.0
 
+- Can use DbMigrator in .net Dependency injection (IServiceCollection) (https://github.com/Retrodad0001/EasyDbMigrator/issues/21)
 - Can run SQL migrations manual with commandline runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/17)
 - Make executions and configuration more resilient (https://github.com/Retrodad0001/EasyDbMigrator/issues/4)
 - support PostgreSQL migrations in your integration test (https://github.com/Retrodad0001/EasyDbMigrator/issues/6)
