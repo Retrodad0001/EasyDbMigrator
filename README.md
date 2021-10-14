@@ -1,7 +1,10 @@
 # Latest news 
 
 ## 1.1.0 :
- - added support for .net core 3.1 and .net 5
+ - added support for .net core 3.1 (until LTS) and .net 5
+ - updated .net packages
+ - updated external packages
+ - updated to latest .net 3.1.x and 5.0.x with security updates
 
 The software can only be used for integrationtesting. Running manual migrations and using it in CI/CD pipelines is under-construction
 # INFO:
