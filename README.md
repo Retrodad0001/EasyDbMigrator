@@ -1,9 +1,9 @@
 # Latest news 
--added support for .net core 3.1 and .net 5
+
+## 1.1.0 :
+ - added support for .net core 3.1 and .net 5
 
 The software can only be used for integrationtesting. Running manual migrations and using it in CI/CD pipelines is under-construction
-
-
 # INFO:
 
 ### Builds:
