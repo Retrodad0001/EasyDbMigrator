@@ -4,8 +4,8 @@
 
 - Can run SQL migrations manual with commandline runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/17)
 - Make executions and configuration more resilient (https://github.com/Retrodad0001/EasyDbMigrator/issues/4)
-- Can run ProgreSQL migrations in CI/CD piplelines (https://github.com/Retrodad0001/EasyDbMigrator/issues/12)
 - support PostgreSQL migrations in your integration test (https://github.com/Retrodad0001/EasyDbMigrator/issues/6)
+- Can run PostgreSQL migrations manual with commandline runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/20)
 - Support also .net core 6 LTS (https://github.com/Retrodad0001/EasyDbMigrator/issues/8)
 - Create fancy UI based runner cross-platform (.net maui) (https://github.com/Retrodad0001/EasyDbMigrator/issues/16)
  
