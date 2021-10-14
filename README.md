@@ -1,7 +1,16 @@
 # Latest news 
 
+## working on : milestone:1.2.0
+
+- Can run SQL migrations manual with commandline runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/17)
+- Make executions and configuration more resilient (https://github.com/Retrodad0001/EasyDbMigrator/issues/4)
+- Can run ProgreSQL migrations in CI/CD piplelines (https://github.com/Retrodad0001/EasyDbMigrator/issues/12)
+- support PostgreSQL migrations in your integration test (https://github.com/Retrodad0001/EasyDbMigrator/issues/6)
+- Support also .net core 6 LTS (https://github.com/Retrodad0001/EasyDbMigrator/issues/8)
+- Create fancy UI based runner cross-platform (.net maui) (https://github.com/Retrodad0001/EasyDbMigrator/issues/16)
+ 
 ## 1.1.0 :
- - added support for .net core 3.1 (until LTS) and .net 5
+ - added support for .net core 3.1 (until LTS ends) and .net 5 (until support ends)
  - updated .net packages
  - updated external packages
  - updated to latest .net 3.1.x and 5.0.x with security updates
