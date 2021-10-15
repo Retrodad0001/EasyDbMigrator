@@ -2,7 +2,7 @@
 
 ## working on : milestone:1.2.0
 
-[![enhancement](https://img.shields.io/github/issues/Retrodad0001/EasyDbMigrator/milestone/4?color=information&label=enhancement&style=flat)](https://github.com/Retrodad0001/EasyDbMigrator/milestone/4)
+[![enhancement](https://img.shields.io/github/issues/Retrodad0001/EasyDbMigrator/milestone/4?color=green&label=enhancement&style=flat)](https://github.com/Retrodad0001/EasyDbMigrator/milestone/4)
 
 - Can use DbMigrator in .net Dependency injection (IServiceCollection) (https://github.com/Retrodad0001/EasyDbMigrator/issues/21)
 - Can cancel the proces from outside (https://github.com/Retrodad0001/EasyDbMigrator/issues/22)
