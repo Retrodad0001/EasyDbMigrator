@@ -2,10 +2,7 @@
 
 ## working on : milestone:1.2.0
 
-[![Good First Issues](https://img.shields.io/github/issues/Retrodad0001/EasyDbMigrator/milestone/4?color=important&label=good%20first%20issue&style=flat)](https://github.com/Retrodad0001/EasyDbMigrator/milestone/4)
-
-https://github.com/Azure/Bicep/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22
-https://github.com/Retrodad0001/EasyDbMigrator/milestone/4
+[![1.2.0 issues](https://img.shields.io/github/issues/Retrodad0001/EasyDbMigrator/milestone/4?color=important&label=good%20first%20issue&style=flat)](https://github.com/Retrodad0001/EasyDbMigrator/milestone/4)
 
 - Can use DbMigrator in .net Dependency injection (IServiceCollection) (https://github.com/Retrodad0001/EasyDbMigrator/issues/21)
 - Can cancel the proces from outside (https://github.com/Retrodad0001/EasyDbMigrator/issues/22)
