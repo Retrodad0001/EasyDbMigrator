@@ -8,8 +8,6 @@
 - Make executions and configuration more resilient (https://github.com/Retrodad0001/EasyDbMigrator/issues/4)
 - support PostgreSQL migrations in your integration test (https://github.com/Retrodad0001/EasyDbMigrator/issues/6)
 - Can run PostgreSQL migrations manual with commandline runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/20)
-- Support also .net core 6 LTS (https://github.com/Retrodad0001/EasyDbMigrator/issues/8)
-- Create fancy UI based runner cross-platform (.net maui) (https://github.com/Retrodad0001/EasyDbMigrator/issues/16)
  
 ## 1.1.0 :
  - added support for .net core 3.1 (until LTS ends) and .net 5 (until support ends)
