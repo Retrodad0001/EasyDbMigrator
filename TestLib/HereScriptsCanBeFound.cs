@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace TestLib
+namespace ExampleTestLibWithScripts
 {
     [ExcludeFromCodeCoverage] //used for testing no production code!
     public class HereScriptsCanBeFound

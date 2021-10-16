@@ -9,7 +9,9 @@ namespace EasyDbMigrator
     [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
     public class SqlDbConnector : IDatabaseConnector
     {
-        public async Task<Result<bool>> TryExcecuteSingleScriptAsync(string connectionString, string scriptName, string sqlScriptContent)
+        public async Task<Result<bool>> TryExcecuteSingleScriptAsync(string connectionString
+            , string scriptName
+            , string sqlScriptContent)
         {
             try
             {

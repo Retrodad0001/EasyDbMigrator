@@ -1,8 +1,8 @@
 ﻿using EasyDbMigrator;
+using ExampleTestLibWithScripts;
 using FluentAssertions;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using TestLib;
 using Xunit;
 
 namespace EasyDbMigratorTests.Unittests

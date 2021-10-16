@@ -4,29 +4,52 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using TestLib;
 using Xunit;
 using Moq;
 using EasyDbMigratorTests.Integrationtests.TestHelpers;
 using FluentAssertions;
+using ExampleTestLibWithScripts;
+using TestEnvironment.Docker;
+using TestEnvironment.Docker.Containers.Mssql;
 
 namespace EasyDbMigratorTests.Integrationtests
 {
     [ExcludeFromCodeCoverage]
     [Collection(nameof(classNotRunParallel))]
-    public class MigrationIntegrationTests
+    public class SqlServerIntegrationTests
     {
+        private const string _databaseName = "EasyDbMigrator";
+        private const string _password = "stuffy6!";
+        private readonly IDictionary<ushort, ushort> _ports = new Dictionary<ushort, ushort> ();
+        private DockerEnvironment _dockerEnvironment;//TODO when null create container
+
+        private DockerEnvironment SetupDockerTestEnvironment(DockerEnvironmentBuilder environmentBuilder)
+        {
+            if (_dockerEnvironment != null)
+                return _dockerEnvironment;
+
+            _ports.Add(1433, 1433);
+            return environmentBuilder.UseDefaultNetwork()
+                .SetName("xunit-EasydbMigratorIntegrationTest")
+                //pick for now the latest version of sqlserver (= default)
+                .AddMssqlContainer(name: _databaseName, saPassword: _password, ports: _ports)
+                .Build();
+        }
+
         [Fact]
         [Trait("Category", "Integrationtest")]
         public async Task the_scenario_when_nothing_goes_wrong_with_running_migrations_on_an_empty_database()
         {
+            var environmentBuilder = new DockerEnvironmentBuilder();
+            _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
+
             try
             {
-                const string connectionstring = @"Data Source = localhost,1433; User ID = sa; Password=stuffy666!; Connect Timeout = 30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False";
-                const string databaseName = "EasyDbMigrator";
+                await _dockerEnvironment.Up();
+                var connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring
-                    , databaseName: databaseName);
+                MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
+                    , databaseName: _databaseName);
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
@@ -43,7 +66,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 scriptsToExclude.Add("20212230_001_CreateDB.sql");
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
+                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName, connectionString: connectionString);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereScriptsCanBeFound));
@@ -60,14 +83,18 @@ namespace EasyDbMigratorTests.Integrationtests
                 expectedRows.Add(new DbMigrationsRunRow(id: 1, executed: ExecutedDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
                 expectedRows.Add(new DbMigrationsRunRow(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
 
-                _ = new DbTestHelper().CheckMigrationsTable(connectionString: connectionstring
+                _ = new DbTestHelper().CheckMigrationsTable(connectionString: connectionString
                   , expectedRows: expectedRows
-                  , testdbName: databaseName);
+                  , testdbName: _databaseName);
 
             }
             catch (Exception ex)
             {
                 Assert.True(false, ex.ToString());
+            }
+            finally
+            {
+                await _dockerEnvironment.DisposeAsync();
             }
         }
 
@@ -77,11 +104,13 @@ namespace EasyDbMigratorTests.Integrationtests
         {
             try
             {
-                const string connectionstring = @"Data Source = localhost,1433; User ID = sa; Password=stuffy666!; Connect Timeout = 30; Encrypt=False; TrustServerCertificate=False; ApplicationIntent=ReadWrite; MultiSubnetFailover=False";
-                const string databaseName = "EasyDbMigrator";
+                var environmentBuilder = new DockerEnvironmentBuilder();
+                _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
+                await _dockerEnvironment.Up();
+                var connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring
-                    , databaseName: databaseName);
+                MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
+                    , databaseName: _databaseName);
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
@@ -99,7 +128,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionstring);
+                bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName, connectionString: connectionString);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereScriptsCanBeFound));
@@ -133,14 +162,18 @@ namespace EasyDbMigratorTests.Integrationtests
                 expectedRows.Add(new DbMigrationsRunRow(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
                 expectedRows.Add(new DbMigrationsRunRow(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
 
-                _ = new DbTestHelper().CheckMigrationsTable(connectionString: connectionstring
+                _ = new DbTestHelper().CheckMigrationsTable(connectionString: connectionString
                  , expectedRows: expectedRows
-                 , testdbName: databaseName);
+                 , testdbName: _databaseName);
 
             }
             catch (Exception ex)
             {
                 Assert.True(false, ex.ToString());
+            }
+            finally
+            {
+                await _dockerEnvironment.DisposeAsync();
             }
         }
     }

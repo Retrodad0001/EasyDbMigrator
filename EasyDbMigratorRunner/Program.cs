@@ -3,6 +3,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using System.Diagnostics.CodeAnalysis;
 
+//TODO replace with entity framework core
+//TODO improving inner dev loop : create docker image in test
+//TODO can use dbmigratior in own code with default .net dependency injection /start runner
+
+
 namespace EasyDbMigratorRunner
 {
     [ExcludeFromCodeCoverage]
