@@ -1,25 +1,17 @@
-﻿using System;
-using System.Data;
-using System.Data.SqlClient;
+﻿using Npgsql;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
-namespace EasyDbMigrator
+namespace EasyDbMigrator.DatabaseConnectors
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
-    public class SqlDbConnector : IDatabaseConnector
+    public class PostgreSqlConnector : IDatabaseConnector
     {
         public async Task<Result<bool>> TryDeleteDatabaseIfExistAsync(string databaseName, string connectionString)
         {
-
             string query = $@"
-                IF EXISTS(SELECT * FROM master.sys.databases WHERE name='{databaseName}')
-                BEGIN               
-                    ALTER DATABASE {databaseName} 
-                    SET OFFLINE WITH ROLLBACK IMMEDIATE;
-                    ALTER DATABASE {databaseName} SET ONLINE;
-                    DROP DATABASE {databaseName};
-                END
+               DROP DATABASE IF EXISTS  {databaseName}
                 ";
 
             Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: connectionString
@@ -31,17 +23,15 @@ namespace EasyDbMigrator
 
         public async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExcistAsync(MigrationConfiguration migrationConfiguration)
         {
-            string sqlScriptCreateMigrationTable = @$" USE {migrationConfiguration.DatabaseName}  
-                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='DbMigrationsRun' AND xtype='U')
-                BEGIN
-                    CREATE TABLE DbMigrationsRun 
-                    (
-                        Id int IDENTITY(1,1) PRIMARY KEY,
-                        Executed datetimeoffset NOT NULL,
-                        Filename nvarchar(100) NOT NULL UNIQUE,
-                        Version nvarchar(10) NOT NULL
-                    )
-                END";
+            string sqlScriptCreateMigrationTable = @$" 
+
+                CREATE TABLE IF NOT EXISTS DbMigrationsRun (
+                    Id          SERIAL PRIMARY KEY,
+                    Executed    Timestamp NOT NULL,
+                    Filename    varchar NOT NULL,
+                    Version     varchar NOT NULL
+                );
+                ";
 
             Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
                 , scriptName: "EasyDbMigrator.SetupDbMigrationsRunTable"
@@ -52,12 +42,10 @@ namespace EasyDbMigrator
 
         public async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration)
         {
-            string sqlScriptCreateDatabase = @$" 
-                USE Master
-                IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '{migrationConfiguration.DatabaseName}')
-                BEGIN
-                    CREATE DATABASE {migrationConfiguration.DatabaseName}
-                END";
+            string sqlScriptCreateDatabase = @$"
+                    SELECT 'CREATE DATABASE {migrationConfiguration.DatabaseName}'
+                    WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{migrationConfiguration.DatabaseName}')
+                    ";
 
             Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
                 , scriptName: "SetupEmptyDb"
@@ -67,8 +55,8 @@ namespace EasyDbMigrator
         }
 
         public async Task<Result<bool>> TryExcecuteSingleScriptAsync(string connectionString
-            , string scriptName
-            , string sqlScriptContent)
+          , string scriptName
+          , string sqlScriptContent)
         {
             try
             {
@@ -77,8 +65,9 @@ namespace EasyDbMigrator
                     throw new ArgumentException($"{scriptName} script is empty, is there something wrong?");
                 }
 
-                using SqlConnection connection = new SqlConnection(connectionString);
-                using SqlCommand command = new SqlCommand(sqlScriptContent, connection);
+                using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+
+                using NpgsqlCommand command = new NpgsqlCommand(sqlScriptContent, connection);
 
                 await command.Connection.OpenAsync();
                 _ = await command.ExecuteNonQueryAsync();
@@ -90,25 +79,24 @@ namespace EasyDbMigrator
                 return new Result<bool>(isSucces: false, exception: ex);
             }
         }
-
         public async Task<Result<RunMigrationResult>> RunDbMigrationScriptWhenNotRunnedBeforeAsync(MigrationConfiguration migrationConfiguration
             , Script script
             , DateTimeOffset executedDateTime)
         {
-            SqlTransaction? transaction = null;
+            NpgsqlTransaction? transaction = null;
             try
             {
-                using SqlConnection connection = new SqlConnection(migrationConfiguration.ConnectionString);
+                using NpgsqlConnection connection = new NpgsqlConnection(migrationConfiguration.ConnectionString);
                 await connection.OpenAsync();
-                //check if script was executed before
 
-                string checkIfScriptHasExecuted = $@"USE {migrationConfiguration.DatabaseName} 
+                string checkIfScriptHasExecuted = $@"
                         SELECT Id
                         FROM DbMigrationsRun
-                         WHERE Filename = '{script.FileName}'
+                        WHERE Filename = '{script.FileName}'
+
                         ";
 
-                using SqlCommand cmdcheckNotExecuted = new SqlCommand(checkIfScriptHasExecuted, connection);
+                using NpgsqlCommand cmdcheckNotExecuted = new NpgsqlCommand(checkIfScriptHasExecuted, connection);
                 var result = _ = await cmdcheckNotExecuted.ExecuteScalarAsync();
 
                 if (result != null)
@@ -116,22 +104,24 @@ namespace EasyDbMigrator
                     return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun);
                 }
 
-                string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss.fffffff zzz");
+                string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
                 string updateVersioningTableScript = $@" 
-                            USE {migrationConfiguration.DatabaseName} 
+                            
                             INSERT INTO DbMigrationsRun (Executed, Filename, version)
                             VALUES ('{sqlFormattedDate}', '{script.FileName}', '1.0.0');
                         ";
 
-                transaction =  connection.BeginTransaction(IsolationLevel.Serializable, "EasyDbMigrator"); //TODO make async with cancellationtoken if works
+                transaction = connection.BeginTransaction();//TODO make async with cancellationtoken if works
 
-                using SqlCommand cmdScript = new SqlCommand(script.Content, connection, transaction);
-                using SqlCommand cmdUpdateVersioningTable = new SqlCommand(updateVersioningTableScript, connection, transaction);
+                using NpgsqlCommand cmdScript = new NpgsqlCommand(script.Content
+                    , connection
+                    , transaction);
+                using NpgsqlCommand cmdUpdateVersioningTable = new NpgsqlCommand(updateVersioningTableScript, connection, transaction);
 
                 _ = await cmdScript.ExecuteNonQueryAsync();
                 _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync();
 
-               transaction.Commit();//TODO make async with cancellationtoken if works
+                transaction.Commit();//TODO make async with cancellationtoken if works
 
                 return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted);
             }
@@ -141,7 +131,5 @@ namespace EasyDbMigrator
                 return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted, ex);
             }
         }
-
-       
     }
 }

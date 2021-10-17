@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator
 {
+
     public class DbMigrator
     {
         private readonly ILogger _logger;
@@ -44,12 +45,14 @@ namespace EasyDbMigrator
         }
 
         /// <summary>
-        /// Create DBMigration object so it can be used in own code
+        /// Create DBMigration object so it can be used in code
         /// </summary>
         /// <param name="migrationConfiguration">the configuration settings DBMigrator uses to perform its tasks</param>
         /// <param name="logger">the ILogger logging object u want that the DBMigrator should use</param>
         /// <returns></returns>
-        public static DbMigrator Create(MigrationConfiguration migrationConfiguration, ILogger logger)
+        public static DbMigrator Create(MigrationConfiguration migrationConfiguration
+            , ILogger logger
+            , IDatabaseConnector databaseConnector)
         {
             if (migrationConfiguration is null)
             {
@@ -61,9 +64,14 @@ namespace EasyDbMigrator
                 throw new ArgumentNullException(nameof(logger));
             }
 
+            if (databaseConnector is null)
+            {
+                throw new ArgumentNullException(nameof(databaseConnector));
+            }
+
             DbMigrator result = new DbMigrator(logger: logger
                 , migrationConfiguration: migrationConfiguration
-                , databaseconnector: new SqlDbConnector()
+                , databaseconnector: databaseConnector
                 , assemblyResourceHelper: new AssemblyResourceHelper()
                 , dataTimeHelper: new DataTimeHelper());
 
@@ -79,7 +87,8 @@ namespace EasyDbMigrator
         /// <returns></returns>
         public static DbMigrator CreateForLocalIntegrationTesting(MigrationConfiguration migrationConfiguration
             , ILogger logger
-            , IDataTimeHelper dataTimeHelperMock)
+            , IDataTimeHelper dataTimeHelperMock
+            , IDatabaseConnector databaseConnector)
         {
             if (migrationConfiguration is null)
             {
@@ -96,9 +105,14 @@ namespace EasyDbMigrator
                 throw new ArgumentNullException(nameof(dataTimeHelperMock));
             }
 
+            if (databaseConnector is null)
+            {
+                throw new ArgumentNullException(nameof(databaseConnector));
+            }
+
             DbMigrator result = new DbMigrator(logger: logger
                , migrationConfiguration: migrationConfiguration
-               , databaseconnector: new SqlDbConnector()
+               , databaseconnector: databaseConnector
                , assemblyResourceHelper: new AssemblyResourceHelper()
                , dataTimeHelper: dataTimeHelperMock);
 
@@ -115,19 +129,8 @@ namespace EasyDbMigrator
         /// <returns></returns>
         public async Task<bool> TryDeleteDatabaseIfExistAsync(string databaseName, string connectionString)
         {
-            string query = $@"
-                IF EXISTS(SELECT * FROM master.sys.databases WHERE name='{databaseName}')
-                BEGIN               
-                    ALTER DATABASE {databaseName} 
-                    SET OFFLINE WITH ROLLBACK IMMEDIATE;
-                    ALTER DATABASE {databaseName} SET ONLINE;
-                    DROP DATABASE {databaseName};
-                END
-                ";
 
-           Result<bool> succeeded = await _databaseconnector.TryExcecuteSingleScriptAsync(connectionString: connectionString
-                , scriptName: "EasyDbMigrator.Integrationtest_dropDatabase"
-                , sqlScriptContent: query);
+            Result<bool> succeeded = await _databaseconnector.TryDeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionString);
 
             if (succeeded.IsFailure)
             {
@@ -171,9 +174,9 @@ namespace EasyDbMigrator
 
                 if (createVersiongTableSucceeded.IsSuccess)
                 {
-                    List<SqlScript> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated);
-                    List<SqlScript> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptList);
-                    List<SqlScript> orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExludedScripts);
+                    List<Script> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated);
+                    List<Script> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptList);
+                    List<Script> orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExludedScripts);
 
                     _logger.Log(logLevel: LogLevel.Information, message: $"Total scripts found: {unOrderedScripts.Count}");
 
@@ -204,45 +207,21 @@ namespace EasyDbMigrator
 
         private async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration)
         {
-            string sqlScriptCreateDatabase = @$" 
-                USE Master
-                IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '{migrationConfiguration.DatabaseName}')
-                BEGIN
-                    CREATE DATABASE {migrationConfiguration.DatabaseName}
-                END";
-
-            Result<bool> result = await _databaseconnector.TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
-                , scriptName: "SetupEmptyDb"
-                , sqlScriptContent: sqlScriptCreateDatabase);
-
+            var result = await _databaseconnector.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: migrationConfiguration);
             return result;
         }
 
         private async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExcistAsync(MigrationConfiguration migrationConfiguration)
         {
-            string sqlScriptCreateMigrationTable = @$" USE {migrationConfiguration.DatabaseName}  
-                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='DbMigrationsRun' AND xtype='U')
-                BEGIN
-                    CREATE TABLE DbMigrationsRun 
-                    (
-                        Id int IDENTITY(1,1) PRIMARY KEY,
-                        Executed datetimeoffset NOT NULL,
-                        Filename nvarchar(100) NOT NULL UNIQUE,
-                        Version nvarchar(10) NOT NULL
-                    )
-                END";
-
-            Result<bool> result = await _databaseconnector.TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
-                , scriptName: "EasyDbMigrator.SetupDbMigrationsRunTable"
-                , sqlScriptContent: sqlScriptCreateMigrationTable);
-
+            var result = await _databaseconnector.TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: migrationConfiguration);
             return result;
         }
 
-        private async Task<bool> TryRunAllMigrationScriptsAsync(MigrationConfiguration migrationConfiguration, List<SqlScript> orderedScripts)
+        private async Task<bool> TryRunAllMigrationScriptsAsync(MigrationConfiguration migrationConfiguration
+            , List<Script> orderedScripts)
         {
             bool skipBecauseOfErrorWithPreviousScript = false;
-            foreach (SqlScript script in orderedScripts)
+            foreach (Script script in orderedScripts)
             {
                 if (skipBecauseOfErrorWithPreviousScript)
                 {
@@ -277,12 +256,12 @@ namespace EasyDbMigrator
                 return true;
         }
 
-        private List<SqlScript> RemoveExcludedScripts(List<SqlScript> scripts, List<string> excludedscripts)
+        private List<Script> RemoveExcludedScripts(List<Script> scripts, List<string> excludedscripts)
         {
             var result = scripts.Where(p => !excludedscripts.Any(x => x == p.FileName)).ToList();
             return result;
         }
-        private List<SqlScript> SetScriptsInCorrectSequence(List<SqlScript> scripts)
+        private List<Script> SetScriptsInCorrectSequence(List<Script> scripts)
         {
             return scripts.OrderBy(s => s.DatePartOfName)
                 .ThenBy(s => s.SequenceNumberPart).ToList();

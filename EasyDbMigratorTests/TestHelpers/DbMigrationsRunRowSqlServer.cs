@@ -4,20 +4,20 @@ using System.Diagnostics.CodeAnalysis;
 namespace EasyDbMigratorTests
 {
     [ExcludeFromCodeCoverage] //this class is used for testing only
-    public class DbMigrationsRunRow//TODO make record when .net 3.1 is out of LTS
+    public class DbMigrationsRunRowSqlServer//TODO make record when .net 3.1 is out of LTS
     {
         public int Id { get; }
         public DateTimeOffset Executed { get; }
         public string Filename { get; }
         public string Version { get; }
 
-        public DbMigrationsRunRow()
+        public DbMigrationsRunRowSqlServer()
         {
 
         }
 
 
-        public DbMigrationsRunRow(int id, DateTimeOffset executed, string filename, string version)
+        public DbMigrationsRunRowSqlServer(int id, DateTimeOffset executed, string filename, string version)
         {
             Id = id;
             Executed = executed;
@@ -34,7 +34,7 @@ namespace EasyDbMigratorTests
             }
             else
             {
-                DbMigrationsRunRow a = (DbMigrationsRunRow)obj;
+                DbMigrationsRunRowSqlServer a = (DbMigrationsRunRowSqlServer)obj;
                 return (Id == a.Id) 
                     && (Executed == a.Executed) 
                     && (Filename == a.Filename) 

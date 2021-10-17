@@ -2,12 +2,13 @@
 
 ## working on : milestone:1.2.0
 
-- Can use DbMigrator in .net Dependency injection (IServiceCollection) (https://github.com/Retrodad0001/EasyDbMigrator/issues/21)
-- Can cancel the proces from outside (https://github.com/Retrodad0001/EasyDbMigrator/issues/22)
-- Can run SQL migrations manual with commandline runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/17)
-- Make executions and configuration more resilient (https://github.com/Retrodad0001/EasyDbMigrator/issues/4)
-- support PostgreSQL migrations in your integration test (https://github.com/Retrodad0001/EasyDbMigrator/issues/6)
-- Can run PostgreSQL migrations manual with commandline runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/20)
+- [DONE] speedup the inner development loop by getting the docker-image and running it in the integration tests (with examples)
+- [BUSY] Can use DbMigrator in .net Dependency injection (IServiceCollection) (https://github.com/Retrodad0001/EasyDbMigrator/issues/21)
+- [BUSY] Can cancel the process from outside (https://github.com/Retrodad0001/EasyDbMigrator/issues/22)
+- [BUSY] Can run SQL migrations manual with command-line runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/17)
+- [BUSY] Make executions and configuration more resilient (https://github.com/Retrodad0001/EasyDbMigrator/issues/4)
+- [BUSY] support PostgreSQL migrations in your integration test (https://github.com/Retrodad0001/EasyDbMigrator/issues/6)
+- [BUSY] Can run PostgreSQL migrations manual with command line runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/20)
  
 ## 1.1.0 :
  - added support for .net core 3.1 (until LTS ends) and .net 5 (until support ends)

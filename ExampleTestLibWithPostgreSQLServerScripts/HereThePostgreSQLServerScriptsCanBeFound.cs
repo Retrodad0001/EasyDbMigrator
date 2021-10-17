@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace ExampleTestLibWithScripts
+namespace ExampleTestLibWithPostgreSQLServerScripts
 {
     [ExcludeFromCodeCoverage] //used for testing no production code!
-    public class HereScriptsCanBeFound
+    public class HereThePostgreSQLServerScriptsCanBeFound
     {
         //needed so the tool knows in witch assembly the resources are
     }

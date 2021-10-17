@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="SqlServerMigrationScripts\20212230_001_CreateDB.sql" />
+    <None Remove="SqlServerMigrationScripts\20212230_002_Script2.sql" />
+    <None Remove="SqlServerMigrationScripts\20212231_001_Script1.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="SqlServerMigrationScripts\20212231_001_Script1.sql" />
+    <EmbeddedResource Include="SqlServerMigrationScripts\20212230_002_Script2.sql" />
+    <EmbeddedResource Include="SqlServerMigrationScripts\20212230_001_CreateDB.sql" />
+  </ItemGroup>
+
+</Project>

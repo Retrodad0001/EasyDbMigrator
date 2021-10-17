@@ -15,9 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDbMigratorRunner", "EasyDbMigratorRunner\EasyDbMigratorRunner.csproj", "{145AC7D7-900D-414A-A389-9A09217E5C2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleDIwithWepAPI", "ExampleDIwithWepAPI\ExampleDIwithWepAPI.csproj", "{26828824-8DE8-4132-BB21-F1DAAF0F322E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleDIwithWepAPI", "ExampleDIwithWepAPI\ExampleDIwithWepAPI.csproj", "{26828824-8DE8-4132-BB21-F1DAAF0F322E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleTestLibWithScripts", "TestLib\ExampleTestLibWithScripts.csproj", "{8DB07F28-DFD3-4268-B4CA-621EE044E9DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleTestLibWithPostgreSQLServerScripts", "ExampleTestLibWithPostgreSQLServerScripts\ExampleTestLibWithPostgreSQLServerScripts.csproj", "{57C1F6DD-22C5-40C2-BCEF-EE28E646F3F9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleTestLibWithSqlServerScripts", "ExampleTestLibWithSqlServerScripts\ExampleTestLibWithSqlServerScripts.csproj", "{2FAB5855-E5D1-4987-A6D5-835456A6DF95}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +43,14 @@ Global
 		{26828824-8DE8-4132-BB21-F1DAAF0F322E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26828824-8DE8-4132-BB21-F1DAAF0F322E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26828824-8DE8-4132-BB21-F1DAAF0F322E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8DB07F28-DFD3-4268-B4CA-621EE044E9DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8DB07F28-DFD3-4268-B4CA-621EE044E9DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8DB07F28-DFD3-4268-B4CA-621EE044E9DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8DB07F28-DFD3-4268-B4CA-621EE044E9DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57C1F6DD-22C5-40C2-BCEF-EE28E646F3F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57C1F6DD-22C5-40C2-BCEF-EE28E646F3F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57C1F6DD-22C5-40C2-BCEF-EE28E646F3F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57C1F6DD-22C5-40C2-BCEF-EE28E646F3F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FAB5855-E5D1-4987-A6D5-835456A6DF95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FAB5855-E5D1-4987-A6D5-835456A6DF95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FAB5855-E5D1-4987-A6D5-835456A6DF95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FAB5855-E5D1-4987-A6D5-835456A6DF95}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,4 @@
-﻿USE EasyDbMigrator
+﻿USE EasyDbMigratorSqlServer
 
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='bb' AND xtype='U')
 BEGIN

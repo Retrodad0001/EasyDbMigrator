@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="PostgresServerMigrationsScripts\20212230_001_DoStuffScript.sql" />
+    <None Remove="PostgresServerMigrationsScripts\20212230_002_Script2p.sql" />
+    <None Remove="PostgresServerMigrationsScripts\20212231_001_Script1p.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="PostgresServerMigrationsScripts\20212230_001_DoStuffScript.sql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PostgresServerMigrationsScripts\20212230_002_Script2p.sql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PostgresServerMigrationsScripts\20212231_001_Script1p.sql" />
+  </ItemGroup>
+
+</Project>
