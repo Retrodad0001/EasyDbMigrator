@@ -7,7 +7,7 @@
 - [BUSY] Can cancel the process from outside (https://github.com/Retrodad0001/EasyDbMigrator/issues/22)
 - [BUSY] Can run SQL migrations manual with command-line runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/17)
 - [BUSY] Make executions and configuration more resilient (https://github.com/Retrodad0001/EasyDbMigrator/issues/4)
-- [BUSY] support PostgreSQL migrations in your integration test (https://github.com/Retrodad0001/EasyDbMigrator/issues/6)
+- [DONE] support PostgreSQL migrations in your integration test (https://github.com/Retrodad0001/EasyDbMigrator/issues/6)
 - [BUSY] Can run PostgreSQL migrations manual with command line runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/20)
  
 ## 1.1.0 :
