@@ -2,14 +2,17 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyDbMigrator
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
-    public class SqlDbConnector : IDatabaseConnector
+    public class MicrosoftSqlConnector : IDatabaseConnector
     {
-        public async Task<Result<bool>> TryDeleteDatabaseIfExistAsync(string databaseName, string connectionString)
+        public async Task<Result<bool>> TryDeleteDatabaseIfExistAsync(string databaseName
+            , string connectionString
+            , CancellationToken cancellationToken)
         {
 
             string query = $@"
@@ -24,12 +27,14 @@ namespace EasyDbMigrator
 
             Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: connectionString
                  , scriptName: "EasyDbMigrator.Integrationtest_dropDatabase"
-                 , sqlScriptContent: query);
+                 , sqlScriptContent: query
+                 , cancellationToken: cancellationToken);
 
             return result;
         }
 
-        public async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExcistAsync(MigrationConfiguration migrationConfiguration)
+        public async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExcistAsync(MigrationConfiguration migrationConfiguration
+            , CancellationToken cancellationToken)
         {
             string sqlScriptCreateMigrationTable = @$" USE {migrationConfiguration.DatabaseName}  
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='DbMigrationsRun' AND xtype='U')
@@ -45,12 +50,13 @@ namespace EasyDbMigrator
 
             Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
                 , scriptName: "EasyDbMigrator.SetupDbMigrationsRunTable"
-                , sqlScriptContent: sqlScriptCreateMigrationTable);
+                , sqlScriptContent: sqlScriptCreateMigrationTable
+                , cancellationToken: cancellationToken);
 
             return result;
         }
 
-        public async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration)
+        public async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration, CancellationToken cancellationToken)
         {
             string sqlScriptCreateDatabase = @$" 
                 USE Master
@@ -61,14 +67,16 @@ namespace EasyDbMigrator
 
             Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
                 , scriptName: "SetupEmptyDb"
-                , sqlScriptContent: sqlScriptCreateDatabase);
+                , sqlScriptContent: sqlScriptCreateDatabase
+                , cancellationToken: cancellationToken);
 
             return result;
         }
 
         public async Task<Result<bool>> TryExcecuteSingleScriptAsync(string connectionString
             , string scriptName
-            , string sqlScriptContent)
+            , string sqlScriptContent
+            , CancellationToken cancellationToken)
         {
             try
             {
@@ -80,8 +88,8 @@ namespace EasyDbMigrator
                 using SqlConnection connection = new SqlConnection(connectionString);
                 using SqlCommand command = new SqlCommand(sqlScriptContent, connection);
 
-                await command.Connection.OpenAsync();
-                _ = await command.ExecuteNonQueryAsync();
+                await command.Connection.OpenAsync(cancellationToken);
+                _ = await command.ExecuteNonQueryAsync(cancellationToken);
 
                 return new Result<bool>(isSucces: true);
             }
@@ -93,14 +101,17 @@ namespace EasyDbMigrator
 
         public async Task<Result<RunMigrationResult>> RunDbMigrationScriptWhenNotRunnedBeforeAsync(MigrationConfiguration migrationConfiguration
             , Script script
-            , DateTimeOffset executedDateTime)
+            , DateTimeOffset executedDateTime
+            , CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested)
+                return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationWasCancelled);
+            
             SqlTransaction? transaction = null;
             try
             {
                 using SqlConnection connection = new SqlConnection(migrationConfiguration.ConnectionString);
-                await connection.OpenAsync();
-                //check if script was executed before
+                await connection.OpenAsync(cancellationToken);
 
                 string checkIfScriptHasExecuted = $@"USE {migrationConfiguration.DatabaseName} 
                         SELECT Id
@@ -109,7 +120,7 @@ namespace EasyDbMigrator
                         ";
 
                 using SqlCommand cmdcheckNotExecuted = new SqlCommand(checkIfScriptHasExecuted, connection);
-                var result = _ = await cmdcheckNotExecuted.ExecuteScalarAsync();
+                var result = _ = await cmdcheckNotExecuted.ExecuteScalarAsync(cancellationToken);
 
                 if (result != null)
                 {
@@ -123,21 +134,29 @@ namespace EasyDbMigrator
                             VALUES ('{sqlFormattedDate}', '{script.FileName}', '1.0.0');
                         ";
 
-                transaction =  connection.BeginTransaction(IsolationLevel.Serializable, "EasyDbMigrator"); //TODO make async with cancellationtoken if works
+                transaction =  await connection.BeginTransactionAsync(isolationLevel: IsolationLevel.Serializable
+                    , cancellationToken: cancellationToken) as SqlTransaction;
 
                 using SqlCommand cmdScript = new SqlCommand(script.Content, connection, transaction);
                 using SqlCommand cmdUpdateVersioningTable = new SqlCommand(updateVersioningTableScript, connection, transaction);
 
-                _ = await cmdScript.ExecuteNonQueryAsync();
-                _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync();
+                _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken: cancellationToken);
+                _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken: cancellationToken);
 
-               transaction.Commit();//TODO make async with cancellationtoken if works
+                if (transaction != null)
+                {
+                    await transaction.CommitAsync(cancellationToken);
+                }
 
                 return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted);
             }
             catch (Exception ex)
             {
-                transaction?.Rollback();//TODO make async with cancellationtoken if works
+                if (transaction != null)
+                {
+                    await transaction.RollbackAsync(cancellationToken: cancellationToken);
+                    await transaction.DisposeAsync();
+                }
                 return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted, ex);
             }
         }

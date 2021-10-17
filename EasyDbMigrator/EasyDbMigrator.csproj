@@ -12,6 +12,7 @@
     <RepositoryType>Github</RepositoryType>
     <PackageTags>database, migration, migrator, integration test, update database, CI, CD, SQL, PostgreSQL , CosmosDB, Update , DB</PackageTags>
     <PackageReleaseNotes>-improving inner dev loop : get en run docker image in test instead of manual work
+-can run PostgreSql scripts in integration-tests
 
 For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</PackageReleaseNotes>
     <PackageIcon>Icon.png</PackageIcon>

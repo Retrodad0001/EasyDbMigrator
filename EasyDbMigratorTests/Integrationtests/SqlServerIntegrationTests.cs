@@ -11,6 +11,7 @@ using FluentAssertions;
 using TestEnvironment.Docker;
 using TestEnvironment.Docker.Containers.Mssql;
 using ExampleTestLibWithSqlServerScripts;
+using System.Threading;
 
 //TODO optimize make test run parallel postgre integration tests & sqlserver integration tests
 
@@ -45,6 +46,9 @@ namespace EasyDbMigratorTests.Integrationtests
             var environmentBuilder = new DockerEnvironmentBuilder();
             _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
 
+            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+
             try
             {
                 await _dockerEnvironment.Up();
@@ -63,16 +67,19 @@ namespace EasyDbMigratorTests.Integrationtests
                 DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
                     , logger: loggerMock.Object
                     , dataTimeHelperMock: datetimeHelperMock.Object
-                    , databaseConnector: new SqlDbConnector());
+                    , databaseConnector: new MicrosoftSqlConnector());
 
                 List<string> scriptsToExclude = new List<string>();
                 scriptsToExclude.Add("20212230_001_CreateDB.sql");
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName, connectionString: connectionString);
+                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName
+                    , connectionString: connectionString
+                    , cancellationToken: token);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
-                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound));
+                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound)
+                    , cancellationToken: token);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 _ = loggerMock
@@ -98,6 +105,7 @@ namespace EasyDbMigratorTests.Integrationtests
             finally
             {
                 _dockerEnvironment.Dispose();
+                source.Dispose();
             }
         }
 
@@ -105,6 +113,9 @@ namespace EasyDbMigratorTests.Integrationtests
         [Trait("Category", "Integrationtest")]
         public async Task the_scenario_when_all_the_migration_script_allready_have_been_executed_before()
         {
+            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+
             try
             {
                 var environmentBuilder = new DockerEnvironmentBuilder();
@@ -125,19 +136,22 @@ namespace EasyDbMigratorTests.Integrationtests
                 DbMigrator migrator1 = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
                     , logger: loggerMock.Object
                     , dataTimeHelperMock: datetimeHelperMock1.Object
-                    , databaseConnector: new SqlDbConnector());
+                    , databaseConnector: new MicrosoftSqlConnector());
 
                 List<string> scriptsToExclude = new List<string>();
                 scriptsToExclude.Add("20212230_001_CreateDB.sql");
 
                 migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName, connectionString: connectionString);
+                bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName
+                    , connectionString: connectionString
+                    , cancellationToken: token);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 var type = typeof(HereTheSQLServerScriptsCanBeFound);
 
-                bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type);
+                bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
+                    , cancellationToken: token);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 //now run the migrations again
@@ -150,11 +164,12 @@ namespace EasyDbMigratorTests.Integrationtests
                 DbMigrator migrator2 = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
                    , logger: loggerMockSecondtRun.Object
                    , dataTimeHelperMock: datetimeHelperMock2.Object
-                   , databaseConnector: new SqlDbConnector());
+                   , databaseConnector: new MicrosoftSqlConnector());
 
                 migrator2.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeeded = await migrator2.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type);
+                bool succeeded = await migrator2.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
+                    , cancellationToken: token);
                 _ = succeeded.Should().BeTrue();
 
                 _ = loggerMockSecondtRun
@@ -183,6 +198,67 @@ namespace EasyDbMigratorTests.Integrationtests
             finally
             {
                 _dockerEnvironment.Dispose();
+                source.Dispose();
+            }
+        }
+
+
+        [Fact]
+        [Trait("Category", "Integrationtest")]
+        public async Task can_cancel_the_migration_just_before_the_scripts_will_run()
+        {
+            var environmentBuilder = new DockerEnvironmentBuilder();
+            _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
+
+            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+
+            try
+            {
+                await _dockerEnvironment.Up();
+                var connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
+
+                MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
+                    , databaseName: _databaseName);
+
+                var loggerMock = new Mock<ILogger<DbMigrator>>();
+
+                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+                DateTimeOffset ExecutedDataTime = DateTime.UtcNow;
+
+                _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
+
+                DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+                    , logger: loggerMock.Object
+                    , dataTimeHelperMock: datetimeHelperMock.Object
+                    , databaseConnector: new MicrosoftSqlConnector());
+
+                List<string> scriptsToExclude = new List<string>();
+                scriptsToExclude.Add("20212230_001_CreateDB.sql");
+                migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
+
+                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName
+                    , connectionString: connectionString
+                    , cancellationToken: token);
+                _ = succeededDeleDatabase.Should().BeTrue();
+
+                source.Cancel();
+
+                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound)
+                    , cancellationToken: token);
+                _ = succeededRunningMigrations.Should().BeTrue();
+
+                _ = loggerMock
+                    .CheckIfLoggerWasCalled("Whole migration process was canceled", LogLevel.Warning, Times.Exactly(1), checkExceptionNotNull: false);
+            }
+            catch (Exception ex)
+            {
+                Assert.True(false, ex.ToString());
+            }
+            finally
+            {
+                _dockerEnvironment.Dispose();
+                source.Dispose();
             }
         }
     }

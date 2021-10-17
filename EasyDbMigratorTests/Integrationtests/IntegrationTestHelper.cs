@@ -30,8 +30,6 @@ namespace EasyDbMigratorTests.Integrationtests
             }
         }
 
-        //TODO use sync everywhere with cancellationtoken if works
-
         public bool CheckMigrationsTablePostgresSever(string connectionString,
            List<DbMigrationsRunTest> expectedRows)
         {
@@ -49,5 +47,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 return true;
             }
         }
+
+        //TODO update wiki
     }
 }

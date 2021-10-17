@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyDbMigrator
@@ -127,10 +128,12 @@ namespace EasyDbMigrator
         /// <param name="databaseName">the name of the database u want to drop</param>
         /// <param name="connectionString">the connectionstring to the database-server</param>
         /// <returns></returns>
-        public async Task<bool> TryDeleteDatabaseIfExistAsync(string databaseName, string connectionString)
+        public async Task<bool> TryDeleteDatabaseIfExistAsync(string databaseName, string connectionString, CancellationToken cancellationToken)
         {
 
-            Result<bool> succeeded = await _databaseconnector.TryDeleteDatabaseIfExistAsync(databaseName: databaseName, connectionString: connectionString);
+            Result<bool> succeeded = await _databaseconnector.TryDeleteDatabaseIfExistAsync(databaseName: databaseName
+                , connectionString: connectionString
+                , cancellationToken: cancellationToken);
 
             if (succeeded.IsFailure)
             {
@@ -148,15 +151,22 @@ namespace EasyDbMigrator
         /// </summary>
         /// <param name="typeWhereMigrationsScriptsExists"></param>
         /// <returns></returns>
-        public async Task<bool> TryApplyMigrationsAsync(Type typeOfClassWhereScriptsAreLocated)
+        public async Task<bool> TryApplyMigrationsAsync(Type typeOfClassWhereScriptsAreLocated, CancellationToken cancellationToken)
         {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                _logger.Log(logLevel: LogLevel.Warning, message: $"Whole migration process was canceled");
+                return true;
+            }
+
             _logger.Log(logLevel: LogLevel.Information, message: $"start running migrations for database: {_migrationConfiguration.DatabaseName}");
 
             Result<bool> setupDatabaseSucceeded;
             Result<bool> createVersiongTableSucceeded = new Result<bool>(isSucces: false);
             bool migrationRunwithoutUnknownExceptions = false;
 
-            setupDatabaseSucceeded = await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: _migrationConfiguration);
+            setupDatabaseSucceeded = await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: _migrationConfiguration
+                , cancellationToken: cancellationToken);
 
             if (setupDatabaseSucceeded.IsFailure)
                 _logger.Log(logLevel: LogLevel.Error, exception: setupDatabaseSucceeded.Exception, @"setup database when there is none with default settings: error occurred");
@@ -165,7 +175,8 @@ namespace EasyDbMigrator
 
             if (setupDatabaseSucceeded.IsSuccess)
             {
-                createVersiongTableSucceeded = await TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: _migrationConfiguration);
+                createVersiongTableSucceeded = await TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: _migrationConfiguration
+                    ,cancellationToken: cancellationToken);
 
                 if (createVersiongTableSucceeded.IsFailure)
                     _logger.Log(logLevel: LogLevel.Error, exception: createVersiongTableSucceeded.Exception, @"setup DbMigrationsRun when there is none executed with errors");
@@ -181,7 +192,8 @@ namespace EasyDbMigrator
                     _logger.Log(logLevel: LogLevel.Information, message: $"Total scripts found: {unOrderedScripts.Count}");
 
                     migrationRunwithoutUnknownExceptions = await TryRunAllMigrationScriptsAsync(migrationConfiguration: _migrationConfiguration
-                        , orderedScripts: orderedScriptsWithoutExcludedScripts);
+                        , orderedScripts: orderedScriptsWithoutExcludedScripts
+                        , cancellationToken: cancellationToken);
                 }
             }
 
@@ -205,20 +217,27 @@ namespace EasyDbMigrator
             _excludedScriptList.AddRange(scriptsToExcludeByname);
         }
 
-        private async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration)
+        private async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration
+            , CancellationToken cancellationToken)
         {
-            var result = await _databaseconnector.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: migrationConfiguration);
+            var result = await _databaseconnector.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: migrationConfiguration
+                , cancellationToken: cancellationToken);
+          
             return result;
         }
 
-        private async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExcistAsync(MigrationConfiguration migrationConfiguration)
+        private async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExcistAsync(MigrationConfiguration migrationConfiguration
+            , CancellationToken cancellationToken)
         {
-            var result = await _databaseconnector.TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: migrationConfiguration);
+            var result = await _databaseconnector.TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: migrationConfiguration
+                , cancellationToken: cancellationToken);
+          
             return result;
         }
 
         private async Task<bool> TryRunAllMigrationScriptsAsync(MigrationConfiguration migrationConfiguration
-            , List<Script> orderedScripts)
+            , List<Script> orderedScripts
+            , CancellationToken cancellationToken)
         {
             bool skipBecauseOfErrorWithPreviousScript = false;
             foreach (Script script in orderedScripts)
@@ -233,8 +252,14 @@ namespace EasyDbMigrator
 
                 Result<RunMigrationResult> result = await _databaseconnector.RunDbMigrationScriptWhenNotRunnedBeforeAsync(migrationConfiguration: migrationConfiguration
                     , script: script
-                    , executedDateTime: executedDateTime);
+                    , executedDateTime: executedDateTime
+                    , cancellationToken: cancellationToken);
 
+                if (result.Value == RunMigrationResult.MigrationWasCancelled)
+                {
+                    _logger.Log(logLevel: LogLevel.Warning, message: $"Whole migration process was canceled");
+                    return true;
+                }
                 if (result.Value == RunMigrationResult.MigrationScriptExecuted)
                 {
                     _logger.Log(logLevel: LogLevel.Information, message: $"script: {script.FileName} was run");
