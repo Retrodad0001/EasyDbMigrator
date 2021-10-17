@@ -645,6 +645,79 @@ namespace EasyDbMigrator
         }
 
         [Fact]
+        public async Task when_migration_get_cancelled_from_the_beginning()
+        {
+            const string databaseName = "EasyDbMigrator";
+            using CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+
+            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
+                , databaseName: databaseName);
+
+            Type someType = typeof(DbMigratorTests);
+
+            var loggerMock = new Mock<ILogger<DbMigrator>>();
+
+            Script script1 = new Script("20212230_001_Script1.sql", "some content");
+            Script script2 = new Script("20212230_002_Script2.sql", "some content");
+            Script script3 = new Script("20212230_003_Script3.sql", "some content");
+            List<Script> scripts = new List<Script>();
+            scripts.Add(script1);
+            scripts.Add(script2);
+            scripts.Add(script3);
+
+            var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
+            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+
+            var databaseConnectorMock = new Mock<IDatabaseConnector>();
+
+            _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<string>(),
+             It.IsAny<string>()
+              , It.IsAny<CancellationToken>()
+              )).ReturnsAsync(new Result<bool>(isSucces: true));
+
+            _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
+                 , It.IsAny<CancellationToken>()
+              )).ReturnsAsync(new Result<bool>(isSucces: true));
+
+            _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExcistAsync(It.IsAny<MigrationConfiguration>()
+                 , It.IsAny<CancellationToken>()
+               )).ReturnsAsync(new Result<bool>(isSucces: true));
+
+            _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+                    , It.IsAny<Script>()
+                    , It.IsAny<DateTimeOffset>()
+                    , It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted, exception: null))
+                .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted, exception: null));
+
+            DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+
+            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
+
+            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+                , migrationConfiguration: config
+                , databaseConnectorMock.Object
+                , assemblyResourceHelperMock.Object
+                , dataTimeHelper: datetimeHelperMock.Object);
+
+            source.Cancel();
+
+            _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType, cancellationToken: token);
+
+            _ = loggerMock
+                  .CheckIfLoggerWasCalled("Whole migration process was canceled", LogLevel.Warning, Times.Exactly(1), checkExceptionNotNull: false);
+
+            //check that the 3rd script is skipped because of the error in the previous script so we check here that max 2 db calls are made
+            databaseConnectorMock.Verify(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+                , It.IsAny<Script>()
+                , It.IsAny<DateTimeOffset>()
+                 , It.IsAny<CancellationToken>())
+            , times: Times.Exactly(0));
+        }
+
+        [Fact]
         public async Task when_some_scripts_already_executed_skip_them()
         {
             const string databaseName = "EasyDbMigrator";

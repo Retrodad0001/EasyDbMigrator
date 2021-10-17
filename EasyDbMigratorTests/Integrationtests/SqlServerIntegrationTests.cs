@@ -182,7 +182,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 //version - table should not be updated for the second time
 
 
-                  List < DbMigrationsRunRowSqlServer > expectedRows = new List<DbMigrationsRunRowSqlServer>();
+                List<DbMigrationsRunRowSqlServer> expectedRows = new List<DbMigrationsRunRowSqlServer>();
                 expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
                 expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
 

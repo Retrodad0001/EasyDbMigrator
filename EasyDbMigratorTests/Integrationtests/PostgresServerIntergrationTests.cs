@@ -50,7 +50,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
             try
             {
-               
+
 
                 await _dockerPostgresServerEnvironment.Up();
                 var connectionString = _dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(_databaseName).GetConnectionString();
@@ -61,7 +61,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
-                DateTime ExecutedDataTime = new DateTime(2021,10,17,12,10,10);
+                DateTime ExecutedDataTime = new DateTime(2021, 10, 17, 12, 10, 10);
 
                 _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
@@ -82,7 +82,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 var type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
                 bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
-                    ,cancellationToken: token);
+                    , cancellationToken: token);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 _ = loggerMock
@@ -243,7 +243,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 var type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
-                
+
                 source.Cancel();
 
                 bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
