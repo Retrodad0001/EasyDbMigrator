@@ -16,7 +16,6 @@ namespace EasyDbMigratorTests
 
         }
 
-
         public DbMigrationsRunTest(int id, DateTime executed, string filename, string version)
         {
             Id = id;

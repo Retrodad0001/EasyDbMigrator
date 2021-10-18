@@ -77,12 +77,12 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName
-                    , connectionString: connectionString
+                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound)
+                    , migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
@@ -149,11 +149,11 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName
-                    , connectionString: connectionString);
+                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
-                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound));
+                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound)
+                    , migrationConfiguration: config);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 _ = loggerMock
@@ -218,14 +218,14 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName
-                    , connectionString: connectionString
+                bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 Type type = typeof(HereTheSQLServerScriptsCanBeFound);
 
                 bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
+                    , migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
@@ -244,6 +244,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 migrator2.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeeded = await migrator2.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
+                    , migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeeded.Should().BeTrue();
 
@@ -256,7 +257,6 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 //version - table should not be updated for the second time
 
-
                 List<DbMigrationsRunRowSqlServer> expectedRows = new();
                 expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
                 expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
@@ -264,7 +264,6 @@ namespace EasyDbMigratorTests.Integrationtests
                 _ = new IntegrationTestHelper().CheckMigrationsTableSqlSever(connectionString: connectionString
                  , expectedRows: expectedRows
                  , testDatabaseName: _databaseName);
-
             }
             catch (Exception ex)
             {
@@ -311,16 +310,17 @@ namespace EasyDbMigratorTests.Integrationtests
                 {
                     "20212230_001_CreateDB.sql"
                 };
+
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName
-                    , connectionString: connectionString
+                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 source.Cancel();
 
                 bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound)
+                    , migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeededRunningMigrations.Should().BeTrue();
 

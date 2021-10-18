@@ -285,7 +285,7 @@ dotnet_diagnostic.CA2215.severity = warning
 dotnet_diagnostic.CA1801.severity = warning
 
 # CA1508: Avoid dead conditional code
-dotnet_diagnostic.CA1508.severity = warning
+dotnet_diagnostic.CA1508.severity = silent
 
 # CA1505: Avoid unmaintainable code
 dotnet_diagnostic.CA1505.severity = warning

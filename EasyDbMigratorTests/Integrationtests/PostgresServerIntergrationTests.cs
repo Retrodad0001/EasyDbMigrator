@@ -75,14 +75,14 @@ namespace EasyDbMigratorTests.Integrationtests
                 scriptsToExclude.Add("20212230_001_DoStuffScript.sql");
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName
-                    , connectionString: connectionString
+                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 var type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
                 bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
+                    , migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
@@ -143,13 +143,13 @@ namespace EasyDbMigratorTests.Integrationtests
                 scriptsToExclude.Add("20212230_001_DoStuffScript.sql");
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName
-                    , connectionString: connectionString);
+                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 var type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
-                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type);
+                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
+                    , migrationConfiguration: config);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 _ = loggerMock
@@ -211,14 +211,14 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName
-                    , connectionString: connectionString
+                bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 var type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
                 bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
+                    , migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
@@ -237,6 +237,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 migrator2.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeeded = await migrator2.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
+                    , migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeeded.Should().BeTrue();
 
@@ -303,8 +304,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 scriptsToExclude.Add("20212230_001_DoStuffScript.sql");
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName
-                    , connectionString: connectionString
+                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
@@ -313,6 +313,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 source.Cancel();
 
                 bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
+                    , migrationConfiguration: config
                     , cancellationToken: token);
                 _ = succeededRunningMigrations.Should().BeTrue();
 

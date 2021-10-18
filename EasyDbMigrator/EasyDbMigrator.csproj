@@ -12,8 +12,12 @@
     <RepositoryType>Github</RepositoryType>
     <PackageTags>database, migration, migrator, integration test, update database, CI, CD, SQL, PostgreSQL , CosmosDB, Update , DB</PackageTags>
     <PackageReleaseNotes>-improving inner dev loop : get en run docker image in test instead of manual work
+-can mock EasyDbMigrator when integrate it in your own code (with IEasyDbMigrator)
 -can run PostgreSql scripts in integration-tests
 -can cancel migration from outside with CancellationToken
+-more resilient in configuration and with transient faults
+-fixed memory issue when running transactions 
+-can use easydbmigrator  in DI .Net (IServiceCollection)
 
 For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</PackageReleaseNotes>
     <PackageIcon>Icon.png</PackageIcon>
@@ -27,6 +31,7 @@ For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</P
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
     <PackageReference Include="Npgsql" Version="5.0.10" />
+    <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
     <PackageReference Include="xunit.abstractions" Version="2.0.3" />
   </ItemGroup>

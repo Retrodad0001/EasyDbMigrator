@@ -6,7 +6,6 @@ using Xunit;
 
 namespace EasyDbMigratorTests.Unittests
 {
-
     [ExcludeFromCodeCoverage]
     public class ScriptTests
     {

@@ -7,18 +7,15 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator
 {
-
-    public class DbMigrator
+    public class DbMigrator : IDbMigrator
     {
         private readonly ILogger _logger;
-        private readonly MigrationConfiguration _migrationConfiguration;
         private readonly IDatabaseConnector _databaseconnector;
         private readonly IAssemblyResourceHelper _assemblyResourceHelper;
         private readonly IDataTimeHelper _dataTimeHelper;
         private readonly List<string> _excludedScriptList = new List<string>();
 
         public DbMigrator(ILogger logger
-            , MigrationConfiguration migrationConfiguration
             , IDatabaseConnector databaseconnector
             , IAssemblyResourceHelper assemblyResourceHelper
             , IDataTimeHelper dataTimeHelper)
@@ -27,10 +24,6 @@ namespace EasyDbMigrator
             if (logger is null)
                 throw new ArgumentNullException(nameof(logger));
             _logger = logger;
-
-            if (migrationConfiguration is null)
-                throw new ArgumentNullException(nameof(migrationConfiguration));
-            _migrationConfiguration = migrationConfiguration;
 
             if (databaseconnector is null)
                 throw new ArgumentNullException(nameof(databaseconnector));
@@ -71,7 +64,6 @@ namespace EasyDbMigrator
             }
 
             DbMigrator result = new DbMigrator(logger: logger
-                , migrationConfiguration: migrationConfiguration
                 , databaseconnector: databaseConnector
                 , assemblyResourceHelper: new AssemblyResourceHelper()
                 , dataTimeHelper: new DataTimeHelper());
@@ -112,7 +104,6 @@ namespace EasyDbMigrator
             }
 
             DbMigrator result = new DbMigrator(logger: logger
-               , migrationConfiguration: migrationConfiguration
                , databaseconnector: databaseConnector
                , assemblyResourceHelper: new AssemblyResourceHelper()
                , dataTimeHelper: dataTimeHelperMock);
@@ -129,14 +120,12 @@ namespace EasyDbMigrator
         /// <param name="connectionString">the connection-string to the database-server</param>
         /// <param name="cancellationToken">The cancellation instruction</param>
         /// <returns></returns>
-        public async Task<bool> TryDeleteDatabaseIfExistAsync(string databaseName
-            , string connectionString
+        public virtual async Task<bool> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken = default(CancellationToken))
         {
 
-            Result<bool> succeeded = await _databaseconnector.TryDeleteDatabaseIfExistAsync(databaseName: databaseName
-                , connectionString: connectionString
-                , cancellationToken: cancellationToken);
+            Result<bool> succeeded = await _databaseconnector.TryDeleteDatabaseIfExistAsync(migrationConfiguration: migrationConfiguration
+                , cancellationToken: cancellationToken); ;
 
             if (succeeded.IsFailure)
             {
@@ -155,7 +144,8 @@ namespace EasyDbMigrator
         /// <param name="typeWhereMigrationsScriptsExists"></param>
         /// <param name="cancellationToken">The cancellation instruction</param>
         /// <returns></returns>
-        public async Task<bool> TryApplyMigrationsAsync(Type typeOfClassWhereScriptsAreLocated
+        public virtual async Task<bool> TryApplyMigrationsAsync(Type typeOfClassWhereScriptsAreLocated
+            , MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken = default(CancellationToken))
         {
             if (cancellationToken.IsCancellationRequested)
@@ -164,13 +154,13 @@ namespace EasyDbMigrator
                 return true;
             }
 
-            _logger.Log(logLevel: LogLevel.Information, message: $"start running migrations for database: {_migrationConfiguration.DatabaseName}");
+            _logger.Log(logLevel: LogLevel.Information, message: $"start running migrations for database: {migrationConfiguration.DatabaseName}");
 
             Result<bool> setupDatabaseSucceeded;
             Result<bool> createVersiongTableSucceeded = new Result<bool>(isSucces: false);
             bool migrationRunwithoutUnknownExceptions = false;
 
-            setupDatabaseSucceeded = await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: _migrationConfiguration
+            setupDatabaseSucceeded = await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: migrationConfiguration
                 , cancellationToken: cancellationToken);
 
             if (setupDatabaseSucceeded.IsFailure)
@@ -180,7 +170,7 @@ namespace EasyDbMigrator
 
             if (setupDatabaseSucceeded.IsSuccess)
             {
-                createVersiongTableSucceeded = await TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: _migrationConfiguration
+                createVersiongTableSucceeded = await TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: migrationConfiguration
                     ,cancellationToken: cancellationToken);
 
                 if (createVersiongTableSucceeded.IsFailure)
@@ -196,7 +186,7 @@ namespace EasyDbMigrator
 
                     _logger.Log(logLevel: LogLevel.Information, message: $"Total scripts found: {unOrderedScripts.Count}");
 
-                    migrationRunwithoutUnknownExceptions = await TryRunAllMigrationScriptsAsync(migrationConfiguration: _migrationConfiguration
+                    migrationRunwithoutUnknownExceptions = await TryRunAllMigrationScriptsAsync(migrationConfiguration: migrationConfiguration
                         , orderedScripts: orderedScriptsWithoutExcludedScripts
                         , cancellationToken: cancellationToken);
                 }
@@ -216,7 +206,7 @@ namespace EasyDbMigrator
         /// Specificity the scripts (by name) what u want to exclude from the migration run
         /// </summary>
         /// <param name="scriptsToExclude"></param>
-        public void ExcludeTheseScriptsInRun(List<string> scriptsToExcludeByname)
+        public virtual void ExcludeTheseScriptsInRun(List<string> scriptsToExcludeByname)
         {
             _excludedScriptList.AddRange(scriptsToExcludeByname);
         }

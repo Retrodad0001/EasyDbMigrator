@@ -16,7 +16,6 @@ namespace EasyDbMigratorTests
 
         }
 
-
         public DbMigrationsRunRowSqlServer(int id, DateTimeOffset executed, string filename, string version)
         {
             Id = id;

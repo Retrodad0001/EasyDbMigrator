@@ -1,14 +1,19 @@
 # Latest news 
 
-## working on : milestone:1.2.0
+## working on milestone: 1.3.0 (next release)
+- support also .net core 6 LTS (https://github.com/Retrodad0001/EasyDbMigrator/issues/8)
+- can run SQL migrations manual with commandline runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/17)
+- can run PostgreSQL migrations manual with commandline runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/20)
 
-- [DONE] speedup the inner development loop by getting the docker-image and running it in the integration tests (with examples)
-- [BUSY] Can use DbMigrator in .net Dependency injection (IServiceCollection) (https://github.com/Retrodad0001/EasyDbMigrator/issues/21)
-- [DONE] Can cancel the process from outside (https://github.com/Retrodad0001/EasyDbMigrator/issues/22)
-- [BUSY] Make executions and configuration more resilient (https://github.com/Retrodad0001/EasyDbMigrator/issues/4)
-- [DONE] support PostgreSQL migrations in your integration test (https://github.com/Retrodad0001/EasyDbMigrator/issues/6)
+## 1.2.0 (latest release):
+- speedup the inner development loop by getting the docker-image and running it in the integration tests (with examples)
+- can mock EasyDbMigrator when u want to integrate it in your own code
+- can use DbMigrator in .net Dependency injection (IServiceCollection) (https://github.com/Retrodad0001/EasyDbMigrator/issues/21)
+- can cancel the process from outside (https://github.com/Retrodad0001/EasyDbMigrator/issues/22)
+- make executions and configuration more resilient (https://github.com/Retrodad0001/EasyDbMigrator/issues/4)
+- support PostgreSQL migrations in your integration test (https://github.com/Retrodad0001/EasyDbMigrator/issues/6)
  
-## 1.1.0 :
+## 1.1.0
  - added support for .net core 3.1 (until LTS ends) and .net 5 (until support ends)
  - updated .net packages
  - updated external packages
@@ -77,12 +82,15 @@ It has a Command-line client for managing migrations and a framework written for
                   , databaseConnector: new MicrosoftSqlConnector()); 
             //can also use the PostgresSqlConnector to connect to Postgress instead of Microsoft Sql Server
 
-            bool succesDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: databaseame, connectionString: _connectionStringForDBMigrator);
-            _ = succesDeleteDatabase.Should().BeTrue();
-            
-            bool succesApplyMigrations = await migrator.TryApplyMigrationsAsync(typeof(MigrationLocation));
-            _ = succesApplyMigrations.Should().BeTrue();
+            bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
+                    , cancellationToken: token);
+                _ = succeededDeleDatabase.Should().BeTrue();
 
+            bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound)
+                    , migrationConfiguration: config
+                    , cancellationToken: token);
+                _ = succeededRunningMigrations.Should().BeTrue();
+            
             //download the code if u want to see examples of integration testing with easyDbMigrator
         }
 
