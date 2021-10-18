@@ -12,8 +12,7 @@ using TestEnvironment.Docker;
 using TestEnvironment.Docker.Containers.Mssql;
 using ExampleTestLibWithSqlServerScripts;
 using System.Threading;
-
-//TODO optimize make test run parallel postgre integration tests & sqlserver integration tests
+using EasyDbMigratorTests.Integrationtests.Helpers;
 
 namespace EasyDbMigratorTests.Integrationtests
 {
@@ -29,7 +28,9 @@ namespace EasyDbMigratorTests.Integrationtests
         private DockerEnvironment SetupDockerTestEnvironment(DockerEnvironmentBuilder environmentBuilder)
         {
             if (_dockerEnvironment != null)
+            {
                 return _dockerEnvironment;
+            }
 
             _ports.Add(1433, 1433);
             return environmentBuilder.UseDefaultNetwork()
@@ -41,25 +42,25 @@ namespace EasyDbMigratorTests.Integrationtests
 
         [Fact]
         [Trait("Category", "Integrationtest")]
-        public async Task the_scenario_when_nothing_goes_wrong_with_running_migrations_on_an_empty_database()
+        public async Task the_scenario_when_nothing_goes_wrong_with_running_migrations_on_an_empty_database_with_cancellationToken()
         {
-            var environmentBuilder = new DockerEnvironmentBuilder();
+            DockerEnvironmentBuilder environmentBuilder = new();
             _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
 
-            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationTokenSource source = new();
             CancellationToken token = source.Token;
 
             try
             {
                 await _dockerEnvironment.Up();
-                var connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
+                string connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
+                MigrationConfiguration config = new(connectionString: connectionString
                     , databaseName: _databaseName);
 
-                var loggerMock = new Mock<ILogger<DbMigrator>>();
+                Mock<ILogger<DbMigrator>> loggerMock = new();
 
-                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> datetimeHelperMock = new();
                 DateTimeOffset ExecutedDataTime = DateTime.UtcNow;
 
                 _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
@@ -69,8 +70,11 @@ namespace EasyDbMigratorTests.Integrationtests
                     , dataTimeHelperMock: datetimeHelperMock.Object
                     , databaseConnector: new MicrosoftSqlConnector());
 
-                List<string> scriptsToExclude = new List<string>();
-                scriptsToExclude.Add("20212230_001_CreateDB.sql");
+                List<string> scriptsToExclude = new()
+                {
+                    "20212230_001_CreateDB.sql"
+                };
+
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName
@@ -89,9 +93,11 @@ namespace EasyDbMigratorTests.Integrationtests
                     .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
 
-                List<DbMigrationsRunRowSqlServer> expectedRows = new List<DbMigrationsRunRowSqlServer>();
-                expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
-                expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
+                List<DbMigrationsRunRowSqlServer> expectedRows = new()
+                {
+                    new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"),
+                    new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0")
+                };
 
                 _ = new IntegrationTestHelper().CheckMigrationsTableSqlSever(connectionString: connectionString
                   , expectedRows: expectedRows
@@ -111,24 +117,93 @@ namespace EasyDbMigratorTests.Integrationtests
 
         [Fact]
         [Trait("Category", "Integrationtest")]
+        public async Task the_scenario_when_nothing_goes_wrong_with_running_migrations_on_an_empty_database_without_cancellationToken()
+        {
+            DockerEnvironmentBuilder environmentBuilder = new();
+            _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
+
+            try
+            {
+                await _dockerEnvironment.Up();
+                string connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
+
+                MigrationConfiguration config = new(connectionString: connectionString
+                    , databaseName: _databaseName);
+
+                Mock<ILogger<DbMigrator>> loggerMock = new();
+
+                Mock<IDataTimeHelper> datetimeHelperMock = new();
+                DateTimeOffset ExecutedDataTime = DateTime.UtcNow;
+
+                _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
+
+                DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+                    , logger: loggerMock.Object
+                    , dataTimeHelperMock: datetimeHelperMock.Object
+                    , databaseConnector: new MicrosoftSqlConnector());
+
+                List<string> scriptsToExclude = new()
+                {
+                    "20212230_001_CreateDB.sql"
+                };
+
+                migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
+
+                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName
+                    , connectionString: connectionString);
+                _ = succeededDeleDatabase.Should().BeTrue();
+
+                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound));
+                _ = succeededRunningMigrations.Should().BeTrue();
+
+                _ = loggerMock
+                    .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync has executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
+
+                List<DbMigrationsRunRowSqlServer> expectedRows = new()
+                {
+                    new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"),
+                    new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0")
+                };
+
+                _ = new IntegrationTestHelper().CheckMigrationsTableSqlSever(connectionString: connectionString
+                  , expectedRows: expectedRows
+                  , testDatabaseName: _databaseName);
+
+            }
+            catch (Exception ex)
+            {
+                Assert.True(false, ex.ToString());
+            }
+            finally
+            {
+                _dockerEnvironment.Dispose();
+            }
+        }
+
+        [Fact]
+        [Trait("Category", "Integrationtest")]
         public async Task the_scenario_when_all_the_migration_script_allready_have_been_executed_before()
         {
-            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationTokenSource source = new();
             CancellationToken token = source.Token;
 
             try
             {
-                var environmentBuilder = new DockerEnvironmentBuilder();
+                DockerEnvironmentBuilder environmentBuilder = new();
                 _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
                 await _dockerEnvironment.Up();
-                var connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
+                string connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
+                MigrationConfiguration config = new(connectionString: connectionString
                     , databaseName: _databaseName);
 
-                var loggerMock = new Mock<ILogger<DbMigrator>>();
+                Mock<ILogger<DbMigrator>> loggerMock = new();
 
-                Mock<IDataTimeHelper> datetimeHelperMock1 = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> datetimeHelperMock1 = new();
                 DateTimeOffset ExecutedFirsttimeDataTime = DateTimeOffset.UtcNow;
 
                 _ = datetimeHelperMock1.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedFirsttimeDataTime);
@@ -138,7 +213,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     , dataTimeHelperMock: datetimeHelperMock1.Object
                     , databaseConnector: new MicrosoftSqlConnector());
 
-                List<string> scriptsToExclude = new List<string>();
+                List<string> scriptsToExclude = new();
                 scriptsToExclude.Add("20212230_001_CreateDB.sql");
 
                 migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
@@ -148,17 +223,17 @@ namespace EasyDbMigratorTests.Integrationtests
                     , cancellationToken: token);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
-                var type = typeof(HereTheSQLServerScriptsCanBeFound);
+                Type type = typeof(HereTheSQLServerScriptsCanBeFound);
 
                 bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
                     , cancellationToken: token);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 //now run the migrations again
-                var loggerMockSecondtRun = new Mock<ILogger<DbMigrator>>();
-                DateTime ExecutedSecondtimeDataTime = new DateTime(2021, 12, 31, 2, 16, 1);
+                Mock<ILogger<DbMigrator>> loggerMockSecondtRun = new();
+                DateTime ExecutedSecondtimeDataTime = new(2021, 12, 31, 2, 16, 1);
 
-                Mock<IDataTimeHelper> datetimeHelperMock2 = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> datetimeHelperMock2 = new();
                 _ = datetimeHelperMock2.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedSecondtimeDataTime);
 
                 DbMigrator migrator2 = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
@@ -182,7 +257,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 //version - table should not be updated for the second time
 
 
-                List<DbMigrationsRunRowSqlServer> expectedRows = new List<DbMigrationsRunRowSqlServer>();
+                List<DbMigrationsRunRowSqlServer> expectedRows = new();
                 expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
                 expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
 
@@ -202,28 +277,27 @@ namespace EasyDbMigratorTests.Integrationtests
             }
         }
 
-
         [Fact]
         [Trait("Category", "Integrationtest")]
         public async Task can_cancel_the_migration_just_before_the_scripts_will_run()
         {
-            var environmentBuilder = new DockerEnvironmentBuilder();
+            DockerEnvironmentBuilder environmentBuilder = new();
             _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
 
-            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationTokenSource source = new();
             CancellationToken token = source.Token;
 
             try
             {
                 await _dockerEnvironment.Up();
-                var connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
+                string connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
+                MigrationConfiguration config = new(connectionString: connectionString
                     , databaseName: _databaseName);
 
-                var loggerMock = new Mock<ILogger<DbMigrator>>();
+                Mock<ILogger<DbMigrator>> loggerMock = new();
 
-                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> datetimeHelperMock = new();
                 DateTimeOffset ExecutedDataTime = DateTime.UtcNow;
 
                 _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
@@ -233,8 +307,10 @@ namespace EasyDbMigratorTests.Integrationtests
                     , dataTimeHelperMock: datetimeHelperMock.Object
                     , databaseConnector: new MicrosoftSqlConnector());
 
-                List<string> scriptsToExclude = new List<string>();
-                scriptsToExclude.Add("20212230_001_CreateDB.sql");
+                List<string> scriptsToExclude = new()
+                {
+                    "20212230_001_CreateDB.sql"
+                };
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: _databaseName

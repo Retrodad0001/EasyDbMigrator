@@ -14,7 +14,9 @@
  - updated external packages
  - updated to latest .net 3.1.x and 5.0.x with security updates
 
-The software can only be used for integrationtesting. Running manual migrations and using it in CI/CD pipelines is under-construction
+The software can only be used for integration-testing. Running manual migrations and using it in CI/CD pipelines is under-construction. 
+It is possible to use EasyDbMigrator in your own application.
+
 # INFO:
 
 ### Builds:
@@ -53,12 +55,14 @@ It has a Command-line client for managing migrations and a framework written for
 
         private async Task RunMigrations()
         {
+            //int the code u find some more advanced examples including setting up docker containers automatically in code
+
             //Make sure u use the correct naming in your scripts like:
             // 20210926_001_AddEquipmentTable.sql --> script are ordered by date and then per sequence number. in this case '001' is the sequence number
             //Make sure to set the BUILD-ACTION property of every migration sql script to EMBEDDED RESOURCE
             const string databaseame = "WorkoutIntegrationTests";
             
-            //Make sure that the 'Database =  xxxx;' param is excluded in the connectionstring
+            //Make sure that the 'Database =  xxxx;' param is excluded in the connection-string
             const string connectionstring = "some fancy connectionstring without database param";
             MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring, databaseName: databaseName);
 
@@ -68,8 +72,10 @@ It has a Command-line client for managing migrations and a framework written for
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
 
             DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
-                , logger: logger
-                , dataTimeHelperMock: datetimeHelperMock.Object);
+                  , logger: loggerMock.Object
+                  , dataTimeHelperMock: datetimeHelperMock.Object
+                  , databaseConnector: new MicrosoftSqlConnector()); 
+            //can also use the PostgresSqlConnector to connect to Postgress instead of Microsoft Sql Server
 
             bool succesDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(databaseName: databaseame, connectionString: _connectionStringForDBMigrator);
             _ = succesDeleteDatabase.Should().BeTrue();

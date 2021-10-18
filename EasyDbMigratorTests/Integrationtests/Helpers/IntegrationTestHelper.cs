@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 
-namespace EasyDbMigratorTests.Integrationtests
+namespace EasyDbMigratorTests.Integrationtests.Helpers
 {
     [ExcludeFromCodeCoverage]
     public class IntegrationTestHelper
@@ -47,7 +47,5 @@ namespace EasyDbMigratorTests.Integrationtests
                 return true;
             }
         }
-
-        //TODO update wiki
     }
 }

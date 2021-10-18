@@ -121,14 +121,17 @@ namespace EasyDbMigrator
         }
 
         /// <summary>
-        /// If the database exist( specified by the param databasename) 
+        /// If the database exist( specified by the parameter databasename) 
         /// it will rollback all the transactions and drop the database. 
         /// Use this only for testing in non-production environments !
         /// </summary>
         /// <param name="databaseName">the name of the database u want to drop</param>
-        /// <param name="connectionString">the connectionstring to the database-server</param>
+        /// <param name="connectionString">the connection-string to the database-server</param>
+        /// <param name="cancellationToken">The cancellation instruction</param>
         /// <returns></returns>
-        public async Task<bool> TryDeleteDatabaseIfExistAsync(string databaseName, string connectionString, CancellationToken cancellationToken)
+        public async Task<bool> TryDeleteDatabaseIfExistAsync(string databaseName
+            , string connectionString
+            , CancellationToken cancellationToken = default(CancellationToken))
         {
 
             Result<bool> succeeded = await _databaseconnector.TryDeleteDatabaseIfExistAsync(databaseName: databaseName
@@ -150,8 +153,10 @@ namespace EasyDbMigrator
         /// assembly where the type (see param typeOfClassWhereScriptsAreLocated) exist
         /// </summary>
         /// <param name="typeWhereMigrationsScriptsExists"></param>
+        /// <param name="cancellationToken">The cancellation instruction</param>
         /// <returns></returns>
-        public async Task<bool> TryApplyMigrationsAsync(Type typeOfClassWhereScriptsAreLocated, CancellationToken cancellationToken)
+        public async Task<bool> TryApplyMigrationsAsync(Type typeOfClassWhereScriptsAreLocated
+            , CancellationToken cancellationToken = default(CancellationToken))
         {
             if (cancellationToken.IsCancellationRequested)
             {
@@ -207,7 +212,6 @@ namespace EasyDbMigrator
             return true;
         }
           
-
         /// <summary>
         /// Specificity the scripts (by name) what u want to exclude from the migration run
         /// </summary>
@@ -286,6 +290,7 @@ namespace EasyDbMigrator
             var result = scripts.Where(p => !excludedscripts.Any(x => x == p.FileName)).ToList();
             return result;
         }
+
         private List<Script> SetScriptsInCorrectSequence(List<Script> scripts)
         {
             return scripts.OrderBy(s => s.DatePartOfName)
