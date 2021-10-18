@@ -80,7 +80,7 @@ It has a Command-line client for managing migrations and a framework written for
                   , logger: loggerMock.Object
                   , dataTimeHelperMock: datetimeHelperMock.Object
                   , databaseConnector: new MicrosoftSqlConnector()); 
-            //can also use the PostgresSqlConnector to connect to Postgress instead of Microsoft Sql Server
+            //can also use the PostgresSqlConnector to connect to PostgreSql instead of Microsoft Sql Server
 
             bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
                     , cancellationToken: token);
