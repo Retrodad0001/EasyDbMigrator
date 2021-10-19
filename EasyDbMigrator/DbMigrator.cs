@@ -155,6 +155,7 @@ namespace EasyDbMigrator
             }
 
             _logger.Log(logLevel: LogLevel.Information, message: $"start running migrations for database: {migrationConfiguration.DatabaseName}");
+            _logger.Log(logLevel: LogLevel.Information, message: $"connection-string used: {migrationConfiguration.ConnectionString}");
 
             Result<bool> setupDatabaseSucceeded;
             Result<bool> createVersiongTableSucceeded = new Result<bool>(isSucces: false);

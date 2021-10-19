@@ -124,7 +124,6 @@ namespace EasyDbMigrator.DatabaseConnectors
                     _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken);
 
                     await transaction.CommitAsync(cancellationToken);
-
                     await transaction.DisposeAsync();
 
                     return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted);

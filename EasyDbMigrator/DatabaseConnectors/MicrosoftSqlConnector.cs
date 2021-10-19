@@ -121,11 +121,8 @@ namespace EasyDbMigrator
                     _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken: cancellationToken);
                     _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken: cancellationToken);
 
-                    if (transaction != null)
-                    {
-                        await transaction.CommitAsync(cancellationToken);
-                        await transaction.DisposeAsync();
-                    }
+                    await transaction.CommitAsync(cancellationToken);
+                    await transaction.DisposeAsync();
 
                     return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted);
                 });

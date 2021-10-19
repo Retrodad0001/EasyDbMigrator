@@ -272,8 +272,9 @@ namespace EasyDbMigrator
             CancellationToken token = source.Token;
 
             const string databaseName = "EasyDbMigrator";
+            const string connectionString = "someconnectionstring";
 
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
+            MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
                 , databaseName: databaseName);
 
             Type someType = typeof(DbMigratorTests);
@@ -323,6 +324,7 @@ namespace EasyDbMigrator
 
             _ = loggerMock
                 .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled($"connection-string used: {connectionString}", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("Total scripts found: 2", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)

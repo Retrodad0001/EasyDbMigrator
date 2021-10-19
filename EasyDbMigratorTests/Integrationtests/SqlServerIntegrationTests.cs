@@ -17,7 +17,7 @@ using EasyDbMigratorTests.Integrationtests.Helpers;
 namespace EasyDbMigratorTests.Integrationtests
 {
     [ExcludeFromCodeCoverage]
-    [Collection(nameof(SqlServerclassNotRunParallel))]
+    [Collection(nameof(NotRunParallel))]
     public class SqlServerIntegrationTests
     {
         private const string _databaseName = "EasyDbMigratorSqlServer";

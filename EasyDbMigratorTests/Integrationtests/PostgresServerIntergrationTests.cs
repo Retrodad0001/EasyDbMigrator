@@ -18,7 +18,7 @@ using Xunit;
 namespace EasyDbMigratorTests.Integrationtests
 {
     [ExcludeFromCodeCoverage]
-    [Collection(nameof(PostgresServerclassNotRunParallel))]
+    [Collection(nameof(NotRunParallel))]
     public class PostgresServerIntergrationTests
     {
         private const string _databaseName = "EasyDbMigratorPostgresServer";
