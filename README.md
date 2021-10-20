@@ -1,9 +1,9 @@
 # The Latest news 
 
 ## working on milestone: 1.3.0 (next release)
-- support for 6 LTS (https://github.com/Retrodad0001/EasyDbMigrator/issues/8)
-- can run SQL migrations manual with command line runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/17)
-- can run PostgreSQL migrations manual with command line runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/20)
+- support for .net 6 LTS (https://github.com/Retrodad0001/EasyDbMigrator/issues/8)
+- can manual run SQL migrations with command line runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/17)
+- can manual run PostgreSQL migrations with command line runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/20)
 
 ## 1.2.0 (the latest release):
 - speedup the inner development loop by getting the docker-image and running it in the integration tests (with examples)
