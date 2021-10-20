@@ -1,11 +1,11 @@
-# Latest news 
+# The Latest news 
 
 ## working on milestone: 1.3.0 (next release)
-- support also .net core 6 LTS (https://github.com/Retrodad0001/EasyDbMigrator/issues/8)
-- can run SQL migrations manual with commandline runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/17)
-- can run PostgreSQL migrations manual with commandline runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/20)
+- support for 6 LTS (https://github.com/Retrodad0001/EasyDbMigrator/issues/8)
+- can run SQL migrations manual with command line runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/17)
+- can run PostgreSQL migrations manual with command line runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/20)
 
-## 1.2.0 (latest release):
+## 1.2.0 (the latest release):
 - speedup the inner development loop by getting the docker-image and running it in the integration tests (with examples)
 - can mock EasyDbMigrator when u want to integrate it in your own code
 - can use DbMigrator in .net Dependency injection (IServiceCollection) (https://github.com/Retrodad0001/EasyDbMigrator/issues/21)
@@ -14,7 +14,7 @@
 - support PostgreSQL migrations in your integration test (https://github.com/Retrodad0001/EasyDbMigrator/issues/6)
  
 ## 1.1.0
- - added support for .net core 3.1 (until LTS ends) and .net 5 (until support ends)
+ - support for .net core 3.1 (until LTS ends) and .net 5 (until support ends)
  - updated .net packages
  - updated external packages
  - updated to latest .net 3.1.x and 5.0.x with security updates
@@ -43,11 +43,11 @@ It is possible to use EasyDbMigrator in your own application.
 
 ## What is EasyDBMigrator?
 
-EasyDBMigrator is an open-source sql database migration framework & Tool. It strongly favors simplicity and easy to use for automatic CI/CD strategies and local integration testing scenario's. 
+EasyDBMigrator is an open-source SQL database migration framework & Tool. It strongly favors simplicity and easy to use for automatic CI/CD strategies and local integration testing scenario's. 
 
 It has a Command-line client for managing migrations and a framework written for .net to integrate database migrations in local en CI pipeline based integration testing scenario's.
     
-## Wat we want to accomplish ?
+## What we want to accomplish ?
 
 1. Make it easy to integrate SQL migrations in your local integration tests (written in .NET)
 2. Make it easy to integrate SQL migrations in your CI/CD flows (runner)
