@@ -1,7 +1,8 @@
 # The Latest news 
 
 ## working on milestone: 1.3.0 (next release)
-- [busy] Can customize the script sequence pattern so i can use it with my current scripts (https://github.com/Retrodad0001/EasyDbMigrator/issues/24)
+- [busy] can use a file directory for my scripts (https://github.com/Retrodad0001/EasyDbMigrator/issues/25)
+- [busy] can customize the script sequence pattern so i can use it with my current scripts (https://github.com/Retrodad0001/EasyDbMigrator/issues/24)
 - [busy] support for .net 6 LTS (https://github.com/Retrodad0001/EasyDbMigrator/issues/8)
 - [busy] can manual run SQL migrations with command line runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/17)
 - [busy] can manual run PostgreSQL migrations with command line runner (https://github.com/Retrodad0001/EasyDbMigrator/issues/20)
