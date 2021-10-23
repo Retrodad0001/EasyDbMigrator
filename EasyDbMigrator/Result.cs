@@ -8,7 +8,7 @@ namespace EasyDbMigrator
         public bool IsFailure => !IsSuccess;
         public bool IsSuccess { get; private set; }
         public Exception? Exception { get; private set; }
-        public T Value { get; private set; }
+        public T Value { get; private set; }//TODO change T to nullable field when .net 3.1 not supported, remove warnings
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public Result(bool isSucces, Exception? exception = null)
@@ -21,7 +21,7 @@ namespace EasyDbMigrator
             Exception = exception;
         }
 
-        public Result(bool isSucces, T value, Exception? exception = null)
+        public Result(bool isSucces, T value, Exception? exception = null)//TODO change T to nullable field when .net 3.1 not supported
         {
             IsSuccess = isSucces;
             Value = value;

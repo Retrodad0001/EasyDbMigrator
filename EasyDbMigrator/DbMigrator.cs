@@ -255,7 +255,7 @@ namespace EasyDbMigrator
                     _logger.Log(logLevel: LogLevel.Warning, message: $"Whole migration process was canceled");
                     return true;
                 }
-                if (result.Value == RunMigrationResult.MigrationScriptExecuted)
+                else if (result.Value == RunMigrationResult.MigrationScriptExecuted)
                 {
                     _logger.Log(logLevel: LogLevel.Information, message: $"script: {script.FileName} was run");
                 }

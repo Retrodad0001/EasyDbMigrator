@@ -4,28 +4,23 @@
     <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.2.1</Version>
+    <Version>1.2.2</Version>
     <PackageId>Retrodad.EasyDbMigrator</PackageId>
     <Description>EasyDbMigrator is a database migration framework written in C#. It can be used for integration testing on your local machine or in CI/CD Pipelines or for manual migrations.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Retrodad0001/EasyDbMigrator</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
     <PackageTags>database, migration, migrator, integration test, update database, CI, CD, SQL, PostgreSQL , CosmosDB, Update , DB</PackageTags>
-    <PackageReleaseNotes>-improving inner dev loop : get en run docker image in test instead of manual work
--can mock EasyDbMigrator when integrate it in your own code (with IEasyDbMigrator)
--can run PostgreSql scripts in integration-tests
--can cancel migration from outside with CancellationToken
--more resilient in configuration and with transient faults
--fixed memory issue when running transactions 
--can use easydbmigrator  in DI .Net (IServiceCollection)
+    <PackageReleaseNotes>-log what script was not run (when exeption occurs during executing the script)
+-better exceptionhandeling including more feedback to the use
 
 For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</PackageReleaseNotes>
     <PackageIcon>Icon.png</PackageIcon>
     <PackageIconUrl />
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <Authors>Retrodad0001</Authors>
-    <AssemblyVersion>1.2.0.1</AssemblyVersion>
-    <FileVersion>1.1.0.1</FileVersion>
+    <AssemblyVersion>1.2.0.2</AssemblyVersion>
+    <FileVersion>1.2.0.2</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

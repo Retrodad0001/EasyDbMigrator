@@ -133,8 +133,20 @@ namespace EasyDbMigrator
             {
                 if (transaction != null)
                 {
-                    await transaction.RollbackAsync(cancellationToken: cancellationToken);
-                    await transaction.DisposeAsync();
+                    try
+                    {
+                        await transaction.RollbackAsync(cancellationToken: cancellationToken);
+                        await transaction.DisposeAsync();
+                        return new Result<RunMigrationResult>(isSucces: true
+                            , RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted
+                            , exception: ex);
+                    }
+                    catch (Exception ex2)
+                    {
+                        return new Result<RunMigrationResult>(isSucces: true
+                            , RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted
+                            , exception: new ApplicationException($"{ex} + {ex2.Message}"));
+                    }
                 }
 
                 return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted, ex);
