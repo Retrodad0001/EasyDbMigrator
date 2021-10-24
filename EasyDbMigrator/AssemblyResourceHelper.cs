@@ -10,7 +10,7 @@ namespace EasyDbMigrator
     [ExcludeFromCodeCoverage] //is tested with integrationtest
     public class AssemblyResourceHelper : IAssemblyResourceHelper
     {
-        public string[] TryGetListOfResourceNamesFromAssembly(Type typeOfClassWhereScriptsAreLocated)
+        public static string[] TryGetListOfResourceNamesFromAssembly(Type typeOfClassWhereScriptsAreLocated)
         {
             Assembly? assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
 
@@ -54,7 +54,7 @@ namespace EasyDbMigrator
             return scripts;
         }
 
-        private string RemoveTheNamespaceFromName(string filename)
+        private static string RemoveTheNamespaceFromName(string filename)
         {
             string[] split = filename.Split(".");
             string filenameWithNoNamespaces = split[^2] + "." + split[^1];

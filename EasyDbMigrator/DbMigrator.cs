@@ -276,13 +276,13 @@ namespace EasyDbMigrator
                 return true;
         }
 
-        private List<Script> RemoveExcludedScripts(List<Script> scripts, List<string> excludedscripts)
+        private static List<Script> RemoveExcludedScripts(List<Script> scripts, List<string> excludedscripts)
         {
             var result = scripts.Where(p => !excludedscripts.Any(x => x == p.FileName)).ToList();
             return result;
         }
 
-        private List<Script> SetScriptsInCorrectSequence(List<Script> scripts)
+        private static List<Script> SetScriptsInCorrectSequence(List<Script> scripts)
         {
             return scripts.OrderBy(s => s.DatePartOfName)
                 .ThenBy(s => s.SequenceNumberPart).ToList();

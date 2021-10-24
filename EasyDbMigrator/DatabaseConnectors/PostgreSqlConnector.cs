@@ -10,7 +10,7 @@ namespace EasyDbMigrator.DatabaseConnectors
     [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
     public class PostgreSqlConnector : IDatabaseConnector
     {
-        private AsyncPolicy _postgreSqlDatabasePolicy = Policy.Handle<Exception>()
+        private readonly AsyncPolicy _postgreSqlDatabasePolicy = Policy.Handle<Exception>()
              .WaitAndRetryAsync(retryCount: 3
             , sleepDurationProvider: times => TimeSpan.FromSeconds(times * 1));
 
@@ -133,7 +133,9 @@ namespace EasyDbMigrator.DatabaseConnectors
             }
             catch (Exception ex)
             {
+#pragma warning disable CA1508 // Avoid dead conditional code
                 if (transaction != null)
+#pragma warning restore CA1508 // Avoid dead conditional code
                 {
                     try
                     {

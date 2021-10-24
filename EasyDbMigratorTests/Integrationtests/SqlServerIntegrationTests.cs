@@ -1,18 +1,18 @@
 ﻿using EasyDbMigrator;
+using EasyDbMigratorTests.Integrationtests.Helpers;
+using EasyDbMigratorTests.Integrationtests.TestHelpers;
+using ExampleTestLibWithSqlServerScripts;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
-using Moq;
-using EasyDbMigratorTests.Integrationtests.TestHelpers;
-using FluentAssertions;
 using TestEnvironment.Docker;
 using TestEnvironment.Docker.Containers.Mssql;
-using ExampleTestLibWithSqlServerScripts;
-using System.Threading;
-using EasyDbMigratorTests.Integrationtests.Helpers;
+using Xunit;
 
 namespace EasyDbMigratorTests.Integrationtests
 {
@@ -99,7 +99,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0")
                 };
 
-                _ = new IntegrationTestHelper().CheckMigrationsTableSqlSever(connectionString: connectionString
+                _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString: connectionString
                   , expectedRows: expectedRows
                   , testDatabaseName: _databaseName);
 
@@ -169,7 +169,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0")
                 };
 
-                _ = new IntegrationTestHelper().CheckMigrationsTableSqlSever(connectionString: connectionString
+                _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString: connectionString
                   , expectedRows: expectedRows
                   , testDatabaseName: _databaseName);
 
@@ -261,9 +261,9 @@ namespace EasyDbMigratorTests.Integrationtests
                 expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
                 expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
 
-                _ = new IntegrationTestHelper().CheckMigrationsTableSqlSever(connectionString: connectionString
-                 , expectedRows: expectedRows
-                 , testDatabaseName: _databaseName);
+                _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString: connectionString
+                , expectedRows: expectedRows
+                , testDatabaseName: _databaseName);
             }
             catch (Exception ex)
             {

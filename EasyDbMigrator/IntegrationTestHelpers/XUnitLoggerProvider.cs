@@ -22,6 +22,7 @@ namespace WorkoutIntegrationTest
 
         public void Dispose()
         {
+            //nothing to dispose here
         }
     }
 }

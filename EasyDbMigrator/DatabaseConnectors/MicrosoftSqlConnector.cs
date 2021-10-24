@@ -11,7 +11,7 @@ namespace EasyDbMigrator
     [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
     public class MicrosoftSqlConnector : IDatabaseConnector
     {
-        private AsyncPolicy _sqlDatabasePolicy = Policy.Handle<Exception>()
+        private readonly AsyncPolicy _sqlDatabasePolicy = Policy.Handle<Exception>()
             .WaitAndRetryAsync(retryCount: 3
             , sleepDurationProvider: times =>  TimeSpan.FromSeconds(times * 1));
 
@@ -121,7 +121,9 @@ namespace EasyDbMigrator
                     _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken: cancellationToken);
                     _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken: cancellationToken);
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                     await transaction.CommitAsync(cancellationToken);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     await transaction.DisposeAsync();
 
                     return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted);
@@ -131,7 +133,9 @@ namespace EasyDbMigrator
             }
             catch (Exception ex)
             {
+#pragma warning disable CA1508 // Avoid dead conditional code
                 if (transaction != null)
+#pragma warning restore CA1508 // Avoid dead conditional code
                 {
                     try
                     {

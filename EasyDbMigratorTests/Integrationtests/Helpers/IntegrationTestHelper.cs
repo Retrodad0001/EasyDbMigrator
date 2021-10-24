@@ -10,7 +10,7 @@ namespace EasyDbMigratorTests.Integrationtests.Helpers
     [ExcludeFromCodeCoverage]
     public class IntegrationTestHelper
     {
-        public bool CheckMigrationsTableSqlSever(string connectionString,
+        public static bool CheckMigrationsTableSqlSever(string connectionString,
             List<DbMigrationsRunRowSqlServer> expectedRows
             , string testDatabaseName)
         {
@@ -30,7 +30,7 @@ namespace EasyDbMigratorTests.Integrationtests.Helpers
             }
         }
 
-        public bool CheckMigrationsTablePostgresSever(string connectionString,
+        public static bool CheckMigrationsTablePostgresSever(string connectionString,
            List<DbMigrationsRunTest> expectedRows)
         {
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))

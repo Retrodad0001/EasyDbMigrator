@@ -2,6 +2,13 @@
 
   <PropertyGroup>
 	  <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+	  <StartupObject>ExampleDIwithWepAPI.Program</StartupObject>
+	  <Nullable>enable</Nullable>
+	  <PackageProjectUrl>https://github.com/Retrodad0001/EasyDbMigrator</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/Retrodad0001/EasyDbMigrator</RepositoryUrl>
+	  <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+	  <EnableNETAnalyzers>True</EnableNETAnalyzers>
+	  <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
 
   <ItemGroup>

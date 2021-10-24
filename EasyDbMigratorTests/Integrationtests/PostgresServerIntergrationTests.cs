@@ -51,8 +51,6 @@ namespace EasyDbMigratorTests.Integrationtests
 
             try
             {
-
-
                 await _dockerPostgresServerEnvironment.Up();
                 var connectionString = _dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(_databaseName).GetConnectionString();
 
@@ -97,7 +95,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 expectedRows.Add(new DbMigrationsRunTest(id: 1, executed: ExecutedDataTime, filename: "20212230_002_Script2p.sql", version: "1.0.0"));
                 expectedRows.Add(new DbMigrationsRunTest(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1p.sql", version: "1.0.0"));
 
-                _ = new IntegrationTestHelper().CheckMigrationsTablePostgresSever(connectionString: connectionString
+                _ = IntegrationTestHelper.CheckMigrationsTablePostgresSever(connectionString: connectionString
                   , expectedRows: expectedRows);
 
             }
@@ -163,7 +161,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 expectedRows.Add(new DbMigrationsRunTest(id: 1, executed: ExecutedDataTime, filename: "20212230_002_Script2p.sql", version: "1.0.0"));
                 expectedRows.Add(new DbMigrationsRunTest(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1p.sql", version: "1.0.0"));
 
-                _ = new IntegrationTestHelper().CheckMigrationsTablePostgresSever(connectionString: connectionString
+                _ = IntegrationTestHelper.CheckMigrationsTablePostgresSever(connectionString: connectionString
                   , expectedRows: expectedRows);
 
             }
@@ -185,7 +183,6 @@ namespace EasyDbMigratorTests.Integrationtests
             CancellationToken token = source.Token;
             try
             {
-
                 var environmentBuilder = new DockerEnvironmentBuilder();
                 _dockerPostgresServerEnvironment = SetupDockerPostgresServerTestEnvironment(environmentBuilder);
                 await _dockerPostgresServerEnvironment.Up();
@@ -254,7 +251,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 expectedRows.Add(new DbMigrationsRunTest(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20212230_002_Script2p.sql", version: "1.0.0"));
                 expectedRows.Add(new DbMigrationsRunTest(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20212231_001_Script1p.sql", version: "1.0.0"));
 
-                _ = new IntegrationTestHelper().CheckMigrationsTablePostgresSever(connectionString: connectionString
+                _ = IntegrationTestHelper.CheckMigrationsTablePostgresSever(connectionString: connectionString
                  , expectedRows: expectedRows);
 
             }
@@ -280,8 +277,6 @@ namespace EasyDbMigratorTests.Integrationtests
 
             try
             {
-
-
                 await _dockerPostgresServerEnvironment.Up();
                 var connectionString = _dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(_databaseName).GetConnectionString();
 
