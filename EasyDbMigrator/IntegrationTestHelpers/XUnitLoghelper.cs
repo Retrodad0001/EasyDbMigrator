@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Xunit.Abstractions;
 
-namespace WorkoutIntegrationTest
+namespace EasyDbMigrator.IntegrationTestHelpers
 {
     [ExcludeFromCodeCoverage]
     public sealed class XUnitLoghelper<T> : XUnitLoghelper, ILogger<T>
@@ -62,7 +62,7 @@ namespace WorkoutIntegrationTest
 
             if (exception != null)
             {
-                _ = sb.Append('\n').Append($"message : {exception.Message} , trace : {exception.StackTrace} " );
+                _ = sb.Append('\n').Append($"message : {exception.Message} , trace : {exception.StackTrace} ");
             }
 
             _scopeProvider.ForEachScope((scope, state) =>

@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Xunit.Abstractions;
 
-namespace WorkoutIntegrationTest
+namespace EasyDbMigrator.IntegrationTestHelpers
 {
     [ExcludeFromCodeCoverage]
     public sealed class XUnitLoggerProvider : ILoggerProvider

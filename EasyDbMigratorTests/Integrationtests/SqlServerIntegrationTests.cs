@@ -1,6 +1,7 @@
 ﻿using EasyDbMigrator;
+using EasyDbMigrator.DatabaseConnectors;
 using EasyDbMigratorTests.Integrationtests.Helpers;
-using EasyDbMigratorTests.Integrationtests.TestHelpers;
+using EasyDbMigratorTests.TestHelpers;
 using ExampleTestLibWithSqlServerScripts;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;

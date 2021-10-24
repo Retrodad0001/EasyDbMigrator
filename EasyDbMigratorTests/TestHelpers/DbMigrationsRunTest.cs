@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace EasyDbMigratorTests
+namespace EasyDbMigratorTests.TestHelpers
 {
     [ExcludeFromCodeCoverage] //this class is used for testing only
     public class DbMigrationsRunTest//TODO make record when .net 3.1 is out of LTS
@@ -27,17 +27,17 @@ namespace EasyDbMigratorTests
         public override bool Equals(object obj)//TODO remove me when .net 3.1 is out of LTS (see record)
         {
             //Check for null and compare run-time types.
-            if ((obj == null) || !GetType().Equals(obj.GetType()))
+            if (obj == null || !GetType().Equals(obj.GetType()))
             {
                 return false;
             }
             else
             {
                 DbMigrationsRunTest a = (DbMigrationsRunTest)obj;
-                return (Id == a.Id) 
-                    && (Executed == a.Executed) 
-                    && (Filename == a.Filename) 
-                    && (Version == a.Version);
+                return Id == a.Id
+                    && Executed == a.Executed
+                    && Filename == a.Filename
+                    && Version == a.Version;
             }
         }
 

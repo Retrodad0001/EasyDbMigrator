@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using EasyDbMigratorTests.TestHelpers;
 using FluentAssertions;
 using Npgsql;
 using System.Collections.Generic;
@@ -14,38 +15,34 @@ namespace EasyDbMigratorTests.Integrationtests.Helpers
             List<DbMigrationsRunRowSqlServer> expectedRows
             , string testDatabaseName)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
+            using SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
 
-                List<DbMigrationsRunRowSqlServer> actual = (List<DbMigrationsRunRowSqlServer>)connection.Query<DbMigrationsRunRowSqlServer>(@$"
+            List<DbMigrationsRunRowSqlServer> actual = (List<DbMigrationsRunRowSqlServer>)connection.Query<DbMigrationsRunRowSqlServer>(@$"
                     use {testDatabaseName}
                     SELECT Id, Executed, Filename, Version 
                     FROM DbMigrationsRun");
 
-                _ = actual.Should().HaveSameCount(expectedRows);
-                _ = actual.Should().Contain(expectedRows);
+            _ = actual.Should().HaveSameCount(expectedRows);
+            _ = actual.Should().Contain(expectedRows);
 
-                return true;
-            }
+            return true;
         }
 
         public static bool CheckMigrationsTablePostgresSever(string connectionString,
            List<DbMigrationsRunTest> expectedRows)
         {
-            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
-            {
-                connection.Open();
+            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+            connection.Open();
 
-                List<DbMigrationsRunTest> actual = (List<DbMigrationsRunTest>)connection.Query<DbMigrationsRunTest>(@$"
+            List<DbMigrationsRunTest> actual = (List<DbMigrationsRunTest>)connection.Query<DbMigrationsRunTest>(@$"
                     SELECT Id, Executed, Filename, Version 
                     FROM DbMigrationsRun");
 
-                _ = actual.Should().HaveSameCount(expectedRows);
-                _ = actual.Should().Contain(expectedRows);
+            _ = actual.Should().HaveSameCount(expectedRows);
+            _ = actual.Should().Contain(expectedRows);
 
-                return true;
-            }
+            return true;
         }
     }
 }

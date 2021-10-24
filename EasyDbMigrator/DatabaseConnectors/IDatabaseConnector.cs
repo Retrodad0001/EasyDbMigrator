@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EasyDbMigrator
+namespace EasyDbMigrator.DatabaseConnectors
 {
     public interface IDatabaseConnector
     {
@@ -10,10 +10,10 @@ namespace EasyDbMigrator
             , CancellationToken cancellationToken);
         Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExcistAsync(MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken);
-       
+
         Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken);
-        
+
         Task<Result<RunMigrationResult>> RunDbMigrationScriptWhenNotRunnedBeforeAsync(MigrationConfiguration migrationConfiguration
             , Script script
             , DateTimeOffset executedDateTime

@@ -1,5 +1,6 @@
-﻿using EasyDbMigrator.DatabaseConnectors;
-using EasyDbMigratorTests.Integrationtests.TestHelpers;
+﻿using EasyDbMigrator;
+using EasyDbMigrator.DatabaseConnectors;
+using EasyDbMigratorTests.TestHelpers;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace EasyDbMigrator
+namespace EasyDbMigratorTests.Unittests
 {
     [ExcludeFromCodeCoverage]
     public class DbMigratorTests

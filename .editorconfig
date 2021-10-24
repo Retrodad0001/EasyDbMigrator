@@ -99,7 +99,7 @@ csharp_prefer_static_local_function = true
 csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async
 
 # Code-block preferences
-csharp_prefer_braces = true
+csharp_prefer_braces =true:error
 csharp_prefer_simple_using_statement =true:warning
 
 # Expression-level preferences
@@ -270,7 +270,7 @@ dotnet_diagnostic.IDE0060.severity = warning
 dotnet_diagnostic.IDE0052.severity = warning
 
 # IDE0130: Namespace does not match folder structure
-dotnet_diagnostic.IDE0130.severity = none
+dotnet_diagnostic.IDE0130.severity =error
 
 # CA1063: Implement IDisposable Correctly
 dotnet_diagnostic.CA1063.severity = warning
@@ -405,13 +405,16 @@ dotnet_diagnostic.IDE0059.severity = warning
 dotnet_diagnostic.IDE0051.severity = warning
 
 # IDE0063: Use simple 'using' statement
-dotnet_diagnostic.IDE0063.severity = none
+dotnet_diagnostic.IDE0063.severity =warning
 
 # CA1848: Use the LoggerMessage delegates
 dotnet_diagnostic.CA1848.severity = none
 
 # CA2254: Template should be a static expression
 dotnet_diagnostic.CA2254.severity = none
+csharp_style_namespace_declarations=block_scoped:error
+dotnet_diagnostic.IDE0017.severity=warning
+dotnet_diagnostic.IDE0072.severity=warning
 
 [*.{cs,vb}]
 dotnet_style_readonly_field=true:warning
@@ -421,7 +424,7 @@ dotnet_style_qualification_for_property=false:warning
 dotnet_style_qualification_for_method=false:warning
 dotnet_style_qualification_for_event=false:warning
 dotnet_diagnostic.CA1040.severity=silent
-dotnet_diagnostic.CA1305.severity=none
+dotnet_diagnostic.CA1305.severity=silent
 dotnet_diagnostic.CA1505.severity=error
 dotnet_diagnostic.CA1502.severity=error
 dotnet_diagnostic.CA1508.severity=warning
@@ -429,3 +432,11 @@ dotnet_diagnostic.CA1822.severity=suggestion
 dotnet_diagnostic.CA2000.severity=error
 dotnet_diagnostic.CA2119.severity=suggestion
 dotnet_diagnostic.CA2215.severity=error
+dotnet_code_quality_unused_parameters=all:warning
+dotnet_diagnostic.CA1063.severity=error
+dotnet_diagnostic.CA1064.severity=error
+dotnet_diagnostic.CA1501.severity=error
+dotnet_diagnostic.CA1307.severity=suggestion
+dotnet_diagnostic.CA2002.severity=error
+dotnet_diagnostic.CA2007.severity=suggestion
+dotnet_diagnostic.CA2213.severity=error

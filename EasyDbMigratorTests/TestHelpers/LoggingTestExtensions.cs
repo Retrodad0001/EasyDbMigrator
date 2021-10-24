@@ -3,10 +3,10 @@ using System;
 using Moq;
 using System.Diagnostics.CodeAnalysis;
 
-namespace EasyDbMigratorTests.Integrationtests.TestHelpers
+namespace EasyDbMigratorTests.TestHelpers
 {
     [ExcludeFromCodeCoverage]
-    public static class LoggingTestExtensions 
+    public static class LoggingTestExtensions
     {
         public static Mock<ILogger<T>> CheckIfLoggerWasCalled<T>(this Mock<ILogger<T>> mockedLogger
             , string expectedMessage

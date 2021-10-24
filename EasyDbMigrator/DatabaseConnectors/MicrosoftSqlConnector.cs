@@ -6,14 +6,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EasyDbMigrator
+namespace EasyDbMigrator.DatabaseConnectors
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
     public class MicrosoftSqlConnector : IDatabaseConnector
     {
         private readonly AsyncPolicy _sqlDatabasePolicy = Policy.Handle<Exception>()
             .WaitAndRetryAsync(retryCount: 3
-            , sleepDurationProvider: times =>  TimeSpan.FromSeconds(times * 1));
+            , sleepDurationProvider: times => TimeSpan.FromSeconds(times * 1));
 
         public async Task<Result<bool>> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken)
