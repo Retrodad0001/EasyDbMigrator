@@ -122,11 +122,11 @@ namespace EasyDbMigrator
         /// <param name="cancellationToken">The cancellation instruction</param>
         /// <returns></returns>
         public virtual async Task<bool> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
-            , CancellationToken cancellationToken = default(CancellationToken))
+            , CancellationToken cancellationToken = default)
         {
 
             Result<bool> succeeded = await _databaseconnector.TryDeleteDatabaseIfExistAsync(migrationConfiguration: migrationConfiguration
-                , cancellationToken: cancellationToken); ;
+                , cancellationToken: cancellationToken).ConfigureAwait(true);
 
             if (succeeded.IsFailure)
             {
@@ -147,7 +147,7 @@ namespace EasyDbMigrator
         /// <returns></returns>
         public virtual async Task<bool> TryApplyMigrationsAsync(Type typeOfClassWhereScriptsAreLocated
             , MigrationConfiguration migrationConfiguration
-            , CancellationToken cancellationToken = default(CancellationToken))
+            , CancellationToken cancellationToken = default)
         {
             if (cancellationToken.IsCancellationRequested)
             {
@@ -163,7 +163,7 @@ namespace EasyDbMigrator
             bool migrationRunwithoutUnknownExceptions = false;
 
             setupDatabaseSucceeded = await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: migrationConfiguration
-                , cancellationToken: cancellationToken);
+                , cancellationToken: cancellationToken).ConfigureAwait(true);
 
             if (setupDatabaseSucceeded.IsFailure)
                 _logger.Log(logLevel: LogLevel.Error, exception: setupDatabaseSucceeded.Exception, @"setup database when there is none with default settings: error occurred");
@@ -173,7 +173,7 @@ namespace EasyDbMigrator
             if (setupDatabaseSucceeded.IsSuccess)
             {
                 createVersiongTableSucceeded = await TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: migrationConfiguration
-                    ,cancellationToken: cancellationToken);
+                    , cancellationToken: cancellationToken).ConfigureAwait(true);
 
                 if (createVersiongTableSucceeded.IsFailure)
                     _logger.Log(logLevel: LogLevel.Error, exception: createVersiongTableSucceeded.Exception, @"setup DbMigrationsRun when there is none executed with errors");
@@ -182,7 +182,7 @@ namespace EasyDbMigrator
 
                 if (createVersiongTableSucceeded.IsSuccess)
                 {
-                    List<Script> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated);
+                    List<Script> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated).ConfigureAwait(true);
                     List<Script> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptList);
                     List<Script> orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExludedScripts);
 
@@ -190,7 +190,7 @@ namespace EasyDbMigrator
 
                     migrationRunwithoutUnknownExceptions = await TryRunAllMigrationScriptsAsync(migrationConfiguration: migrationConfiguration
                         , orderedScripts: orderedScriptsWithoutExcludedScripts
-                        , cancellationToken: cancellationToken);
+                        , cancellationToken: cancellationToken).ConfigureAwait(true);
                 }
             }
 
@@ -203,7 +203,7 @@ namespace EasyDbMigrator
             _logger.Log(logLevel: LogLevel.Information, message: "Whole migration process executed successfully");
             return true;
         }
-          
+
         /// <summary>
         /// Specificity the scripts (by name) what u want to exclude from the migration run
         /// </summary>
@@ -217,8 +217,8 @@ namespace EasyDbMigrator
             , CancellationToken cancellationToken)
         {
             var result = await _databaseconnector.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: migrationConfiguration
-                , cancellationToken: cancellationToken);
-          
+                , cancellationToken: cancellationToken).ConfigureAwait(true);
+
             return result;
         }
 
@@ -226,8 +226,8 @@ namespace EasyDbMigrator
             , CancellationToken cancellationToken)
         {
             var result = await _databaseconnector.TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: migrationConfiguration
-                , cancellationToken: cancellationToken);
-          
+                , cancellationToken: cancellationToken).ConfigureAwait(true);
+
             return result;
         }
 
@@ -249,7 +249,7 @@ namespace EasyDbMigrator
                 Result<RunMigrationResult> result = await _databaseconnector.RunDbMigrationScriptWhenNotRunnedBeforeAsync(migrationConfiguration: migrationConfiguration
                     , script: script
                     , executedDateTime: executedDateTime
-                    , cancellationToken: cancellationToken);
+                    , cancellationToken: cancellationToken).ConfigureAwait(true);
 
                 if (result.Value == RunMigrationResult.MigrationWasCancelled)
                 {
