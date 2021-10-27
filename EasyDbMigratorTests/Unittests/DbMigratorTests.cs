@@ -293,17 +293,17 @@ namespace EasyDbMigratorTests.Unittests
             _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
-                , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(isSucces: true));
+                , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<CancellationToken>()
-              )).ReturnsAsync(new Result<bool>(isSucces: true));
+              )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExcistAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<CancellationToken>()
-               )).ReturnsAsync(new Result<bool>(isSucces: true));
+               )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
-            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
+            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
@@ -321,13 +321,13 @@ namespace EasyDbMigratorTests.Unittests
 
             _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
-                , cancellationToken: token);
+                , cancellationToken: token).ConfigureAwait(true);
 
             _ = loggerMock
                 .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled($"connection-string used: {connectionString}", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("Total scripts found: 2", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -360,17 +360,17 @@ namespace EasyDbMigratorTests.Unittests
             _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
-                , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(isSucces: true));
+                , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<CancellationToken>()
-              )).ReturnsAsync(new Result<bool>(isSucces: false, exception: new Exception()));
+              )).ReturnsAsync(new Result<bool>(wasSuccessful: false, exception: new Exception()));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExcistAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<CancellationToken>()
-               )).ReturnsAsync(new Result<bool>(isSucces: true));
+               )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
-            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
+            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
@@ -388,7 +388,7 @@ namespace EasyDbMigratorTests.Unittests
 
             _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
-                , cancellationToken: token);
+                , cancellationToken: token).ConfigureAwait(true);
 
             _ = loggerMock
                 .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -425,17 +425,17 @@ namespace EasyDbMigratorTests.Unittests
             _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
-                , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(isSucces: true));
+                , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<CancellationToken>()
-              )).ReturnsAsync(new Result<bool>(isSucces: true));
+              )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExcistAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<CancellationToken>()
-               )).ReturnsAsync(new Result<bool>(isSucces: false, exception: new Exception()));
+               )).ReturnsAsync(new Result<bool>(wasSuccessful: false, exception: new Exception()));
 
-            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
+            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
@@ -454,7 +454,7 @@ namespace EasyDbMigratorTests.Unittests
 
             _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
-                , cancellationToken: token);
+                , cancellationToken: token).ConfigureAwait(true);
 
             _ = loggerMock
                .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -493,22 +493,22 @@ namespace EasyDbMigratorTests.Unittests
 
             _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
               , It.IsAny<CancellationToken>()
-              )).ReturnsAsync(new Result<bool>(isSucces: true));
+              )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
                  , It.IsAny<CancellationToken>()
-              )).ReturnsAsync(new Result<bool>(isSucces: true));
+              )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExcistAsync(It.IsAny<MigrationConfiguration>()
                  , It.IsAny<CancellationToken>()
-               )).ReturnsAsync(new Result<bool>(isSucces: true));
+               )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
                     , It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted, exception: null))
-                .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted, exception: new Exception()));
+                .ReturnsAsync(new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.MigrationScriptExecuted, exception: null))
+                .ReturnsAsync(new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted, exception: new Exception()));
 
             DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
@@ -522,12 +522,12 @@ namespace EasyDbMigratorTests.Unittests
 
             _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
-                , cancellationToken: token);
+                , cancellationToken: token).ConfigureAwait(true);
 
             _ = loggerMock
                   .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                  .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                  .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("Total scripts found: 3", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not completed due to exception", LogLevel.Error, Times.Exactly(1), checkExceptionNotNull: true)
@@ -571,22 +571,22 @@ namespace EasyDbMigratorTests.Unittests
 
             _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
               , It.IsAny<CancellationToken>()
-              )).ReturnsAsync(new Result<bool>(isSucces: true));
+              )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
                  , It.IsAny<CancellationToken>()
-              )).ReturnsAsync(new Result<bool>(isSucces: true));
+              )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExcistAsync(It.IsAny<MigrationConfiguration>()
                  , It.IsAny<CancellationToken>()
-               )).ReturnsAsync(new Result<bool>(isSucces: true));
+               )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
                     , It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted, exception: null))
-                .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationWasCancelled, exception: new Exception()));
+                .ReturnsAsync(new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.MigrationScriptExecuted, exception: null))
+                .ReturnsAsync(new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.MigrationWasCancelled, exception: new Exception()));
 
             DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
@@ -600,12 +600,12 @@ namespace EasyDbMigratorTests.Unittests
 
             _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                     , migrationConfiguration: config
-                    , cancellationToken: token);
+                    , cancellationToken: token).ConfigureAwait(true);
 
             _ = loggerMock
                   .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                  .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                  .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("Total scripts found: 3", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("Whole migration process was canceled", LogLevel.Warning, Times.Exactly(1), checkExceptionNotNull: false)
@@ -648,22 +648,22 @@ namespace EasyDbMigratorTests.Unittests
 
             _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
               , It.IsAny<CancellationToken>()
-              )).ReturnsAsync(new Result<bool>(isSucces: true));
+              )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
                  , It.IsAny<CancellationToken>()
-              )).ReturnsAsync(new Result<bool>(isSucces: true));
+              )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExcistAsync(It.IsAny<MigrationConfiguration>()
                  , It.IsAny<CancellationToken>()
-               )).ReturnsAsync(new Result<bool>(isSucces: true));
+               )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
                     , It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted, exception: null))
-                .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted, exception: null));
+                .ReturnsAsync(new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.MigrationScriptExecuted, exception: null))
+                .ReturnsAsync(new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.MigrationScriptExecuted, exception: null));
 
             DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
@@ -679,7 +679,7 @@ namespace EasyDbMigratorTests.Unittests
 
             _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
-                , cancellationToken: token);
+                , cancellationToken: token).ConfigureAwait(true);
 
             _ = loggerMock
                   .CheckIfLoggerWasCalled("Whole migration process was canceled", LogLevel.Warning, Times.Exactly(1), checkExceptionNotNull: false);
@@ -720,23 +720,23 @@ namespace EasyDbMigratorTests.Unittests
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
             _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
-                , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(isSucces: true));
+                , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<CancellationToken>()
-              )).ReturnsAsync(new Result<bool>(isSucces: true));
+              )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExcistAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<CancellationToken>()
-               )).ReturnsAsync(new Result<bool>(isSucces: true));
+               )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                      , It.IsAny<Script>()
                      , It.IsAny<DateTimeOffset>()
                      , It.IsAny<CancellationToken>()))
-                     .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted, exception: null))
-                     .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun, exception: null))
-                     .ReturnsAsync(new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted, exception: null));
+                     .ReturnsAsync(new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.MigrationScriptExecuted, exception: null))
+                     .ReturnsAsync(new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun, exception: null))
+                     .ReturnsAsync(new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.MigrationScriptExecuted, exception: null));
 
             DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
@@ -750,12 +750,12 @@ namespace EasyDbMigratorTests.Unittests
 
             _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
-                , cancellationToken: token);
+                , cancellationToken: token).ConfigureAwait(true);
 
             _ = loggerMock
                  .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                  .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                 .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                 .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                  .CheckIfLoggerWasCalled("Total scripts found: 3", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                  .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                  .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -788,17 +788,17 @@ namespace EasyDbMigratorTests.Unittests
             _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
-                , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(isSucces: true));
+                , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
                  , It.IsAny<CancellationToken>()
-              )).ReturnsAsync(new Result<bool>(isSucces: true));
+              )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExcistAsync(It.IsAny<MigrationConfiguration>()
                  , It.IsAny<CancellationToken>()
-               )).ReturnsAsync(new Result<bool>(isSucces: true));
+               )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
-            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(isSucces: true, exception: null);
+            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
@@ -820,12 +820,12 @@ namespace EasyDbMigratorTests.Unittests
 
             _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
-                , cancellationToken: token);
+                , cancellationToken: token).ConfigureAwait(true);
 
             _ = loggerMock
                 .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("Total scripts found: 2", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -851,7 +851,7 @@ namespace EasyDbMigratorTests.Unittests
 
             _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
                , It.IsAny<CancellationToken>()
-               )).ReturnsAsync(new Result<bool>(isSucces: false, exception: new Exception()));
+               )).ReturnsAsync(new Result<bool>(wasSuccessful: false, exception: new Exception()));
 
             DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                 , databaseconnector: databaseConnectorMock.Object
@@ -859,7 +859,7 @@ namespace EasyDbMigratorTests.Unittests
                 , dataTimeHelper: datetimeHelperMock.Object);
 
             bool succes = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                , cancellationToken: token);
+                , cancellationToken: token).ConfigureAwait(true);
 
             _ = succes.Should().BeFalse();
 
@@ -885,7 +885,7 @@ namespace EasyDbMigratorTests.Unittests
 
             _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<CancellationToken>()
-                 )).ReturnsAsync(new Result<bool>(isSucces: true));
+                 )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                 , databaseconnector: databaseConnectorMock.Object
@@ -893,7 +893,7 @@ namespace EasyDbMigratorTests.Unittests
                 , dataTimeHelper: datetimeHelperMock.Object);
 
             bool succes = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                , cancellationToken: token);
+                , cancellationToken: token).ConfigureAwait(true);
 
             _ = succes.Should().BeTrue();
 

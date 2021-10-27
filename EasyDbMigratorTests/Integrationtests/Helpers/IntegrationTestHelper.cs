@@ -30,12 +30,12 @@ namespace EasyDbMigratorTests.Integrationtests.Helpers
         }
 
         public static bool CheckMigrationsTablePostgresSever(string connectionString,
-           List<DbMigrationsRunTest> expectedRows)
+           List<DbMigrationsRunRowPostgressServer> expectedRows)
         {
             using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
             connection.Open();
 
-            List<DbMigrationsRunTest> actual = (List<DbMigrationsRunTest>)connection.Query<DbMigrationsRunTest>(@$"
+            List<DbMigrationsRunRowPostgressServer> actual = (List<DbMigrationsRunRowPostgressServer>)connection.Query<DbMigrationsRunRowPostgressServer>(@$"
                     SELECT Id, Executed, Filename, Version 
                     FROM DbMigrationsRun");
 

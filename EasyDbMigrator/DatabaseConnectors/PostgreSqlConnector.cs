@@ -34,7 +34,7 @@ namespace EasyDbMigrator.DatabaseConnectors
         {
 
             if (cancellationToken.IsCancellationRequested)
-                return new Result<bool>(isSucces: true);
+                return new Result<bool>(wasSuccessful: true);
 
             string sqlScriptCreateMigrationTable = @$" 
 
@@ -59,7 +59,7 @@ namespace EasyDbMigrator.DatabaseConnectors
         {
 
             if (cancellationToken.IsCancellationRequested)
-                return new Result<bool>(isSucces: true);
+                return new Result<bool>(wasSuccessful: true);
 
             string sqlScriptCreateDatabase = @$"
                     SELECT 'CREATE DATABASE {migrationConfiguration.DatabaseName}'
@@ -80,7 +80,7 @@ namespace EasyDbMigrator.DatabaseConnectors
             , CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
-                return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationWasCancelled);
+                return new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.MigrationWasCancelled);
 
             NpgsqlTransaction? transaction = null;
             try
@@ -103,7 +103,7 @@ namespace EasyDbMigrator.DatabaseConnectors
 
                     if (result != null)
                     {
-                        return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun);
+                        return new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun);
                     }
 
                     string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
@@ -126,7 +126,7 @@ namespace EasyDbMigrator.DatabaseConnectors
                     await transaction.CommitAsync(cancellationToken).ConfigureAwait(true);
                     await transaction.DisposeAsync().ConfigureAwait(true);
 
-                    return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.MigrationScriptExecuted);
+                    return new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.MigrationScriptExecuted);
                 }).ConfigureAwait(true);
 
                 return result;
@@ -141,19 +141,19 @@ namespace EasyDbMigrator.DatabaseConnectors
                     {
                         await transaction.RollbackAsync(cancellationToken: cancellationToken).ConfigureAwait(true);
                         await transaction.DisposeAsync().ConfigureAwait(true);
-                        return new Result<RunMigrationResult>(isSucces: true
+                        return new Result<RunMigrationResult>(wasSuccessful: true
                             , RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted
                             , exception: ex);
                     }
                     catch (Exception ex2)
                     {
-                        return new Result<RunMigrationResult>(isSucces: true
+                        return new Result<RunMigrationResult>(wasSuccessful: true
                             , RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted
                             , exception: new ApplicationException($"{ex} + {ex2.Message}"));
                     }
                 }
 
-                return new Result<RunMigrationResult>(isSucces: true, RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted, ex);
+                return new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted, ex);
             }
         }
 
@@ -164,7 +164,7 @@ namespace EasyDbMigrator.DatabaseConnectors
 
         {
             if (cancellationToken.IsCancellationRequested)
-                return new Result<bool>(isSucces: true);
+                return new Result<bool>(wasSuccessful: true);
 
             try
             {
@@ -183,11 +183,11 @@ namespace EasyDbMigrator.DatabaseConnectors
                     _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(true);
                 }).ConfigureAwait(true);
 
-                return new Result<bool>(isSucces: true);
+                return new Result<bool>(wasSuccessful: true);
             }
             catch (Exception ex)
             {
-                return new Result<bool>(isSucces: false, exception: ex);
+                return new Result<bool>(wasSuccessful: false, exception: ex);
             }
         }
     }

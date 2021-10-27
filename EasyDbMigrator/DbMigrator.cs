@@ -128,7 +128,7 @@ namespace EasyDbMigrator
             Result<bool> succeeded = await _databaseconnector.TryDeleteDatabaseIfExistAsync(migrationConfiguration: migrationConfiguration
                 , cancellationToken: cancellationToken).ConfigureAwait(true);
 
-            if (succeeded.IsFailure)
+            if (succeeded.HasFailure)
             {
                 _logger.Log(logLevel: LogLevel.Error, exception: succeeded.Exception, message: "DeleteDatabaseIfExistAsync executed with error");
                 return false;
@@ -156,31 +156,32 @@ namespace EasyDbMigrator
             }
 
             _logger.Log(logLevel: LogLevel.Information, message: $"start running migrations for database: {migrationConfiguration.DatabaseName}");
+
             _logger.Log(logLevel: LogLevel.Information, message: $"connection-string used: {migrationConfiguration.ConnectionString}");
 
             Result<bool> setupDatabaseSucceeded;
-            Result<bool> createVersiongTableSucceeded = new Result<bool>(isSucces: false);
+            Result<bool> createVersiongTableSucceeded = new Result<bool>(wasSuccessful: false);
             bool migrationRunwithoutUnknownExceptions = false;
 
             setupDatabaseSucceeded = await TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: migrationConfiguration
                 , cancellationToken: cancellationToken).ConfigureAwait(true);
 
-            if (setupDatabaseSucceeded.IsFailure)
+            if (setupDatabaseSucceeded.HasFailure)
                 _logger.Log(logLevel: LogLevel.Error, exception: setupDatabaseSucceeded.Exception, @"setup database when there is none with default settings: error occurred");
             else
                 _logger.Log(logLevel: LogLevel.Information, message: @"setup database when there is none with default settings executed successfully");
 
-            if (setupDatabaseSucceeded.IsSuccess)
+            if (setupDatabaseSucceeded.WasSuccessful)
             {
                 createVersiongTableSucceeded = await TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: migrationConfiguration
                     , cancellationToken: cancellationToken).ConfigureAwait(true);
 
-                if (createVersiongTableSucceeded.IsFailure)
+                if (createVersiongTableSucceeded.HasFailure)
                     _logger.Log(logLevel: LogLevel.Error, exception: createVersiongTableSucceeded.Exception, @"setup DbMigrationsRun when there is none executed with errors");
                 else
-                    _logger.Log(logLevel: LogLevel.Information, message: @"setup DbMigrationsRun when there is none executed successfully");
+                    _logger.Log(logLevel: LogLevel.Information, message: @"setup DbMigrationsRun table executed successfully");
 
-                if (createVersiongTableSucceeded.IsSuccess)
+                if (createVersiongTableSucceeded.WasSuccessful)
                 {
                     List<Script> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated).ConfigureAwait(true);
                     List<Script> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptList);
@@ -194,7 +195,7 @@ namespace EasyDbMigrator
                 }
             }
 
-            if (setupDatabaseSucceeded.IsFailure || createVersiongTableSucceeded.IsFailure || !migrationRunwithoutUnknownExceptions)
+            if (setupDatabaseSucceeded.HasFailure || createVersiongTableSucceeded.HasFailure || !migrationRunwithoutUnknownExceptions)
             {
                 _logger.Log(logLevel: LogLevel.Error, exception: null, message: "Whole migration process executed with errors");
                 return false;
@@ -203,6 +204,8 @@ namespace EasyDbMigrator
             _logger.Log(logLevel: LogLevel.Information, message: "Whole migration process executed successfully");
             return true;
         }
+
+        
 
         /// <summary>
         /// Specificity the scripts (by name) what u want to exclude from the migration run

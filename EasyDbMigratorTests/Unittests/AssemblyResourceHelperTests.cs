@@ -15,7 +15,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             var sut = new AssemblyResourceHelper();
 
-            var result = await sut.TryConverManifestResourceStreamsToScriptsAsync(typeof(HereThePostgreSQLServerScriptsCanBeFound));
+            var result = await sut.TryConverManifestResourceStreamsToScriptsAsync(typeof(HereThePostgreSQLServerScriptsCanBeFound)).ConfigureAwait(true);
 
             _ = result.Should().HaveCount(3);
             _ = result.TrueForAll(script => script.FileName != string.Empty);

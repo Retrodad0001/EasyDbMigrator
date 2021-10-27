@@ -37,8 +37,13 @@ namespace EasyDbMigrator.IntegrationTestHelpers
 
         public XUnitLoghelper(ITestOutputHelper testOutputHelper, LoggerExternalScopeProvider scopeProvider, string categoryName)
         {
-            _testOutputHelper = testOutputHelper;
-            _scopeProvider = scopeProvider;
+            if (string.IsNullOrEmpty(categoryName))
+            {
+                throw new ArgumentException($"'{nameof(categoryName)}' cannot be null or empty.", nameof(categoryName));
+            }
+
+            _testOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
+            _scopeProvider = scopeProvider ?? throw new ArgumentNullException(nameof(scopeProvider));
             _categoryName = categoryName;
         }
         public bool IsEnabled(LogLevel logLevel)

@@ -4,19 +4,19 @@ using System.Diagnostics.CodeAnalysis;
 namespace EasyDbMigratorTests.TestHelpers
 {
     [ExcludeFromCodeCoverage] //this class is used for testing only
-    public class DbMigrationsRunTest//TODO make record when .net 3.1 is out of LTS
+    public class DbMigrationsRunRowPostgressServer//TODO make record when .net 3.1 is out of LTS
     {
         public int Id { get; }
         public DateTime Executed { get; }
         public string Filename { get; }
         public string Version { get; }
 
-        public DbMigrationsRunTest()
+        public DbMigrationsRunRowPostgressServer()
         {
 
         }
 
-        public DbMigrationsRunTest(int id, DateTime executed, string filename, string version)
+        public DbMigrationsRunRowPostgressServer(int id, DateTime executed, string filename, string version)
         {
             Id = id;
             Executed = executed;
@@ -33,7 +33,7 @@ namespace EasyDbMigratorTests.TestHelpers
             }
             else
             {
-                DbMigrationsRunTest a = (DbMigrationsRunTest)obj;
+                DbMigrationsRunRowPostgressServer a = (DbMigrationsRunRowPostgressServer)obj;
                 return Id == a.Id
                     && Executed == a.Executed
                     && Filename == a.Filename

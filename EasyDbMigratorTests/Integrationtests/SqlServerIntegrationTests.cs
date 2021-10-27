@@ -43,7 +43,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
         [Fact]
         [Trait("Category", "Integrationtest")]
-        public async Task the_scenario_when_nothing_goes_wrong_with_running_migrations_on_an_empty_database_with_cancellationToken()
+        public async Task when_nothing_goes_wrong_with_running_the_migrations_on_an_empty_database()
         {
             DockerEnvironmentBuilder environmentBuilder = new();
             _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
@@ -53,7 +53,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
             try
             {
-                await _dockerEnvironment.Up();
+                await _dockerEnvironment.Up().ConfigureAwait(true);
                 string connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString: connectionString
@@ -79,12 +79,12 @@ namespace EasyDbMigratorTests.Integrationtests
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                    , cancellationToken: token);
+                    , cancellationToken: token).ConfigureAwait(true);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound)
                     , migrationConfiguration: config
-                    , cancellationToken: token);
+                    , cancellationToken: token).ConfigureAwait(true);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 _ = loggerMock
@@ -118,14 +118,14 @@ namespace EasyDbMigratorTests.Integrationtests
 
         [Fact]
         [Trait("Category", "Integrationtest")]
-        public async Task the_scenario_when_nothing_goes_wrong_with_running_migrations_on_an_empty_database_without_cancellationToken()
+        public async Task when_nothing_goes_wrong_with_running_migrations_on_an_empty_database_without_cancellationToken()
         {
             DockerEnvironmentBuilder environmentBuilder = new();
             _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
 
             try
             {
-                await _dockerEnvironment.Up();
+                await _dockerEnvironment.Up().ConfigureAwait(true);
                 string connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString: connectionString
@@ -150,11 +150,11 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
-                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config);
+                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config).ConfigureAwait(true);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound)
-                    , migrationConfiguration: config);
+                    , migrationConfiguration: config).ConfigureAwait(true);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 _ = loggerMock
@@ -187,7 +187,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
         [Fact]
         [Trait("Category", "Integrationtest")]
-        public async Task the_scenario_when_all_the_migration_script_allready_have_been_executed_before()
+        public async Task when_all_the_migration_script_allready_have_been_executed_before()
         {
             CancellationTokenSource source = new();
             CancellationToken token = source.Token;
@@ -196,7 +196,7 @@ namespace EasyDbMigratorTests.Integrationtests
             {
                 DockerEnvironmentBuilder environmentBuilder = new();
                 _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
-                await _dockerEnvironment.Up();
+                await _dockerEnvironment.Up().ConfigureAwait(true);
                 string connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString: connectionString
@@ -220,14 +220,14 @@ namespace EasyDbMigratorTests.Integrationtests
                 migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                    , cancellationToken: token);
+                    , cancellationToken: token).ConfigureAwait(true);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 Type type = typeof(HereTheSQLServerScriptsCanBeFound);
 
                 bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
                     , migrationConfiguration: config
-                    , cancellationToken: token);
+                    , cancellationToken: token).ConfigureAwait(true);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 //now run the migrations again
@@ -246,12 +246,12 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 bool succeeded = await migrator2.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
                     , migrationConfiguration: config
-                    , cancellationToken: token);
+                    , cancellationToken: token).ConfigureAwait(true);
                 _ = succeeded.Should().BeTrue();
 
                 _ = loggerMockSecondtRun
                     .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
@@ -289,7 +289,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
             try
             {
-                await _dockerEnvironment.Up();
+                await _dockerEnvironment.Up().ConfigureAwait(true);
                 string connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString: connectionString
@@ -315,14 +315,14 @@ namespace EasyDbMigratorTests.Integrationtests
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                    , cancellationToken: token);
+                    , cancellationToken: token).ConfigureAwait(true);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 source.Cancel();
 
                 bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound)
                     , migrationConfiguration: config
-                    , cancellationToken: token);
+                    , cancellationToken: token).ConfigureAwait(true);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 _ = loggerMock
