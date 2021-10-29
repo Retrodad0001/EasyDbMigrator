@@ -51,10 +51,13 @@ It has a Command-line client for managing migrations and a framework written for
     
 ## What we want to accomplish ?
 
-1. Make it easy to integrate SQL migrations in your local integration tests (written in .NET)
-2. Make it easy to integrate SQL migrations in your CI/CD flows (runner)
-3. Make it easy to perform manual SQL migration
-4. Provide examples and stimulate discussions about writing integration tests in code (so please send me feedback or start a good discussion)
+1. Make it easy to integrate Microsoft SQL migrations in your local integration testsuite
+2. Make it easy to integrate Postgre SQL migrations in your local integration testsuite
+3. Make it easy to integrate Microsoft SQL migrations in your CI/CD flows
+4. Make it easy to integrate Postgre SQL migrations in your CI/CD flows
+5. Make it easy to perform manual Microsoft SQL migrations
+6. Make it easy to perform manual Postgre SQL migrations
+7. Provide examples and stimulate discussions about writing integration tests in code (so please send me feedback or start a good discussion)
 
 ## Get started with EasyDBMigrator :
 
@@ -82,7 +85,7 @@ It has a Command-line client for managing migrations and a framework written for
                   , logger: loggerMock.Object
                   , dataTimeHelperMock: datetimeHelperMock.Object
                   , databaseConnector: new MicrosoftSqlConnector()); 
-            //can also use the PostgresSqlConnector to connect to PostgreSql instead of Microsoft Sql Server
+            //can also use the PostgreSqlConnector to connect to PostgreSql instead of Microsoft Sql Server
 
             bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
                     , cancellationToken: token);
