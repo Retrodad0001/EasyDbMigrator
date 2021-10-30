@@ -183,11 +183,21 @@ namespace EasyDbMigrator
 
                 if (createVersiongTableSucceeded.WasSuccessful)
                 {
-                    List<Script> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated).ConfigureAwait(true);
-                    List<Script> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptList);
-                    List<Script> orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExludedScripts);
+                    List<Script>? orderedScriptsWithoutExcludedScripts;
+                    try
+                    {
+                        List<Script> unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated).ConfigureAwait(true);
+                        _logger.Log(logLevel: LogLevel.Information, message: $"Total scripts found: {unOrderedScripts.Count}");
+                        List<Script> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptList);
+                        orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExludedScripts);
 
-                    _logger.Log(logLevel: LogLevel.Information, message: $"Total scripts found: {unOrderedScripts.Count}");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Log(logLevel: LogLevel.Error, exception: ex, message: "One or more scripts could not be loaded, is the sequence patterns correct?");
+                        _logger.Log(logLevel: LogLevel.Error, exception: null, message: "Whole migration process executed with errors");
+                        return false;
+                    }
 
                     migrationRunwithoutUnknownExceptions = await TryRunAllMigrationScriptsAsync(migrationConfiguration: migrationConfiguration
                         , orderedScripts: orderedScriptsWithoutExcludedScripts
@@ -293,3 +303,8 @@ namespace EasyDbMigrator
         }
     }
 }
+
+
+//TODO !!! can use a file directory for my scripts
+//TODO !!! can customize the script sequence pattern
+//TODO !!! has support for .net 6

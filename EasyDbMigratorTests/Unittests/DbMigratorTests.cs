@@ -28,9 +28,7 @@ namespace EasyDbMigratorTests.Unittests
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
                 DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                     , databaseconnector: null
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                     , assemblyResourceHelper: new AssemblyResourceHelper()
                     , dataTimeHelper: datetimeHelperMock.Object);
             };
@@ -48,9 +46,7 @@ namespace EasyDbMigratorTests.Unittests
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
                 DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                     , databaseconnector: new MicrosoftSqlConnector()
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                     , assemblyResourceHelper: null
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                     , dataTimeHelper: datetimeHelperMock.Object);
             };
 
@@ -64,9 +60,7 @@ namespace EasyDbMigratorTests.Unittests
             {
                 Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = new DbMigrator(logger: null
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                     , databaseconnector: new MicrosoftSqlConnector()
                     , assemblyResourceHelper: new AssemblyResourceHelper()
                     , dataTimeHelper: datetimeHelperMock.Object);
@@ -86,9 +80,7 @@ namespace EasyDbMigratorTests.Unittests
                 DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
                     , databaseconnector: new MicrosoftSqlConnector()
                     , assemblyResourceHelper: new AssemblyResourceHelper()
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                     , dataTimeHelper: null);
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             };
 
             _ = act.Should().Throw<ArgumentNullException>();
@@ -119,12 +111,9 @@ namespace EasyDbMigratorTests.Unittests
             {
                 MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
                     , databaseName: "databasename");
-
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = DbMigrator.Create(migrationConfiguration: config
                     , logger: null
                     , databaseConnector: new PostgreSqlConnector());
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             };
 
             _ = act.Should().Throw<ArgumentNullException>();
@@ -136,12 +125,9 @@ namespace EasyDbMigratorTests.Unittests
             Action act = () =>
             {
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
-
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = DbMigrator.Create(migrationConfiguration: null
                     , logger: loggerMock.Object
                     , databaseConnector: new MicrosoftSqlConnector());
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             };
 
             _ = act.Should().Throw<ArgumentNullException>();
@@ -155,12 +141,9 @@ namespace EasyDbMigratorTests.Unittests
                 MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
                   , databaseName: "databasename");
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
-
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = DbMigrator.Create(migrationConfiguration: config
                     , logger: loggerMock.Object
                     , databaseConnector: null);
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             };
 
             _ = act.Should().Throw<ArgumentNullException>();
@@ -196,9 +179,7 @@ namespace EasyDbMigratorTests.Unittests
                 Mock<IDataTimeHelper> dataTimeHelperMock = new Mock<IDataTimeHelper>();
 
                 DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                     , logger: null
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                     , dataTimeHelperMock: dataTimeHelperMock.Object
                     , databaseConnector: new MicrosoftSqlConnector());
             };
@@ -213,10 +194,7 @@ namespace EasyDbMigratorTests.Unittests
             {
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 Mock<IDataTimeHelper> dataTimeHelperMock = new Mock<IDataTimeHelper>();
-
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: null
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                     , logger: loggerMock.Object
                     , dataTimeHelperMock: dataTimeHelperMock.Object
                     , databaseConnector: new PostgreSqlConnector());
@@ -236,10 +214,8 @@ namespace EasyDbMigratorTests.Unittests
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
                     , logger: loggerMock.Object
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                     , dataTimeHelperMock: null
                     , databaseConnector: new MicrosoftSqlConnector());
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             };
 
             _ = act.Should().Throw<ArgumentNullException>();
@@ -257,10 +233,8 @@ namespace EasyDbMigratorTests.Unittests
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
                     , logger: loggerMock.Object
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                     , dataTimeHelperMock: dataTimeHelperMock.Object
                     , databaseConnector: null);
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             };
 
             _ = act.Should().Throw<ArgumentNullException>();
@@ -283,8 +257,8 @@ namespace EasyDbMigratorTests.Unittests
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
+            Script script1 = new Script("20211230_001_Script1.sql", "some content");
+            Script script2 = new Script("20211230_002_Script2.sql", "some content");
             List<Script> scripts = new List<Script>();
             scripts.Add(script1);
             scripts.Add(script2);
@@ -329,8 +303,8 @@ namespace EasyDbMigratorTests.Unittests
                 .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("Total scripts found: 2", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("script: 20211230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
         }
 
@@ -350,8 +324,8 @@ namespace EasyDbMigratorTests.Unittests
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
+            Script script1 = new Script("20211230_001_Script1.sql", "some content");
+            Script script2 = new Script("20211230_002_Script2.sql", "some content");
             List<Script> scripts = new List<Script>();
             scripts.Add(script1);
             scripts.Add(script2);
@@ -399,6 +373,65 @@ namespace EasyDbMigratorTests.Unittests
                 .CheckIfLoggerWasCalled("Whole migration process executed with errors", LogLevel.Error, Times.Exactly(1), checkExceptionNotNull: false);
         }
 
+
+        [Fact]
+        public async Task when_one_of_the_scripts_cannot_be_parsed()
+        {
+            using CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+
+            const string databaseName = "EasyDbMigrator";
+
+            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
+                , databaseName: databaseName);
+
+            Type someType = typeof(DbMigratorTests);
+
+            var loggerMock = new Mock<ILogger<DbMigrator>>();
+            var databaseConnectorMock = new Mock<IDatabaseConnector>();
+
+            var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
+            _ = assemblyResourceHelperMock.Setup(x => x.TryConverManifestResourceStreamsToScriptsAsync(It.IsAny<Type>())).Throws(new ArgumentException());
+            
+            _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+                , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(wasSuccessful: true));
+
+            _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
+                , It.IsAny<CancellationToken>()
+              )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
+
+            _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExcistAsync(It.IsAny<MigrationConfiguration>()
+                , It.IsAny<CancellationToken>()
+               )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
+
+            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
+            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+                    , It.IsAny<Script>()
+                    , It.IsAny<DateTimeOffset>()
+                    , It.IsAny<CancellationToken>())).ReturnsAsync(resultRunMigrations);
+
+            DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+
+            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
+
+            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+                , databaseconnector: databaseConnectorMock.Object
+                , assemblyResourceHelper: assemblyResourceHelperMock.Object
+                , dataTimeHelper: datetimeHelperMock.Object);
+
+            _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
+                , migrationConfiguration: config
+                , cancellationToken: token).ConfigureAwait(true);
+
+            _ = loggerMock
+                .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("Total scripts found: 2", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("One or more scripts could not be loaded, is the sequence patterns correct?", LogLevel.Error, Times.Exactly(1), checkExceptionNotNull: true)
+                .CheckIfLoggerWasCalled("Whole migration process executed with errors", LogLevel.Error, Times.Exactly(1), checkExceptionNotNull: false);
+        }
+
         [Fact]
         public async Task when_creating_new_versioningtable_fails()
         {
@@ -415,8 +448,8 @@ namespace EasyDbMigratorTests.Unittests
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
+            Script script1 = new Script("20211230_001_Script1.sql", "some content");
+            Script script2 = new Script("20211230_002_Script2.sql", "some content");
             List<Script> scripts = new List<Script>();
             scripts.Add(script1);
             scripts.Add(script2);
@@ -459,8 +492,8 @@ namespace EasyDbMigratorTests.Unittests
             _ = loggerMock
                .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed with errors", LogLevel.Error, Times.Exactly(1), checkExceptionNotNull: true)
-               .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
-               .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
+               .CheckIfLoggerWasCalled("script: 20211230_001_Script1.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
+               .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
                .CheckIfLoggerWasCalled("Whole migration process executed with errors", LogLevel.Error, Times.Exactly(1), checkExceptionNotNull: false);
         }
 
@@ -478,9 +511,9 @@ namespace EasyDbMigratorTests.Unittests
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
-            Script script3 = new Script("20212230_003_Script3.sql", "some content");
+            Script script1 = new Script("20211230_001_Script1.sql", "some content");
+            Script script2 = new Script("20211230_002_Script2.sql", "some content");
+            Script script3 = new Script("20211230_003_Script3.sql", "some content");
             List<Script> scripts = new List<Script>();
             scripts.Add(script1);
             scripts.Add(script2);
@@ -529,9 +562,9 @@ namespace EasyDbMigratorTests.Unittests
                   .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("Total scripts found: 3", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                  .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                  .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not completed due to exception", LogLevel.Error, Times.Exactly(1), checkExceptionNotNull: true)
-                  .CheckIfLoggerWasCalled("script: 20212230_003_Script3.sql was skipped due to exception in previous script", LogLevel.Warning, Times.Exactly(1), checkExceptionNotNull: false)
+                  .CheckIfLoggerWasCalled("script: 20211230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                  .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was not completed due to exception", LogLevel.Error, Times.Exactly(1), checkExceptionNotNull: true)
+                  .CheckIfLoggerWasCalled("script: 20211230_003_Script3.sql was skipped due to exception in previous script", LogLevel.Warning, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("Whole migration process executed with errors", LogLevel.Error, Times.Exactly(1), checkExceptionNotNull: false);
 
             //check that the 3rd script is skipped because of the error in the previous script so we check here that max 2 db calls are made
@@ -556,9 +589,9 @@ namespace EasyDbMigratorTests.Unittests
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
-            Script script3 = new Script("20212230_003_Script3.sql", "some content");
+            Script script1 = new Script("20211230_001_Script1.sql", "some content");
+            Script script2 = new Script("20211230_002_Script2.sql", "some content");
+            Script script3 = new Script("20211230_003_Script3.sql", "some content");
             List<Script> scripts = new List<Script>();
             scripts.Add(script1);
             scripts.Add(script2);
@@ -607,7 +640,7 @@ namespace EasyDbMigratorTests.Unittests
                   .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("Total scripts found: 3", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                  .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                  .CheckIfLoggerWasCalled("script: 20211230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("Whole migration process was canceled", LogLevel.Warning, Times.Exactly(1), checkExceptionNotNull: false)
                   .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
 
@@ -633,9 +666,9 @@ namespace EasyDbMigratorTests.Unittests
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
-            Script script3 = new Script("20212230_003_Script3.sql", "some content");
+            Script script1 = new Script("20211230_001_Script1.sql", "some content");
+            Script script2 = new Script("20211230_002_Script2.sql", "some content");
+            Script script3 = new Script("20211230_003_Script3.sql", "some content");
             List<Script> scripts = new List<Script>();
             scripts.Add(script1);
             scripts.Add(script2);
@@ -706,9 +739,9 @@ namespace EasyDbMigratorTests.Unittests
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
-            Script script3 = new Script("20212230_003_Script3.sql", "some content");
+            Script script1 = new Script("20211230_001_Script1.sql", "some content");
+            Script script2 = new Script("20211230_002_Script2.sql", "some content");
+            Script script3 = new Script("20211230_003_Script3.sql", "some content");
             List<Script> scripts = new List<Script>();
             scripts.Add(script1);
             scripts.Add(script2);
@@ -757,9 +790,9 @@ namespace EasyDbMigratorTests.Unittests
                  .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                  .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                  .CheckIfLoggerWasCalled("Total scripts found: 3", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                 .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                 .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                 .CheckIfLoggerWasCalled("script: 20212230_003_Script3.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                 .CheckIfLoggerWasCalled("script: 20211230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                 .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                 .CheckIfLoggerWasCalled("script: 20211230_003_Script3.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                  .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
         }
 
@@ -778,8 +811,8 @@ namespace EasyDbMigratorTests.Unittests
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-            Script script1 = new Script("20212230_001_Script1.sql", "some content");
-            Script script2 = new Script("20212230_002_Script2.sql", "some content");
+            Script script1 = new Script("20211230_001_Script1.sql", "some content");
+            Script script2 = new Script("20211230_002_Script2.sql", "some content");
             List<Script> scripts = new List<Script>();
             scripts.Add(script1);
             scripts.Add(script2);
@@ -816,7 +849,7 @@ namespace EasyDbMigratorTests.Unittests
                 , dataTimeHelper: datetimeHelperMock.Object);
 
             //exclude some scripts
-            migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: new List<string> { "20212230_001_Script1.sql" });
+            migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: new List<string> { "20211230_001_Script1.sql" });
 
             _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
@@ -827,8 +860,8 @@ namespace EasyDbMigratorTests.Unittests
                 .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("Total scripts found: 2", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("script: 20211230_001_Script1.sql was run", LogLevel.Information, Times.Never(), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                 .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
         }
 
@@ -972,9 +1005,7 @@ namespace EasyDbMigratorTests.Unittests
             using ServiceProvider serviceProvider = collection.BuildServiceProvider();
 
             var migrator = serviceProvider.GetService<IDbMigrator>();
-#pragma warning disable CS8602 // Dereference of a possibly null reference. for sake of testing this cannot be null
             migrator.ExcludeTheseScriptsInRun(new List<string>());
-#pragma warning restore CS8602
         }
     }
 }

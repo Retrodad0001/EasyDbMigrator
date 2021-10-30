@@ -5,7 +5,7 @@
 
     <IsPackable>false</IsPackable>
 
-    <Nullable>warnings</Nullable>
+    <Nullable>annotations</Nullable>
 
     <PackageProjectUrl>https://github.com/Retrodad0001/EasyDbMigrator</PackageProjectUrl>
 

@@ -26,21 +26,6 @@ namespace EasyDbMigratorTests.Integrationtests
         private readonly IDictionary<ushort, ushort> _ports = new Dictionary<ushort, ushort>();
         private DockerEnvironment _dockerEnvironment;
 
-        private DockerEnvironment SetupDockerTestEnvironment(DockerEnvironmentBuilder environmentBuilder)
-        {
-            if (_dockerEnvironment != null)
-            {
-                return _dockerEnvironment;
-            }
-
-            _ports.Add(1433, 1433);
-            return environmentBuilder.UseDefaultNetwork()
-                .SetName("xunit-EasyDbMigratorSqlServer")
-                //pick for now the latest version of sqlserver (= default)
-                .AddMssqlContainer(name: _databaseName, saPassword: _password, ports: _ports)
-                .Build();
-        }
-
         [Fact]
         [Trait("Category", "Integrationtest")]
         public async Task when_nothing_goes_wrong_with_running_the_migrations_on_an_empty_database()
@@ -73,7 +58,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 List<string> scriptsToExclude = new()
                 {
-                    "20212230_001_CreateDB.sql"
+                    "20211230_001_CreateDB.sql"
                 };
 
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
@@ -90,14 +75,14 @@ namespace EasyDbMigratorTests.Integrationtests
                 _ = loggerMock
                     .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync has executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
 
                 List<DbMigrationsRunRowSqlServer> expectedRows = new()
                 {
-                    new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"),
-                    new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0")
+                    new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedDataTime, filename: "20211230_002_Script2.sql", version: "1.0.0"),
+                    new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedDataTime, filename: "20211231_001_Script1.sql", version: "1.0.0")
                 };
 
                 _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString: connectionString
@@ -145,7 +130,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 List<string> scriptsToExclude = new()
                 {
-                    "20212230_001_CreateDB.sql"
+                    "20211230_001_CreateDB.sql"
                 };
 
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
@@ -160,14 +145,14 @@ namespace EasyDbMigratorTests.Integrationtests
                 _ = loggerMock
                     .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync has executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
 
                 List<DbMigrationsRunRowSqlServer> expectedRows = new()
                 {
-                    new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"),
-                    new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0")
+                    new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedDataTime, filename: "20211230_002_Script2.sql", version: "1.0.0"),
+                    new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedDataTime, filename: "20211231_001_Script1.sql", version: "1.0.0")
                 };
 
                 _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString: connectionString
@@ -215,7 +200,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     , databaseConnector: new MicrosoftSqlConnector());
 
                 List<string> scriptsToExclude = new();
-                scriptsToExclude.Add("20212230_001_CreateDB.sql");
+                scriptsToExclude.Add("20211230_001_CreateDB.sql");
 
                 migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
@@ -252,15 +237,15 @@ namespace EasyDbMigratorTests.Integrationtests
                 _ = loggerMockSecondtRun
                     .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211231_001_Script1.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
 
                 //version - table should not be updated for the second time
 
                 List<DbMigrationsRunRowSqlServer> expectedRows = new();
-                expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20212230_002_Script2.sql", version: "1.0.0"));
-                expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20212231_001_Script1.sql", version: "1.0.0"));
+                expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20211230_002_Script2.sql", version: "1.0.0"));
+                expectedRows.Add(new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20211231_001_Script1.sql", version: "1.0.0"));
 
                 _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString: connectionString
                 , expectedRows: expectedRows
@@ -337,6 +322,95 @@ namespace EasyDbMigratorTests.Integrationtests
                 _dockerEnvironment.Dispose();
                 source.Dispose();
             }
+        }
+
+        [Fact]
+        [Trait("Category", "Integrationtest")]
+        public async Task when_nothing_goes_wrong_using_a_directory_for_running_the_scripts()
+        {
+            DockerEnvironmentBuilder environmentBuilder = new();
+            _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
+
+            CancellationTokenSource source = new();
+            CancellationToken token = source.Token;
+
+            try
+            {
+                await _dockerEnvironment.Up().ConfigureAwait(true);
+                string connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
+
+                Mock<ILogger<DbMigrator>> loggerMock = new();
+                Mock<IDataTimeHelper> datetimeHelperMock = new();
+
+                DateTimeOffset ExecutedDataTime = DateTime.UtcNow;
+
+                _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
+
+                MigrationConfiguration config = new(connectionString: connectionString
+                  , databaseName: _databaseName);
+
+                DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+                    , logger: loggerMock.Object
+                    , dataTimeHelperMock: datetimeHelperMock.Object
+                    , databaseConnector: new MicrosoftSqlConnector());
+
+                List<string> scriptsToExclude = new()
+                {
+                    "20211230_001_CreateDB.sql"
+                };
+
+                migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
+
+                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
+                    , cancellationToken: token).ConfigureAwait(true);
+                _ = succeededDeleDatabase.Should().BeTrue();
+
+                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound)
+                    , migrationConfiguration: config
+                    , cancellationToken: token).ConfigureAwait(true);
+                _ = succeededRunningMigrations.Should().BeTrue();
+
+                _ = loggerMock
+                    .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync has executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
+
+                List<DbMigrationsRunRowSqlServer> expectedRows = new()
+                {
+                    new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedDataTime, filename: "20211230_002_Script2.sql", version: "1.0.0"),
+                    new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedDataTime, filename: "20211231_001_Script1.sql", version: "1.0.0")
+                };
+
+                _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString: connectionString
+                  , expectedRows: expectedRows
+                  , testDatabaseName: _databaseName);
+
+            }
+            catch (Exception ex)
+            {
+                Assert.True(false, ex.ToString());
+            }
+            finally
+            {
+                _dockerEnvironment.Dispose();
+                source.Dispose();
+            }
+        }
+        private DockerEnvironment SetupDockerTestEnvironment(DockerEnvironmentBuilder environmentBuilder)
+        {
+            if (_dockerEnvironment != null)
+            {
+                return _dockerEnvironment;
+            }
+
+            _ports.Add(1433, 1433);
+            return environmentBuilder.UseDefaultNetwork()
+                .SetName("xunit-EasyDbMigratorSqlServer")
+                //pick for now the latest version of sqlserver (= default)
+                .AddMssqlContainer(name: _databaseName, saPassword: _password, ports: _ports)
+                .Build();
         }
     }
 }

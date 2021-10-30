@@ -10,19 +10,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="PostgresServerMigrationsScripts\20212230_001_DoStuffScript.sql" />
-    <None Remove="PostgresServerMigrationsScripts\20212230_002_Script2p.sql" />
-    <None Remove="PostgresServerMigrationsScripts\20212231_001_Script1p.sql" />
+    <None Remove="PostgresServerMigrationsScripts\20211230_001_DoStuffScript.sql" />
+    <None Remove="PostgresServerMigrationsScripts\20211230_002_Script2p.sql" />
+    <None Remove="PostgresServerMigrationsScripts\20211231_001_Script1p.sql" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="PostgresServerMigrationsScripts\20212230_001_DoStuffScript.sql">
+    <EmbeddedResource Include="PostgresServerMigrationsScripts\20211230_001_DoStuffScript.sql">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="PostgresServerMigrationsScripts\20212230_002_Script2p.sql">
+    <EmbeddedResource Include="PostgresServerMigrationsScripts\20211230_002_Script2p.sql">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="PostgresServerMigrationsScripts\20212231_001_Script1p.sql" />
+    <EmbeddedResource Include="PostgresServerMigrationsScripts\20211231_001_Script1p.sql" />
   </ItemGroup>
 
 </Project>

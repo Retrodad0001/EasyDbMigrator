@@ -6,6 +6,7 @@ using Xunit;
 
 namespace EasyDbMigratorTests.Unittests
 {
+    //TODO add more test testing split
     [ExcludeFromCodeCoverage]
     public class ScriptTests
     {

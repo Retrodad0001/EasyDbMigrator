@@ -26,20 +26,6 @@ namespace EasyDbMigratorTests.Integrationtests
         private const string _password = "stuffy6!";
         private DockerEnvironment _dockerPostgresServerEnvironment;
 
-        private DockerEnvironment SetupDockerPostgresServerTestEnvironment(DockerEnvironmentBuilder environmentBuilder)
-        {
-            if (_dockerPostgresServerEnvironment != null)
-                return _dockerPostgresServerEnvironment;
-
-            return environmentBuilder.UseDefaultNetwork()
-                .SetName("xunit-EasyDbMigratorPostgresServer")
-                //pick for now the latest version of sqlserver (= default)
-                .AddPostgresContainer(name: _databaseName
-                    , userName: _userName
-                    , password: _password)
-                .Build();
-        }
-
         [Fact]
         [Trait("Category", "Integrationtest")]
         public async Task the_scenario_when_nothing_goes_wrong_with_running_migrations_on_an_empty_database_with_cancellationToken()
@@ -70,7 +56,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     , databaseConnector: new PostgreSqlConnector());
 
                 List<string> scriptsToExclude = new List<string>();
-                scriptsToExclude.Add("20212230_001_DoStuffScript.sql");
+                scriptsToExclude.Add("20211230_001_DoStuffScript.sql");
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
@@ -87,13 +73,13 @@ namespace EasyDbMigratorTests.Integrationtests
                 _ = loggerMock
                     .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync has executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2p.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1p.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211230_002_Script2p.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211231_001_Script1p.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
 
                 List<DbMigrationsRunRowPostgressServer> expectedRows = new List<DbMigrationsRunRowPostgressServer>();
-                expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 1, executed: ExecutedDataTime, filename: "20212230_002_Script2p.sql", version: "1.0.0"));
-                expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1p.sql", version: "1.0.0"));
+                expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 1, executed: ExecutedDataTime, filename: "20211230_002_Script2p.sql", version: "1.0.0"));
+                expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 2, executed: ExecutedDataTime, filename: "20211231_001_Script1p.sql", version: "1.0.0"));
 
                 _ = IntegrationTestHelper.CheckMigrationsTablePostgresSever(connectionString: connectionString
                   , expectedRows: expectedRows);
@@ -138,7 +124,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     , databaseConnector: new PostgreSqlConnector());
 
                 List<string> scriptsToExclude = new List<string>();
-                scriptsToExclude.Add("20212230_001_DoStuffScript.sql");
+                scriptsToExclude.Add("20211230_001_DoStuffScript.sql");
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config).ConfigureAwait(true);
@@ -153,13 +139,13 @@ namespace EasyDbMigratorTests.Integrationtests
                 _ = loggerMock
                     .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync has executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2p.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1p.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211230_002_Script2p.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211231_001_Script1p.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
 
                 List<DbMigrationsRunRowPostgressServer> expectedRows = new List<DbMigrationsRunRowPostgressServer>();
-                expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 1, executed: ExecutedDataTime, filename: "20212230_002_Script2p.sql", version: "1.0.0"));
-                expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 2, executed: ExecutedDataTime, filename: "20212231_001_Script1p.sql", version: "1.0.0"));
+                expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 1, executed: ExecutedDataTime, filename: "20211230_002_Script2p.sql", version: "1.0.0"));
+                expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 2, executed: ExecutedDataTime, filename: "20211231_001_Script1p.sql", version: "1.0.0"));
 
                 _ = IntegrationTestHelper.CheckMigrationsTablePostgresSever(connectionString: connectionString
                   , expectedRows: expectedRows);
@@ -204,7 +190,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     , databaseConnector: new PostgreSqlConnector());
 
                 List<string> scriptsToExclude = new List<string>();
-                scriptsToExclude.Add("20212230_001_DoStuffScript.sql");
+                scriptsToExclude.Add("20211230_001_DoStuffScript.sql");
 
                 migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
@@ -241,15 +227,15 @@ namespace EasyDbMigratorTests.Integrationtests
                 _ = loggerMockSecondtRun
                     .CheckIfLoggerWasCalled("setup database when there is none with default settings executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("setup DbMigrationsRun table executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212230_002_Script2p.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20212231_001_Script1p.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211230_002_Script2p.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
+                    .CheckIfLoggerWasCalled("script: 20211231_001_Script1p.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("Whole migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
 
                 //  version - table should not be updated for the second time
 
                 List<DbMigrationsRunRowPostgressServer> expectedRows = new List<DbMigrationsRunRowPostgressServer>();
-                expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20212230_002_Script2p.sql", version: "1.0.0"));
-                expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20212231_001_Script1p.sql", version: "1.0.0"));
+                expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20211230_002_Script2p.sql", version: "1.0.0"));
+                expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20211231_001_Script1p.sql", version: "1.0.0"));
 
                 _ = IntegrationTestHelper.CheckMigrationsTablePostgresSever(connectionString: connectionString
                  , expectedRows: expectedRows);
@@ -296,7 +282,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     , databaseConnector: new PostgreSqlConnector());
 
                 List<string> scriptsToExclude = new List<string>();
-                scriptsToExclude.Add("20212230_001_DoStuffScript.sql");
+                scriptsToExclude.Add("20211230_001_DoStuffScript.sql");
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
@@ -324,6 +310,20 @@ namespace EasyDbMigratorTests.Integrationtests
                 source.Dispose();
                 _dockerPostgresServerEnvironment.Dispose();
             }
+        }
+
+        private DockerEnvironment SetupDockerPostgresServerTestEnvironment(DockerEnvironmentBuilder environmentBuilder)
+        {
+            if (_dockerPostgresServerEnvironment != null)
+                return _dockerPostgresServerEnvironment;
+
+            return environmentBuilder.UseDefaultNetwork()
+                .SetName("xunit-EasyDbMigratorPostgresServer")
+                //pick for now the latest version of sqlserver (= default)
+                .AddPostgresContainer(name: _databaseName
+                    , userName: _userName
+                    , password: _password)
+                .Build();
         }
     }
 }

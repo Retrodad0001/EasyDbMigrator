@@ -3,8 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigrator
 {
-    //TODO !!!!!!!! check naming
-    //TODO !!!!!!!! pick up one pbi
     public struct Result<T>
     {
         public bool HasFailure => !WasSuccessful;

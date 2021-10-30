@@ -10,15 +10,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="SqlServerMigrationScripts\20212230_001_CreateDB.sql" />
-    <None Remove="SqlServerMigrationScripts\20212230_002_Script2.sql" />
-    <None Remove="SqlServerMigrationScripts\20212231_001_Script1.sql" />
+    <None Remove="SqlServerMigrationScripts\20211230_001_CreateDB.sql" />
+    <None Remove="SqlServerMigrationScripts\20211230_002_Script2.sql" />
+    <None Remove="SqlServerMigrationScripts\20211231_001_Script1.sql" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="SqlServerMigrationScripts\20212231_001_Script1.sql" />
-    <EmbeddedResource Include="SqlServerMigrationScripts\20212230_002_Script2.sql" />
-    <EmbeddedResource Include="SqlServerMigrationScripts\20212230_001_CreateDB.sql" />
+    <EmbeddedResource Include="SqlServerMigrationScripts\20211231_001_Script1.sql" />
+    <EmbeddedResource Include="SqlServerMigrationScripts\20211230_002_Script2.sql" />
+    <EmbeddedResource Include="SqlServerMigrationScripts\20211230_001_CreateDB.sql" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
 ﻿using EasyDbMigrator;
-using ExampleTestLibWithPostgreSQLServerScripts;
+using ExampleTestLibWithSqlServerScripts;
 using FluentAssertions;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
@@ -15,7 +15,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             var sut = new AssemblyResourceHelper();
 
-            var result = await sut.TryConverManifestResourceStreamsToScriptsAsync(typeof(HereThePostgreSQLServerScriptsCanBeFound)).ConfigureAwait(true);
+            var result = await sut.TryConverManifestResourceStreamsToScriptsAsync(typeof(HereTheSQLServerScriptsCanBeFound)).ConfigureAwait(true);
 
             _ = result.Should().HaveCount(3);
             _ = result.TrueForAll(script => script.FileName != string.Empty);
