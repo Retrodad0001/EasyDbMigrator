@@ -4,8 +4,9 @@
     {
         public string ConnectionString { get; private set; }
         public string DatabaseName { get; private set; }
+        public string? ScriptsDirectory { get; private set; }
 
-        public MigrationConfiguration(string connectionString, string databaseName)
+        public MigrationConfiguration(string connectionString, string databaseName, string? ScriptsDirectory = null)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -21,6 +22,7 @@
 
             ConnectionString = connectionString;
             DatabaseName = databaseName;
+            this.ScriptsDirectory = ScriptsDirectory;
         }
 
         private static void CheckCorrectDatabaseName(string databaseName)

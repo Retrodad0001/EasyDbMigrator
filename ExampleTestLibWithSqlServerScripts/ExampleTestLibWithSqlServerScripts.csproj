@@ -16,9 +16,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="SqlServerMigrationScripts\20211231_001_Script1.sql" />
-    <EmbeddedResource Include="SqlServerMigrationScripts\20211230_002_Script2.sql" />
-    <EmbeddedResource Include="SqlServerMigrationScripts\20211230_001_CreateDB.sql" />
+    <EmbeddedResource Include="SqlServerMigrationScripts\20211231_001_Script1.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SqlServerMigrationScripts\20211230_002_Script2.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SqlServerMigrationScripts\20211230_001_CreateDB.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

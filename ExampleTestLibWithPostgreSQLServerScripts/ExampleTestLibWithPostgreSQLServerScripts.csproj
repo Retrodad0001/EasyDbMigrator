@@ -17,12 +17,14 @@
 
   <ItemGroup>
     <EmbeddedResource Include="PostgresServerMigrationsScripts\20211230_001_DoStuffScript.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="PostgresServerMigrationsScripts\20211230_002_Script2p.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="PostgresServerMigrationsScripts\20211231_001_Script1p.sql" />
+    <EmbeddedResource Include="PostgresServerMigrationsScripts\20211231_001_Script1p.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
