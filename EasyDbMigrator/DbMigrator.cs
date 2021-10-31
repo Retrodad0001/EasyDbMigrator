@@ -147,8 +147,7 @@ namespace EasyDbMigrator
             return true;
         }
 
-        //TODO add test no scripts found
-        //TODO refactor code to more readable method TryApplyMigrationsAsync
+        //TODO add test no scripts found with directory
 
         /// <summary>
         /// Run all the migration scripts(embedded resources) specified in the 
