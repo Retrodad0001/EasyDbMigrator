@@ -7,7 +7,7 @@
 - [busy] updated all internal packages
 
 ## 1.2.0 (the latest release):
-- can use a file directory for my scripts
+- can use a file directory for scripts
 - speedup the inner development loop by getting the docker-image and running it in the integration tests (with examples)
 - can mock EasyDbMigrator when u want to integrate it in your own code
 - can use DbMigrator in .net Dependency injection (IServiceCollection)
@@ -43,7 +43,7 @@ It is possible to use EasyDbMigrator in your own application.
 | `EasyDbMigrator` | core & integration testing |[![NuGet](https://img.shields.io/nuget/v/Retrodad.EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/) | [![Nuget](https://img.shields.io/nuget/dt/Retrodad.EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/) |
 | `EasyDbMigrator runner` | running migrations manual and CD pipelines support  | TODO | TODO |
 
-# EasyDBMigrator - making database migrations easier
+# EasyDBMigrator - making database migrations and integration testing easier
 
 ## What is EasyDBMigrator?
 
