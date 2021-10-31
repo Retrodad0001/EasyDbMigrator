@@ -1,7 +1,8 @@
 # The Latest news 
 
 ## working on milestone: 1.3.0 (next release)
-- [busy] can customize the script sequence pattern so i can use it with my current scripts (like: 11112233-444-555.sql) 
+- [busy] can customize the script sequence pattern so i can use it with my current scripts 
+    examples: 11112233-444-555.sql, 111122334444.sql, 111122.sql, 1111_2222.sql or whatever
 - [busy] support for .net 6 LTS
 - [busy] updated all internal packages
 
