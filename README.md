@@ -1,17 +1,20 @@
 # The Latest news 
 
 ## working on milestone: 1.3.0 (next release)
-- [done] can use a file directory for my scripts (https://github.com/Retrodad0001/EasyDbMigrator/issues/25)
-- [busy] can customize the script sequence pattern so i can use it with my current scripts (https://github.com/Retrodad0001/EasyDbMigrator/issues/24)
-- [busy] support for .net 6 LTS (https://github.com/Retrodad0001/EasyDbMigrator/issues/8)
+- [busy] can customize the script sequence pattern so i can use it with my current scripts (like: 11112233-444-555.sql) 
+- [busy] support for .net 6 LTS
+- [busy] updated all internal packages
 
 ## 1.2.0 (the latest release):
+- can use a file directory for my scripts
 - speedup the inner development loop by getting the docker-image and running it in the integration tests (with examples)
 - can mock EasyDbMigrator when u want to integrate it in your own code
-- can use DbMigrator in .net Dependency injection (IServiceCollection) (https://github.com/Retrodad0001/EasyDbMigrator/issues/21)
-- can cancel the process from outside (https://github.com/Retrodad0001/EasyDbMigrator/issues/22)
-- make executions and configuration more resilient (https://github.com/Retrodad0001/EasyDbMigrator/issues/4)
-- support PostgreSQL migrations in your integration test (https://github.com/Retrodad0001/EasyDbMigrator/issues/6)
+- can use DbMigrator in .net Dependency injection (IServiceCollection)
+- can cancel the process from outside
+- make executions and configuration more resilient
+- support PostgreSQL migrations in your integration test
+- bugfixes and better logging
+- updated all internal packages
  
 ## 1.1.0
  - support for .net core 3.1 (until LTS ends) and .net 5 (until support ends)
