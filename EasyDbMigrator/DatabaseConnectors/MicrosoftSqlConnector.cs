@@ -31,7 +31,7 @@ namespace EasyDbMigrator.DatabaseConnectors
             Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
                    , scriptName: "EasyDbMigrator.Integrationtest_dropDatabase"
                    , sqlScriptContent: query
-                   , cancellationToken: cancellationToken).ConfigureAwait(true);
+                   , cancellationToken: cancellationToken).ConfigureAwait(false);
             return result;
         }
 
@@ -70,7 +70,7 @@ namespace EasyDbMigrator.DatabaseConnectors
             Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
                 , scriptName: "SetupEmptyDb"
                 , sqlScriptContent: sqlScriptCreateDatabase
-                , cancellationToken: cancellationToken).ConfigureAwait(true); ;
+                , cancellationToken: cancellationToken).ConfigureAwait(false); ;
 
             return result;
         }
@@ -89,7 +89,7 @@ namespace EasyDbMigrator.DatabaseConnectors
                 Result<RunMigrationResult> result = await _sqlDatabasePolicy.ExecuteAsync(async () =>
                 {
                     using SqlConnection connection = new SqlConnection(migrationConfiguration.ConnectionString);
-                    await connection.OpenAsync(cancellationToken).ConfigureAwait(true);
+                    await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
                     string checkIfScriptHasExecuted = $@"USE {migrationConfiguration.DatabaseName} 
                         SELECT Id
@@ -98,7 +98,7 @@ namespace EasyDbMigrator.DatabaseConnectors
                         ";
 
                     using SqlCommand cmdcheckNotExecuted = new SqlCommand(checkIfScriptHasExecuted, connection);
-                    var result = _ = await cmdcheckNotExecuted.ExecuteScalarAsync(cancellationToken).ConfigureAwait(true);
+                    var result = _ = await cmdcheckNotExecuted.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
 
                     if (result != null)
                     {
@@ -113,21 +113,21 @@ namespace EasyDbMigrator.DatabaseConnectors
                         ";
 
                     transaction = await connection.BeginTransactionAsync(isolationLevel: IsolationLevel.Serializable
-                        , cancellationToken: cancellationToken).ConfigureAwait(true) as SqlTransaction;
+                        , cancellationToken: cancellationToken).ConfigureAwait(false) as SqlTransaction;
 
                     using SqlCommand cmdScript = new SqlCommand(script.Content, connection, transaction);
                     using SqlCommand cmdUpdateVersioningTable = new SqlCommand(updateVersioningTableScript, connection, transaction);
 
-                    _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken: cancellationToken).ConfigureAwait(true);
-                    _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken: cancellationToken).ConfigureAwait(true);
+                    _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+                    _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-                    await transaction.CommitAsync(cancellationToken).ConfigureAwait(true);
+                    await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-                    await transaction.DisposeAsync().ConfigureAwait(true);
+                    await transaction.DisposeAsync().ConfigureAwait(false);
 
                     return new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.MigrationScriptExecuted);
-                }).ConfigureAwait(true);
+                }).ConfigureAwait(false);
 
                 return result;
             }
@@ -139,8 +139,8 @@ namespace EasyDbMigrator.DatabaseConnectors
                 {
                     try
                     {
-                        await transaction.RollbackAsync(cancellationToken: cancellationToken).ConfigureAwait(true);
-                        await transaction.DisposeAsync().ConfigureAwait(true);
+                        await transaction.RollbackAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+                        await transaction.DisposeAsync().ConfigureAwait(false);
                         return new Result<RunMigrationResult>(wasSuccessful: true
                             , RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted
                             , exception: ex);
@@ -176,9 +176,9 @@ namespace EasyDbMigrator.DatabaseConnectors
                     using SqlConnection connection = new SqlConnection(connectionString);
                     using SqlCommand command = new SqlCommand(sqlScriptContent, connection);
 
-                    await command.Connection.OpenAsync(cancellationToken).ConfigureAwait(true);
-                    _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(true);
-                }).ConfigureAwait(true);
+                    await command.Connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+                    _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                }).ConfigureAwait(false);
 
                 return new Result<bool>(wasSuccessful: true);
             }

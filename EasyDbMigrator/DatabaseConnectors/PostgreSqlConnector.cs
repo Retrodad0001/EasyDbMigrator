@@ -24,7 +24,7 @@ namespace EasyDbMigrator.DatabaseConnectors
             Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
                  , scriptName: "EasyDbMigrator.Integrationtest_dropDatabase"
                  , sqlScriptContent: query
-                 , cancellationToken: cancellationToken).ConfigureAwait(true); ;
+                 , cancellationToken: cancellationToken).ConfigureAwait(false); ;
 
             return result;
         }
@@ -49,7 +49,7 @@ namespace EasyDbMigrator.DatabaseConnectors
             Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
                 , scriptName: "EasyDbMigrator.SetupDbMigrationsRunTable"
                 , sqlScriptContent: sqlScriptCreateMigrationTable
-                , cancellationToken: cancellationToken).ConfigureAwait(true);
+                , cancellationToken: cancellationToken).ConfigureAwait(false);
 
             return result;
         }
@@ -69,7 +69,7 @@ namespace EasyDbMigrator.DatabaseConnectors
             Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
                 , scriptName: "SetupEmptyDb"
                 , sqlScriptContent: sqlScriptCreateDatabase
-                , cancellationToken: cancellationToken).ConfigureAwait(true);
+                , cancellationToken: cancellationToken).ConfigureAwait(false);
 
             return result;
         }
@@ -89,7 +89,7 @@ namespace EasyDbMigrator.DatabaseConnectors
                 {
 
                     using NpgsqlConnection connection = new NpgsqlConnection(migrationConfiguration.ConnectionString);
-                    await connection.OpenAsync(cancellationToken).ConfigureAwait(true);
+                    await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
                     string checkIfScriptHasExecuted = $@"
                         SELECT Id
@@ -99,7 +99,7 @@ namespace EasyDbMigrator.DatabaseConnectors
                         ";
 
                     using NpgsqlCommand cmdcheckNotExecuted = new NpgsqlCommand(checkIfScriptHasExecuted, connection);
-                    var result = _ = await cmdcheckNotExecuted.ExecuteScalarAsync(cancellationToken).ConfigureAwait(true);
+                    var result = _ = await cmdcheckNotExecuted.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
 
                     if (result != null)
                     {
@@ -113,21 +113,21 @@ namespace EasyDbMigrator.DatabaseConnectors
                             VALUES ('{sqlFormattedDate}', '{script.FileName}', '1.0.0');
                         ";
 
-                    transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(true);
+                    transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
                     using NpgsqlCommand cmdScript = new NpgsqlCommand(script.Content
                         , connection
                         , transaction);
                     using NpgsqlCommand cmdUpdateVersioningTable = new NpgsqlCommand(updateVersioningTableScript, connection, transaction);
 
-                    _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(true);
-                    _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(true);
+                    _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                    _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
 
-                    await transaction.CommitAsync(cancellationToken).ConfigureAwait(true);
-                    await transaction.DisposeAsync().ConfigureAwait(true);
+                    await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+                    await transaction.DisposeAsync().ConfigureAwait(false);
 
                     return new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.MigrationScriptExecuted);
-                }).ConfigureAwait(true);
+                }).ConfigureAwait(false);
 
                 return result;
             }
@@ -139,8 +139,8 @@ namespace EasyDbMigrator.DatabaseConnectors
                 {
                     try
                     {
-                        await transaction.RollbackAsync(cancellationToken: cancellationToken).ConfigureAwait(true);
-                        await transaction.DisposeAsync().ConfigureAwait(true);
+                        await transaction.RollbackAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+                        await transaction.DisposeAsync().ConfigureAwait(false);
                         return new Result<RunMigrationResult>(wasSuccessful: true
                             , RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted
                             , exception: ex);
@@ -176,12 +176,12 @@ namespace EasyDbMigrator.DatabaseConnectors
                 await _postgreSqlDatabasePolicy.ExecuteAsync(async () =>
                 {
                     using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-                    await connection.OpenAsync(cancellationToken).ConfigureAwait(true);
+                    await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
                     using NpgsqlCommand command = new NpgsqlCommand(sqlScriptContent, connection);
 
-                    _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(true);
-                }).ConfigureAwait(true);
+                    _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                }).ConfigureAwait(false);
 
                 return new Result<bool>(wasSuccessful: true);
             }

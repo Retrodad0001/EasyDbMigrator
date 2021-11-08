@@ -135,7 +135,7 @@ namespace EasyDbMigrator
         {
 
             Result<bool> succeeded = await _databaseconnector.TryDeleteDatabaseIfExistAsync(migrationConfiguration: migrationConfiguration
-                , cancellationToken: cancellationToken).ConfigureAwait(true);
+                , cancellationToken: cancellationToken).ConfigureAwait(false);
 
             if (succeeded.HasFailure)
             {
@@ -147,7 +147,7 @@ namespace EasyDbMigrator
             return true;
         }
 
-        //TODO add test no scripts found with directory
+        //TODO add test no scripts found with directory whemn support .net 6
 
         /// <summary>
         /// Run all the migration scripts(embedded resources) specified in the 
@@ -169,7 +169,7 @@ namespace EasyDbMigrator
             LogBasicInformation(migrationConfiguration);
 
             Result<bool> setupDatabaseAction = await TrySetupEmptyDataBaseWhenThereIsNoDatabaseAsync(migrationConfiguration: migrationConfiguration
-                , cancellationToken: cancellationToken).ConfigureAwait(true);
+                , cancellationToken: cancellationToken).ConfigureAwait(false);
 
             if (setupDatabaseAction.HasFailure)
             {
@@ -180,7 +180,7 @@ namespace EasyDbMigrator
 
             _logger.Log(logLevel: LogLevel.Information, message: @"setup database executed successfully");
             Result<bool> createVersioningTableAction = await TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: migrationConfiguration
-               , cancellationToken: cancellationToken).ConfigureAwait(true);
+               , cancellationToken: cancellationToken).ConfigureAwait(false);
 
             if (createVersioningTableAction.HasFailure)
             {
@@ -191,7 +191,7 @@ namespace EasyDbMigrator
 
             _logger.Log(logLevel: LogLevel.Information, message: @"setup versioning table executed successfully");
 
-            Result<List<Script>> loadScriptsAction = await TryLoadingScripts(typeOfClassWhereScriptsAreLocated, migrationConfiguration).ConfigureAwait(true);
+            Result<List<Script>> loadScriptsAction = await TryLoadingScripts(typeOfClassWhereScriptsAreLocated, migrationConfiguration).ConfigureAwait(false);
 
             if (loadScriptsAction.HasFailure)
             {
@@ -202,7 +202,7 @@ namespace EasyDbMigrator
 
             Result<bool> runMigrationsScriptsAction = await TryRunAllMigrationScriptsAsync(migrationConfiguration: migrationConfiguration
                 , orderedScripts: loadScriptsAction.Value
-                , cancellationToken: cancellationToken).ConfigureAwait(true);
+                , cancellationToken: cancellationToken).ConfigureAwait(false);
 
             if (runMigrationsScriptsAction.HasFailure)
             {
@@ -238,7 +238,7 @@ namespace EasyDbMigrator
             , CancellationToken cancellationToken)
         {
             var result = await _databaseconnector.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: migrationConfiguration
-                , cancellationToken: cancellationToken).ConfigureAwait(true);
+                , cancellationToken: cancellationToken).ConfigureAwait(false);
 
             return result;
         }
@@ -247,7 +247,7 @@ namespace EasyDbMigrator
             , CancellationToken cancellationToken)
         {
             var result = await _databaseconnector.TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: migrationConfiguration
-                , cancellationToken: cancellationToken).ConfigureAwait(true);
+                , cancellationToken: cancellationToken).ConfigureAwait(false);
 
             return result;
         }
@@ -259,9 +259,9 @@ namespace EasyDbMigrator
             try
             {
                 if (string.IsNullOrEmpty(migrationConfiguration.ScriptsDirectory))
-                    unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated).ConfigureAwait(true);
+                    unOrderedScripts = await _assemblyResourceHelper.TryConverManifestResourceStreamsToScriptsAsync(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated).ConfigureAwait(false);
                 else
-                    unOrderedScripts = await _directoryHelper.TryGetScriptsFromDirectoryAsync(migrationConfiguration.ScriptsDirectory).ConfigureAwait(true);
+                    unOrderedScripts = await _directoryHelper.TryGetScriptsFromDirectoryAsync(migrationConfiguration.ScriptsDirectory).ConfigureAwait(false);
 
                 _logger.Log(logLevel: LogLevel.Information, message: $"Total scripts found: {unOrderedScripts.Count}");
                 List<Script> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptList);
@@ -292,7 +292,7 @@ namespace EasyDbMigrator
                 Result<RunMigrationResult> result = await _databaseconnector.RunDbMigrationScriptWhenNotRunnedBeforeAsync(migrationConfiguration: migrationConfiguration
                     , script: script
                     , executedDateTime: executedDateTime
-                    , cancellationToken: cancellationToken).ConfigureAwait(true);
+                    , cancellationToken: cancellationToken).ConfigureAwait(false);
 
                 if (result.Value == RunMigrationResult.MigrationWasCancelled)
                 {

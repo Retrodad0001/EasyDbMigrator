@@ -2,7 +2,7 @@
 
 ## working on milestone: 1.3.0 (next release)
 - [done] can use a file directory for my scripts (https://github.com/Retrodad0001/EasyDbMigrator/issues/25)
-- [busy] can customize the script sequence pattern so i can use it with my current scripts (https://github.com/Retrodad0001/EasyDbMigrator/issues/24)
+- [busy] can customize the script sequence pattern so u can use it with your current scripts (https://github.com/Retrodad0001/EasyDbMigrator/issues/24)
 - [busy] support for .net 6 LTS (https://github.com/Retrodad0001/EasyDbMigrator/issues/8)
 
 ## 1.2.0 (the latest release):

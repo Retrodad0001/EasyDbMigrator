@@ -1134,7 +1134,7 @@ namespace EasyDbMigratorTests.Unittests
             }
         }
 
-        //TODO !!! make this more easy with trick
+        //TODO !!! make this more easy to setup as clientcode
         [Fact]
         public void that_it_is_possable_to_inject_EasyDbCreator_in_ServiceCollection()
         {
