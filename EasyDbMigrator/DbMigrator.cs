@@ -15,7 +15,7 @@ namespace EasyDbMigrator
         private readonly IAssemblyResourceHelper _assemblyResourceHelper;
         private readonly IDirectoryHelper _directoryHelper;
         private readonly IDataTimeHelper _dataTimeHelper;
-        private readonly List<string> _excludedScriptList = new List<string>();
+        private readonly List<string> _excludedScriptsList = new List<string>();
 
         public DbMigrator(ILogger logger
             , IDatabaseConnector databaseconnector
@@ -147,8 +147,6 @@ namespace EasyDbMigrator
             return true;
         }
 
-        //TODO add test no scripts found with directory whemn support .net 6
-
         /// <summary>
         /// Run all the migration scripts(embedded resources) specified in the 
         /// assembly where the type (see param typeOfClassWhereScriptsAreLocated) exist
@@ -220,7 +218,7 @@ namespace EasyDbMigrator
         /// <param name="scriptsToExclude"></param>
         public virtual void ExcludeTheseScriptsInRun(List<string> scriptsToExcludeByname)
         {
-            _excludedScriptList.AddRange(scriptsToExcludeByname);
+            _excludedScriptsList.AddRange(scriptsToExcludeByname);
         }
 
         private static bool IsCancellationRequested(CancellationToken cancellationToken)
@@ -264,7 +262,7 @@ namespace EasyDbMigrator
                     unOrderedScripts = await _directoryHelper.TryGetScriptsFromDirectoryAsync(migrationConfiguration.ScriptsDirectory).ConfigureAwait(false);
 
                 _logger.Log(logLevel: LogLevel.Information, message: $"Total scripts found: {unOrderedScripts.Count}");
-                List<Script> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptList);
+                List<Script> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptsList);
                 List<Script> orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExludedScripts);
                 return new Result<List<Script>>(wasSuccessful: true, value: orderedScriptsWithoutExcludedScripts);
             }
@@ -335,4 +333,3 @@ namespace EasyDbMigrator
 }
 
 //TODO !!! can customize the script sequence pattern
-//TODO !!! has support for .net 6

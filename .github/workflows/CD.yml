@@ -16,15 +16,20 @@ jobs:
     - name: Check out Repo
       uses: actions/checkout@v2
 
-    - name: Setup .NET Core 3.1.x	
-      uses: actions/setup-dotnet@v1	
-      with:	
+    - name: Setup .NET Core 3.1.x LTS
+      uses: actions/setup-dotnet@v1
+      with:
         dotnet-version: 3.1.x
     
     - name: Setup .NET Core 5.0.x
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+
+    - name: Setup .NET Core 6.0.x LTS
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
    
     - name: Restore dependencies
       run: dotnet restore
@@ -32,7 +37,7 @@ jobs:
     - name: Build debug version
       run: dotnet build --configuration Debug --no-restore
     
-    - name: Run unittest with codecoverage
+    - name: Run unittest with code-coverage
       run: dotnet test --no-build --verbosity normal --filter Category!=Integrationtest /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
     
     - name: Upload code coverage to Codecov
@@ -101,7 +106,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.x #todo env var maken
+        dotnet-version: 6.0.x
 
       # Publish
     - name: publish nuget when newer version

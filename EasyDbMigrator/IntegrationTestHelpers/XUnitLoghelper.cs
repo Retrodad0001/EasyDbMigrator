@@ -41,10 +41,11 @@ namespace EasyDbMigrator.IntegrationTestHelpers
             {
                 throw new ArgumentException($"'{nameof(categoryName)}' cannot be null or empty.", nameof(categoryName));
             }
+            _categoryName = categoryName;
 
             _testOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
+           
             _scopeProvider = scopeProvider ?? throw new ArgumentNullException(nameof(scopeProvider));
-            _categoryName = categoryName;
         }
         public bool IsEnabled(LogLevel logLevel)
         {
@@ -94,3 +95,5 @@ namespace EasyDbMigrator.IntegrationTestHelpers
         }
     }
 }
+
+//TODO : https://www.youtube.com/watch?v=7FxluGv-LY4 in build-pipeline
