@@ -1,7 +1,7 @@
 # The Latest news 
 
 ## working on milestone: 1.4.0 (next release)
-- creating cross platform UI (MAUI) to run scripts manual
+- Create fancy cross-platform UI so migrations can be run manual
 
 ## 1.3.0 (the latest release)
 - support for .net 6 LTS
