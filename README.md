@@ -1,12 +1,13 @@
 # The Latest news 
 
-## working on milestone: 1.3.0 (next release)
-- [busy] can customize the script sequence pattern so i can use it with my current scripts 
-    examples: 11112233-444-555.sql, 111122334444.sql, 111122.sql, 1111_2222.sql or whatever
-- [done] support for .net 6 LTS
-- [done] updated all internal packages
+## working on milestone: 1.4.0 (next release)
+- creating cross platform UI (MAUI) to run scripts manual
 
-## 1.2.0 (the latest release):
+## 1.3.0 (the latest release)
+- support for .net 6 LTS
+- updated all internal packages
+
+## 1.2.0:
 - can use a file directory for scripts
 - speedup the inner development loop by getting the docker-image and running it in the integration tests (with examples)
 - can mock EasyDbMigrator when u want to integrate it in your own code

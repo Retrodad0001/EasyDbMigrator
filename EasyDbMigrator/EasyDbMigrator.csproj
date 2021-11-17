@@ -11,8 +11,8 @@
     <RepositoryUrl>https://github.com/Retrodad0001/EasyDbMigrator</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
     <PackageTags>database, migration, migrator, integration test, update database, CI, CD, SQL, PostgreSQL , CosmosDB, Update , DB</PackageTags>
-    <PackageReleaseNotes>-can use a file directory for my scripts
--bug fixes and better logging
+    <PackageReleaseNotes>-support for .net 6 lts
+-bug fixes and updated internal packages
 For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</PackageReleaseNotes>
     <PackageIcon>Icon.png</PackageIcon>
     <PackageIconUrl />
@@ -43,7 +43,7 @@ For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</P
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-    <PackageReference Include="Npgsql" Version="5.0.10" />
+    <PackageReference Include="Npgsql" Version="6.0.0" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
     <PackageReference Include="xunit.abstractions" Version="2.0.3" />

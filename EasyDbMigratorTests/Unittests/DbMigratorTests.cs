@@ -296,7 +296,7 @@ namespace EasyDbMigratorTests.Unittests
             scripts.Add(script2);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             var directoryHelperMock = new Mock<IDirectoryHelper>();
 
@@ -312,7 +312,7 @@ namespace EasyDbMigratorTests.Unittests
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
-            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
                     , It.IsAny<CancellationToken>())).ReturnsAsync(resultRunMigrations);
@@ -384,7 +384,7 @@ namespace EasyDbMigratorTests.Unittests
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
-            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
                     , It.IsAny<CancellationToken>())).ReturnsAsync(resultRunMigrations);
@@ -438,7 +438,7 @@ namespace EasyDbMigratorTests.Unittests
             scripts.Add(script2);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             var directoryHelperMock = new Mock<IDirectoryHelper>();
 
@@ -454,7 +454,7 @@ namespace EasyDbMigratorTests.Unittests
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
-            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
                     , It.IsAny<CancellationToken>())).ReturnsAsync(resultRunMigrations);
@@ -501,7 +501,7 @@ namespace EasyDbMigratorTests.Unittests
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(x => x.TryConverManifestResourceStreamsToScriptsAsync(It.IsAny<Type>())).Throws(new ArgumentException());
+            _ = assemblyResourceHelperMock.Setup(x => x.TryGetScriptsFromAssembly(It.IsAny<Type>())).Throws(new ArgumentException());
 
             var directoryHelperMock = new Mock<IDirectoryHelper>();
 
@@ -517,7 +517,7 @@ namespace EasyDbMigratorTests.Unittests
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
-            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
                     , It.IsAny<CancellationToken>())).ReturnsAsync(resultRunMigrations);
@@ -568,7 +568,7 @@ namespace EasyDbMigratorTests.Unittests
             scripts.Add(script2);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             var directoryHelperMock = new Mock<IDirectoryHelper>();
 
@@ -584,7 +584,7 @@ namespace EasyDbMigratorTests.Unittests
                )).ReturnsAsync(new Result<bool>(wasSuccessful: false, exception: new Exception()));
 
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
-            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
                     , It.IsAny<CancellationToken>()
@@ -636,7 +636,7 @@ namespace EasyDbMigratorTests.Unittests
             scripts.Add(script3);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             var directoryHelperMock = new Mock<IDirectoryHelper>();
 
@@ -654,7 +654,7 @@ namespace EasyDbMigratorTests.Unittests
                  , It.IsAny<CancellationToken>()
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
-            _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
                     , It.IsAny<CancellationToken>()))
@@ -687,7 +687,7 @@ namespace EasyDbMigratorTests.Unittests
                   .CheckIfLoggerWasCalled("migration process executed with errors", LogLevel.Error, Times.Exactly(1), checkExceptionNotNull: false);
 
             //check that the 3rd script is skipped because of the error in the previous script so we check here that max 2 db calls are made
-            databaseConnectorMock.Verify(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            databaseConnectorMock.Verify(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<Script>()
                 , It.IsAny<DateTimeOffset>()
                  , It.IsAny<CancellationToken>())
@@ -717,7 +717,7 @@ namespace EasyDbMigratorTests.Unittests
             scripts.Add(script3);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
             
             var directoryHelperMock = new Mock<IDirectoryHelper>();
 
@@ -735,7 +735,7 @@ namespace EasyDbMigratorTests.Unittests
                  , It.IsAny<CancellationToken>()
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
-            _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
                     , It.IsAny<CancellationToken>()))
@@ -767,7 +767,7 @@ namespace EasyDbMigratorTests.Unittests
                   .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
 
             //check that the 3rd script is skipped because of the error in the previous script so we check here that max 2 db calls are made
-            databaseConnectorMock.Verify(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            databaseConnectorMock.Verify(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<Script>()
                 , It.IsAny<DateTimeOffset>()
                  , It.IsAny<CancellationToken>())
@@ -797,7 +797,7 @@ namespace EasyDbMigratorTests.Unittests
             scripts.Add(script3);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             var directoryHelperMock = new Mock<IDirectoryHelper>();
 
@@ -815,7 +815,7 @@ namespace EasyDbMigratorTests.Unittests
                  , It.IsAny<CancellationToken>()
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
-            _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
                     , It.IsAny<CancellationToken>()))
@@ -843,7 +843,7 @@ namespace EasyDbMigratorTests.Unittests
                   .CheckIfLoggerWasCalled("migration process was canceled from the outside", LogLevel.Warning, Times.Exactly(1), checkExceptionNotNull: false);
 
             //check that the 3rd script is skipped because of the error in the previous script so we check here that max 2 db calls are made
-            databaseConnectorMock.Verify(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            databaseConnectorMock.Verify(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<Script>()
                 , It.IsAny<DateTimeOffset>()
                  , It.IsAny<CancellationToken>())
@@ -873,7 +873,7 @@ namespace EasyDbMigratorTests.Unittests
             scripts.Add(script3);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             var directoryHelperMock = new Mock<IDirectoryHelper>();
 
@@ -890,7 +890,7 @@ namespace EasyDbMigratorTests.Unittests
                 , It.IsAny<CancellationToken>()
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
-            _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                      , It.IsAny<Script>()
                      , It.IsAny<DateTimeOffset>()
                      , It.IsAny<CancellationToken>()))
@@ -946,7 +946,7 @@ namespace EasyDbMigratorTests.Unittests
             scripts.Add(script2);
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-            _ = assemblyResourceHelperMock.Setup(m => m.TryConverManifestResourceStreamsToScriptsAsync(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
+            _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult<List<Script>>(scripts));
 
             var directoryHelperMock = new Mock<IDirectoryHelper>();
 
@@ -962,7 +962,7 @@ namespace EasyDbMigratorTests.Unittests
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
             Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
-            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptWhenNotRunnedBeforeAsync(It.IsAny<MigrationConfiguration>()
+            _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
                      , It.IsAny<CancellationToken>()
@@ -1077,7 +1077,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void that_it_is_possable_to_mock_EasyDbCreator_when_using_the_interface()
+        public void is_possable_to_mock_EasyDbCreator_when_using_the_interface()
         {
             var sut = new Mock<IDbMigrator>();
 
@@ -1097,7 +1097,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void that_it_is_possable_to_mock_EasyDbCreator_when_overriding_methods()
+        public void is_possable_to_mock_EasyDbCreator_when_overriding_methods()
         {
             var sut = new Mock<DbMigrator>();
 
@@ -1134,9 +1134,8 @@ namespace EasyDbMigratorTests.Unittests
             }
         }
 
-        //TODO !!! make this more easy to setup as clientcode
         [Fact]
-        public void that_it_is_possable_to_inject_EasyDbCreator_in_ServiceCollection()
+        public void is_possable_to_inject_EasyDbCreator_in_ServiceCollection()
         {
             var collection = new ServiceCollection();
             _ = collection.AddTransient<ILogger, TestloggerImplementation>();

@@ -95,5 +95,3 @@ namespace EasyDbMigrator.IntegrationTestHelpers
         }
     }
 }
-
-//TODO : https://www.youtube.com/watch?v=7FxluGv-LY4 in build-pipeline

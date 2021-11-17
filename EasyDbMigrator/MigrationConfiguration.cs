@@ -18,14 +18,14 @@
                 throw new System.ArgumentException($"'{nameof(databaseName)}' cannot be null or whitespace.", nameof(databaseName));
             }
 
-            CheckCorrectDatabaseName(databaseName);
+            CheckIfCorrectDatabaseName(databaseName);
 
             ConnectionString = connectionString;
             DatabaseName = databaseName;
             this.ScriptsDirectory = ScriptsDirectory;
         }
 
-        private static void CheckCorrectDatabaseName(string databaseName)
+        private static void CheckIfCorrectDatabaseName(string databaseName)
         {
             if (databaseName.Trim().Split(" ").Length > 1)
             {

@@ -10,7 +10,7 @@ namespace EasyDbMigrator
     [ExcludeFromCodeCoverage] //is tested with integrationtest
     public class AssemblyResourceHelper : IAssemblyResourceHelper
     {
-        public static string[] TryGetListOfResourceNamesFromAssembly(Type typeOfClassWhereScriptsAreLocated)
+        public static string[] TryGetManifestResourceNamesFromAssembly(Type typeOfClassWhereScriptsAreLocated)
         {
             Assembly? assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
 
@@ -23,14 +23,14 @@ namespace EasyDbMigrator
             return resourcenames;
         }
 
-        public async Task<List<Script>> TryConverManifestResourceStreamsToScriptsAsync(Type typeOfClassWhereScriptsAreLocated)
+        public async Task<List<Script>> TryGetScriptsFromAssembly(Type typeOfClassWhereScriptsAreLocated)
         {
             Assembly? assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
 
             if (assembly is null)
                 throw new InvalidOperationException($"assembly is null for custom-class : {typeOfClassWhereScriptsAreLocated}");
 
-            string[] filenames = TryGetListOfResourceNamesFromAssembly(typeOfClassWhereScriptsAreLocated);
+            string[] filenames = TryGetManifestResourceNamesFromAssembly(typeOfClassWhereScriptsAreLocated);
 
             List<Script> scripts = new List<Script>();
             foreach (string filename in filenames)

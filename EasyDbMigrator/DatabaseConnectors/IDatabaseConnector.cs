@@ -14,7 +14,7 @@ namespace EasyDbMigrator.DatabaseConnectors
         Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken);
 
-        Task<Result<RunMigrationResult>> RunDbMigrationScriptWhenNotRunnedBeforeAsync(MigrationConfiguration migrationConfiguration
+        Task<Result<RunMigrationResult>> RunDbMigrationScriptAsync(MigrationConfiguration migrationConfiguration
             , Script script
             , DateTimeOffset executedDateTime
             , CancellationToken cancellationToken);

@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 namespace EasyDbMigrator
 {
 
-    //when .net 6 is out checkin and support .net 6 (also build), then update visual studio to real version and install fine coverage
-    
     [ExcludeFromCodeCoverage] //tested with integrationtests
     public class DirectoryHelper : IDirectoryHelper
     {
-        //TODO add result when ther is test and add some test scenario's
-
         public async Task<List<Script>> TryGetScriptsFromDirectoryAsync(string directory)
         {
             List<Script> scripts = new List<Script>();
