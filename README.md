@@ -2,18 +2,19 @@
 
 ## working on milestone: 1.4.0 (next release)
 - Create fancy cross-platform UI so migrations can be run manual
+- updated all internal packages
 
 ## 1.3.0 (the latest release)
 - support for .net 6 LTS
 - updated all internal packages
 
 ## 1.2.0:
-- can use a file directory for scripts
+- can point to a directory for scripts
 - speedup the inner development loop by getting the docker-image and running it in the integration tests (with examples)
-- can mock EasyDbMigrator when u want to integrate it in your own code
-- can use DbMigrator in .net Dependency injection (IServiceCollection)
-- can cancel the process from outside
-- make executions and configuration more resilient
+- can mock EasyDbMigrator when used in tests
+- can use DbMigrator with .net Dependency injection (IServiceCollection)
+- can cancel the process from outside (CancellationToken)
+- make executions more resilient (retries)
 - support PostgreSQL migrations in your integration test
 - bugfixes and better logging
 - updated all internal packages
@@ -39,19 +40,16 @@ It is possible to use EasyDbMigrator in your own application.
 
 ### More info:
 
-|         |       |       |        |
-| ------- | ----- | ----- | -----  |
-| `EasyDbMigrator` | core & integration testing |[![NuGet](https://img.shields.io/nuget/v/Retrodad.EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/) | [![Nuget](https://img.shields.io/nuget/dt/Retrodad.EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/) |
-| `EasyDbMigrator runner` | running migrations manual and CD pipelines support  | TODO | TODO |
+|[![NuGet](https://img.shields.io/nuget/v/Retrodad.EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/) 
+[![Nuget](https://img.shields.io/nuget/dt/Retrodad.EasyDbMigrator.svg)](https://www.nuget.org/packages/Retrodad.EasyDbMigrator/)
+
 
 # EasyDBMigrator - making database migrations and integration testing easier
 
 ## What is EasyDBMigrator?
 
-EasyDBMigrator is an open-source SQL database migration framework & Tool. It strongly favors simplicity and easy to use for automatic CI/CD strategies and local integration testing scenario's. 
-
-It has a Command-line client for managing migrations and a framework written for .net to integrate database migrations in local en CI pipeline based integration testing scenario's.
-    
+EasyDBMigrator is an open-source database migration framework. It strongly favors simplicity and easy to use for automatic CI/CD strategies and local integration testing scenario's and easy integration in own code.
+  
 ## What we want to accomplish ?
 
 1. Make it easy to integrate Microsoft SQL migrations in your local integration testsuite
@@ -60,7 +58,8 @@ It has a Command-line client for managing migrations and a framework written for
 4. Make it easy to integrate Postgre SQL migrations in your CI/CD flows
 5. Make it easy to perform manual Microsoft SQL migrations
 6. Make it easy to perform manual Postgre SQL migrations
-7. Provide examples and stimulate discussions about writing integration tests in code (so please send me feedback or start a good discussion)
+7. Make it easy to integrate this package in your own code/tool
+8. Provide examples and stimulate discussions about writing integration tests in code (so please send me feedback or start a good discussion)
 
 ## Get started with EasyDBMigrator :
 
