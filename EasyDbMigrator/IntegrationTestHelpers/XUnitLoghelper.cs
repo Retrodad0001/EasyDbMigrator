@@ -6,12 +6,14 @@ using Xunit.Abstractions;
 
 namespace EasyDbMigrator.IntegrationTestHelpers
 {
-    [ExcludeFromCodeCoverage]
+    [ExcludeFromCodeCoverage]//TODO FIX WHEN NO SUPPORT .NET 3.1
+#pragma warning disable CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).
     public sealed class XUnitLoghelper<T> : XUnitLoghelper, ILogger<T>
+#pragma warning restore CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).
     {
         public XUnitLoghelper(ITestOutputHelper testOutputHelper
             , LoggerExternalScopeProvider scopeProvider)
-#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8604 // Possible null reference argument. //TODO FIX WHEN NO SUPPORT .NET 3.1
             : base(testOutputHelper, scopeProvider, typeof(T).FullName)
 #pragma warning restore CS8604 // Possible null reference argument.
         {
@@ -54,8 +56,10 @@ namespace EasyDbMigrator.IntegrationTestHelpers
         public IDisposable BeginScope<TState>(TState state)
         {
             return _scopeProvider.Push(state);
-        }
+        }//TODO FIX WHEN NO SUPPORT .NET 3.1
+#pragma warning disable CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).
         public void Log<TState>(LogLevel logLevel
+#pragma warning restore CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).
             , EventId eventId
             , TState state
             , Exception exception
