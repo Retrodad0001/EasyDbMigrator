@@ -43,7 +43,7 @@ For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</P
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-    <PackageReference Include="Npgsql" Version="6.0.0" />
+    <PackageReference Include="Npgsql" Version="6.0.1" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
     <PackageReference Include="xunit.abstractions" Version="2.0.3" />

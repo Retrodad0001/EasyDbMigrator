@@ -23,23 +23,22 @@ namespace EasyDbMigratorTests.Integrationtests
     {
         private const string _databaseName = "EasyDbMigratorSqlServer";
         private const string _password = "stuffy6!";
-        private readonly IDictionary<ushort, ushort> _ports = new Dictionary<ushort, ushort>();
-        private DockerEnvironment _dockerEnvironment;
+        private DockerEnvironment _dockerEnvironmentSql;
 
         [Fact]
         [Trait("Category", "Integrationtest")]
         public async Task when_nothing_goes_wrong_with_running_the_migrations_on_an_empty_database()
         {
             DockerEnvironmentBuilder environmentBuilder = new();
-            _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
+            _dockerEnvironmentSql = SetupDockerTestEnvironment(environmentBuilder);
 
             CancellationTokenSource source = new();
             CancellationToken token = source.Token;
 
             try
             {
-                await _dockerEnvironment.Up().ConfigureAwait(true);
-                string connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
+                await _dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
+                string connectionString = _dockerEnvironmentSql.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString: connectionString
                     , databaseName: _databaseName);
@@ -96,7 +95,7 @@ namespace EasyDbMigratorTests.Integrationtests
             }
             finally
             {
-                _dockerEnvironment.Dispose();
+                await _dockerEnvironmentSql.DisposeAsync().ConfigureAwait(true);
                 source.Dispose();
             }
         }
@@ -106,12 +105,12 @@ namespace EasyDbMigratorTests.Integrationtests
         public async Task when_nothing_goes_wrong_with_running_migrations_on_an_empty_database_without_cancellationToken()
         {
             DockerEnvironmentBuilder environmentBuilder = new();
-            _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
+            _dockerEnvironmentSql = SetupDockerTestEnvironment(environmentBuilder);
 
             try
             {
-                await _dockerEnvironment.Up().ConfigureAwait(true);
-                string connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
+                await _dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
+                string connectionString = _dockerEnvironmentSql.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString: connectionString
                     , databaseName: _databaseName);
@@ -166,7 +165,7 @@ namespace EasyDbMigratorTests.Integrationtests
             }
             finally
             {
-                _dockerEnvironment.Dispose();
+                await _dockerEnvironmentSql.DisposeAsync().ConfigureAwait(true);
             }
         }
 
@@ -180,9 +179,9 @@ namespace EasyDbMigratorTests.Integrationtests
             try
             {
                 DockerEnvironmentBuilder environmentBuilder = new();
-                _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
-                await _dockerEnvironment.Up().ConfigureAwait(true);
-                string connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
+                _dockerEnvironmentSql = SetupDockerTestEnvironment(environmentBuilder);
+                await _dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
+                string connectionString = _dockerEnvironmentSql.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString: connectionString
                     , databaseName: _databaseName);
@@ -257,7 +256,7 @@ namespace EasyDbMigratorTests.Integrationtests
             }
             finally
             {
-                _dockerEnvironment.Dispose();
+                await _dockerEnvironmentSql.DisposeAsync().ConfigureAwait(true);
                 source.Dispose();
             }
         }
@@ -267,15 +266,15 @@ namespace EasyDbMigratorTests.Integrationtests
         public async Task can_cancel_the_migration_just_before_the_scripts_will_run()
         {
             DockerEnvironmentBuilder environmentBuilder = new();
-            _dockerEnvironment = SetupDockerTestEnvironment(environmentBuilder);
+            _dockerEnvironmentSql = SetupDockerTestEnvironment(environmentBuilder);
 
             CancellationTokenSource source = new();
             CancellationToken token = source.Token;
 
             try
             {
-                await _dockerEnvironment.Up().ConfigureAwait(true);
-                string connectionString = _dockerEnvironment.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
+                await _dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
+                string connectionString = _dockerEnvironmentSql.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString: connectionString
                     , databaseName: _databaseName);
@@ -319,24 +318,31 @@ namespace EasyDbMigratorTests.Integrationtests
             }
             finally
             {
-                _dockerEnvironment.Dispose();
+                await _dockerEnvironmentSql.DisposeAsync().ConfigureAwait(true);
                 source.Dispose();
             }
         }
-       
+
         private DockerEnvironment SetupDockerTestEnvironment(DockerEnvironmentBuilder environmentBuilder)
         {
-            if (_dockerEnvironment != null)
+            if (_dockerEnvironmentSql != null)
             {
-                return _dockerEnvironment;
+                return _dockerEnvironmentSql;
             }
 
-            _ports.Add(1433, 1433);
-            return environmentBuilder.UseDefaultNetwork()
-                .SetName("xunit-EasyDbMigratorSqlServer")
-                //pick for now the latest version of sqlserver (= default)
-                .AddMssqlContainer(name: _databaseName, saPassword: _password, ports: _ports)
-                .Build();
+            IDictionary<ushort, ushort> ports = new Dictionary<ushort, ushort>();
+            ports.Add(1433, 1433);
+            return (DockerEnvironment)environmentBuilder
+                 .SetName(_databaseName)
+                 .AddMssqlContainer(p =>
+                 {
+                     return p with
+                     {
+                         Name = _databaseName
+                         , SAPassword = _password
+                         , Ports = ports
+                     };
+                 }).Build();
         }
     }
 }

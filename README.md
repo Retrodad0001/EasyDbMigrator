@@ -1,12 +1,15 @@
-# The Latest news 
+# The Latest news and Roadmap
+
+## Future release
+- Create fancy cross-platform UI so migrations can be run manual (in .Net MAUI, so i must wait for stable release MAUI first)
 
 ## working on milestone: 1.4.0 (next release)
-- Create fancy cross-platform UI so migrations can be run manual
-- updated all internal packages
+- updated all internal packages for stability and security (i do this at least every month and when an new package is published)
+- Run same scripts against multiple databases parallel, so it can be used for multitenant platforms
 
 ## 1.3.0 (the latest release)
 - support for .net 6 LTS
-- updated all internal packages
+- updated all internal packages for stability and security
 
 ## 1.2.0:
 - can point to a directory for scripts
@@ -20,9 +23,9 @@
 - updated all internal packages
  
 ## 1.1.0
- - support for .net core 3.1 (until LTS ends) and .net 5 (until support ends)
+ - support for .net core 3.1 LTS and .net 5
  - updated .net packages
- - updated external packages
+ - updated all internal packages
  - updated to latest .net 3.1.x and 5.0.x with security updates
 
 The software can only be used for integration-testing. Running manual migrations and using it in CI/CD pipelines is under-construction. 

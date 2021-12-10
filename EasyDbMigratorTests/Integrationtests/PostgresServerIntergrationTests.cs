@@ -37,7 +37,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
             try
             {
-                await _dockerPostgresServerEnvironment.Up().ConfigureAwait(true);
+                await _dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(true);
                 var connectionString = _dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
@@ -92,7 +92,7 @@ namespace EasyDbMigratorTests.Integrationtests
             finally
             {
                 source.Dispose();
-                _dockerPostgresServerEnvironment.Dispose();
+                await _dockerPostgresServerEnvironment.DisposeAsync().ConfigureAwait(true);
             }
         }
 
@@ -105,7 +105,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
             try
             {
-                await _dockerPostgresServerEnvironment.Up().ConfigureAwait(true);
+                await _dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(true);
                 var connectionString = _dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
@@ -157,7 +157,7 @@ namespace EasyDbMigratorTests.Integrationtests
             }
             finally
             {
-                _dockerPostgresServerEnvironment.Dispose();
+                await _dockerPostgresServerEnvironment.DisposeAsync().ConfigureAwait(true);
             }
         }
 
@@ -171,7 +171,7 @@ namespace EasyDbMigratorTests.Integrationtests
             {
                 var environmentBuilder = new DockerEnvironmentBuilder();
                 _dockerPostgresServerEnvironment = SetupDockerPostgresServerTestEnvironment(environmentBuilder);
-                await _dockerPostgresServerEnvironment.Up().ConfigureAwait(true);
+                await _dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(true);
                 var connectionString = _dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
@@ -248,7 +248,7 @@ namespace EasyDbMigratorTests.Integrationtests
             finally
             {
                 source.Dispose();
-                _dockerPostgresServerEnvironment.Dispose();
+                await _dockerPostgresServerEnvironment.DisposeAsync().ConfigureAwait(true);
             }
         }
 
@@ -263,7 +263,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
             try
             {
-                await _dockerPostgresServerEnvironment.Up().ConfigureAwait(true);
+                await _dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(true);
                 var connectionString = _dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
@@ -308,7 +308,7 @@ namespace EasyDbMigratorTests.Integrationtests
             finally
             {
                 source.Dispose();
-                _dockerPostgresServerEnvironment.Dispose();
+                await _dockerPostgresServerEnvironment.DisposeAsync().ConfigureAwait(true);
             }
         }
 
@@ -317,13 +317,17 @@ namespace EasyDbMigratorTests.Integrationtests
             if (_dockerPostgresServerEnvironment != null)
                 return _dockerPostgresServerEnvironment;
 
-            return environmentBuilder.UseDefaultNetwork()
-                .SetName("xunit-EasyDbMigratorPostgresServer")
-                //pick for now the latest version of sqlserver (= default)
-                .AddPostgresContainer(name: _databaseName
-                    , userName: _userName
-                    , password: _password)
-                .Build();
+            return (DockerEnvironment)environmentBuilder
+                 .SetName(_databaseName)
+                 .AddPostgresContainer(p =>
+                 {
+                     return p with
+                     {
+                         Name = _databaseName
+                         , UserName = _userName
+                         , Password = _password
+                     };
+                 }).Build();
         }
     }
 }
