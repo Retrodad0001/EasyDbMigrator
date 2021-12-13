@@ -5,6 +5,7 @@
 
 ## working on milestone: 1.4.0 (next release)
 - updated all internal packages for stability and security (i do this at least every month and when an new package is published)
+- Can choose between different script naming conventions
 - Run same scripts against multiple databases parallel, so it can be used for multitenant platforms
 
 ## 1.3.0 (the latest release)
