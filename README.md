@@ -93,9 +93,9 @@ EasyDBMigrator is an open-source database migration framework. It strongly favor
                   , databaseConnector: new MicrosoftSqlConnector()); 
             //can also use the PostgreSqlConnector to connect to PostgreSql instead of Microsoft Sql Server
 
-            bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
+            bool succeededDeletingDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
                     , cancellationToken: token);
-                _ = succeededDeleDatabase.Should().BeTrue();
+                _ = succeededDeletingDatabase.Should().BeTrue();
 
             bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound)
                     , migrationConfiguration: config
