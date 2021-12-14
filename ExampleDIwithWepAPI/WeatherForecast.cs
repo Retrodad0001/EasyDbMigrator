@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace ExampleDIwithWepAPI
 {
     [ExcludeFromCodeCoverage] //used for testing no production code!
-    public class WeatherForecast
+    public record WeatherForecast
     {
         public DateTime Date { get; set; }
 

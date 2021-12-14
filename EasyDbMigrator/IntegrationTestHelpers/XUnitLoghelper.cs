@@ -6,16 +6,12 @@ using Xunit.Abstractions;
 
 namespace EasyDbMigrator.IntegrationTestHelpers
 {
-    [ExcludeFromCodeCoverage]//TODO FIX WHEN NO SUPPORT .NET 3.1
-#pragma warning disable CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).
+    [ExcludeFromCodeCoverage]
     public sealed class XUnitLoghelper<T> : XUnitLoghelper, ILogger<T>
-#pragma warning restore CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).
     {
         public XUnitLoghelper(ITestOutputHelper testOutputHelper
             , LoggerExternalScopeProvider scopeProvider)
-#pragma warning disable CS8604 // Possible null reference argument. //TODO FIX WHEN NO SUPPORT .NET 3.1
             : base(testOutputHelper, scopeProvider, typeof(T).FullName)
-#pragma warning restore CS8604 // Possible null reference argument.
         {
         }
     }
@@ -24,12 +20,12 @@ namespace EasyDbMigrator.IntegrationTestHelpers
     public class XUnitLoghelper : ILogger
     {
         private readonly ITestOutputHelper _testOutputHelper;
-        private readonly string _categoryName;
+        private readonly string? _categoryName;
         private readonly LoggerExternalScopeProvider _scopeProvider;
 
         public static ILogger CreateLogger(ITestOutputHelper testOutputHelper)
         {
-            return new XUnitLoghelper(testOutputHelper, new LoggerExternalScopeProvider(), "");
+            return new XUnitLoghelper(testOutputHelper, new LoggerExternalScopeProvider(), string.Empty);
         }
 
         public static ILogger<T> CreateLogger<T>(ITestOutputHelper testOutputHelper)
@@ -37,16 +33,15 @@ namespace EasyDbMigrator.IntegrationTestHelpers
             return new XUnitLoghelper<T>(testOutputHelper, new LoggerExternalScopeProvider());
         }
 
-        public XUnitLoghelper(ITestOutputHelper testOutputHelper, LoggerExternalScopeProvider scopeProvider, string categoryName)
+        public XUnitLoghelper(ITestOutputHelper testOutputHelper, LoggerExternalScopeProvider scopeProvider, string? categoryName)
         {
             if (string.IsNullOrEmpty(categoryName))
             {
                 throw new ArgumentException($"'{nameof(categoryName)}' cannot be null or empty.", nameof(categoryName));
             }
-            _categoryName = categoryName;
 
+            _categoryName = categoryName;
             _testOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
-           
             _scopeProvider = scopeProvider ?? throw new ArgumentNullException(nameof(scopeProvider));
         }
         public bool IsEnabled(LogLevel logLevel)
@@ -56,21 +51,19 @@ namespace EasyDbMigrator.IntegrationTestHelpers
         public IDisposable BeginScope<TState>(TState state)
         {
             return _scopeProvider.Push(state);
-        }//TODO FIX WHEN NO SUPPORT .NET 3.1
-#pragma warning disable CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).
+        }
         public void Log<TState>(LogLevel logLevel
-#pragma warning restore CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).
             , EventId eventId
             , TState state
-            , Exception exception
-            , Func<TState, Exception, string> formatter)
+            , Exception? exception
+            , Func<TState, Exception?, string> formatter)
         {
             var sb = new StringBuilder();
             _ = sb.Append(GetLogLevelString(logLevel))
               .Append(" [").Append(_categoryName).Append("] ")
               .Append(formatter(state, exception));
 
-            if (exception != null)
+            if (exception is not null)
             {
                 _ = sb.Append('\n').Append($"message : {exception.Message} , trace : {exception.StackTrace} ");
             }

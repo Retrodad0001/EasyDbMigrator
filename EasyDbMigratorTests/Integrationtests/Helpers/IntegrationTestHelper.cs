@@ -9,7 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace EasyDbMigratorTests.Integrationtests.Helpers
 {
     [ExcludeFromCodeCoverage]
-    public class IntegrationTestHelper
+    public sealed class IntegrationTestHelper
     {
         public static bool CheckMigrationsTableSqlSever(string connectionString,
             List<DbMigrationsRunRowSqlServer> expectedRows

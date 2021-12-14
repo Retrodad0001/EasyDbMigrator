@@ -1,6 +1,6 @@
 ﻿namespace EasyDbMigrator
 {
-    public class MigrationConfiguration
+    public record MigrationConfiguration
     {
         public string ConnectionString { get; private set; }
         public string DatabaseName { get; private set; }

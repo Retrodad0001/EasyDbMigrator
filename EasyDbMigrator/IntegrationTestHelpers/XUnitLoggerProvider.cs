@@ -22,7 +22,7 @@ namespace EasyDbMigrator.IntegrationTestHelpers
 
         public void Dispose()
         {
-            //nothing to dispose here, but must implement this interface
+            //nothing to dispose here
         }
     }
 }

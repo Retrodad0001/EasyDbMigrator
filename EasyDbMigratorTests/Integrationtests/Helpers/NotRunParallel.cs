@@ -5,7 +5,7 @@ namespace EasyDbMigratorTests.Integrationtests.Helpers
 {
     [ExcludeFromCodeCoverage]
     [CollectionDefinition(nameof(NotRunParallel), DisableParallelization = true)]
-    public class NotRunParallel
+    public sealed class NotRunParallel
     {
     }
 }

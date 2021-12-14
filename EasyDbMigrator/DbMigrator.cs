@@ -199,7 +199,7 @@ namespace EasyDbMigrator
             }
 
             Result<bool> runMigrationsScriptsAction = await TryRunMigrationScriptsAsync(migrationConfiguration: migrationConfiguration
-                , orderedScripts: loadScriptsAction.Value
+                , orderedScripts: loadScriptsAction.Value is not null ? loadScriptsAction.Value : new List<Script>()
                 , cancellationToken: cancellationToken).ConfigureAwait(false);
 
             if (runMigrationsScriptsAction.HasFailure)
