@@ -7,7 +7,7 @@
 - updated all internal packages for stability and security (i do this at least every month and when an new package is published)
 - Can choose between different script naming conventions
 - Run same scripts against multiple databases parallel, so it can be used for multitenant platforms
-- only support for .net 6.0 lts what is needed for future development
+- only support for .net 6.0 LTS what is needed for future development (remove .net 5 and .net core 3.1 LTS support)
 
 ## 1.3.0 (the latest release)
 - support for .net 6 LTS
