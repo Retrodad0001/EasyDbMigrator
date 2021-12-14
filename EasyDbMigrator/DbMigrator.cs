@@ -199,7 +199,9 @@ namespace EasyDbMigrator
             }
 
             Result<bool> runMigrationsScriptsAction = await TryRunMigrationScriptsAsync(migrationConfiguration: migrationConfiguration
-                , orderedScripts: loadScriptsAction.Value is not null ? loadScriptsAction.Value : new List<Script>()
+#pragma warning disable CS8604 // Possible null reference argument.
+                , orderedScripts: loadScriptsAction.Value
+#pragma warning restore CS8604 // Possible null reference argument.
                 , cancellationToken: cancellationToken).ConfigureAwait(false);
 
             if (runMigrationsScriptsAction.HasFailure)
