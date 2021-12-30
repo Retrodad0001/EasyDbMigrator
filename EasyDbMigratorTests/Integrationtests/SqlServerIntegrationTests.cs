@@ -22,23 +22,17 @@ namespace EasyDbMigratorTests.Integrationtests
     public class SqlServerIntegrationTests
     {
         private const string _databaseName = "EasyDbMigratorSqlServer";
-        private const string _password = "stuffy6!";
-        private DockerEnvironment _dockerEnvironmentSql;
 
         [Fact]
         [Trait("Category", "Integrationtest")]
         public async Task when_nothing_goes_wrong_with_running_the_migrations_on_an_empty_database()
         {
-            DockerEnvironmentBuilder environmentBuilder = new();
-            _dockerEnvironmentSql = SetupDockerTestEnvironment(environmentBuilder);
-
-            CancellationTokenSource source = new();
-            CancellationToken token = source.Token;
+            var dockerEnvironmentSql = SetupSQLDockerTestEnvironment();
 
             try
             {
-                await _dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
-                string connectionString = _dockerEnvironmentSql.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
+                await dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
+                string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString: connectionString
                     , databaseName: _databaseName);
@@ -63,12 +57,12 @@ namespace EasyDbMigratorTests.Integrationtests
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                    , cancellationToken: token).ConfigureAwait(true);
+                    , cancellationToken: CancellationToken.None).ConfigureAwait(true);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound)
                     , migrationConfiguration: config
-                    , cancellationToken: token).ConfigureAwait(true);
+                    , cancellationToken: CancellationToken.None).ConfigureAwait(true);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 _ = loggerMock
@@ -95,93 +89,20 @@ namespace EasyDbMigratorTests.Integrationtests
             }
             finally
             {
-                await _dockerEnvironmentSql.DisposeAsync().ConfigureAwait(true);
-                source.Dispose();
+                await dockerEnvironmentSql.DisposeAsync().ConfigureAwait(true);
             }
         }
 
         [Fact]
         [Trait("Category", "Integrationtest")]
-        public async Task when_nothing_goes_wrong_with_running_migrations_on_an_empty_database_without_cancellationToken()
+        public async Task can_skip_scripts_if_they_allready_run_before()
         {
-            DockerEnvironmentBuilder environmentBuilder = new();
-            _dockerEnvironmentSql = SetupDockerTestEnvironment(environmentBuilder);
+            var dockerEnvironmentSql = SetupSQLDockerTestEnvironment();
 
             try
             {
-                await _dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
-                string connectionString = _dockerEnvironmentSql.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
-
-                MigrationConfiguration config = new(connectionString: connectionString
-                    , databaseName: _databaseName);
-
-                Mock<ILogger<DbMigrator>> loggerMock = new();
-
-                Mock<IDataTimeHelper> datetimeHelperMock = new();
-                DateTimeOffset ExecutedDataTime = DateTime.UtcNow;
-
-                _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
-
-                DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
-                    , logger: loggerMock.Object
-                    , dataTimeHelperMock: datetimeHelperMock.Object
-                    , databaseConnector: new MicrosoftSqlConnector());
-
-                List<string> scriptsToExclude = new()
-                {
-                    "20211230_001_CreateDB.sql"
-                };
-
-                migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
-
-                bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config).ConfigureAwait(true);
-                _ = succeededDeleDatabase.Should().BeTrue();
-
-                bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSQLServerScriptsCanBeFound)
-                    , migrationConfiguration: config).ConfigureAwait(true);
-                _ = succeededRunningMigrations.Should().BeTrue();
-
-                _ = loggerMock
-                    .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync has executed", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("script: 20211231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
-                    .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
-
-                List<DbMigrationsRunRowSqlServer> expectedRows = new()
-                {
-                    new DbMigrationsRunRowSqlServer(id: 1, executed: ExecutedDataTime, filename: "20211230_002_Script2.sql", version: "1.0.0"),
-                    new DbMigrationsRunRowSqlServer(id: 2, executed: ExecutedDataTime, filename: "20211231_001_Script1.sql", version: "1.0.0")
-                };
-
-                _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString: connectionString
-                  , expectedRows: expectedRows
-                  , testDatabaseName: _databaseName);
-
-            }
-            catch (Exception ex)
-            {
-                Assert.True(false, ex.ToString());
-            }
-            finally
-            {
-                await _dockerEnvironmentSql.DisposeAsync().ConfigureAwait(true);
-            }
-        }
-
-        [Fact]
-        [Trait("Category", "Integrationtest")]
-        public async Task when_all_the_migration_script_allready_have_been_executed_before()
-        {
-            CancellationTokenSource source = new();
-            CancellationToken token = source.Token;
-
-            try
-            {
-                DockerEnvironmentBuilder environmentBuilder = new();
-                _dockerEnvironmentSql = SetupDockerTestEnvironment(environmentBuilder);
-                await _dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
-                string connectionString = _dockerEnvironmentSql.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
+                await dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
+                string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString: connectionString
                     , databaseName: _databaseName);
@@ -204,14 +125,14 @@ namespace EasyDbMigratorTests.Integrationtests
                 migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                    , cancellationToken: token).ConfigureAwait(true);
+                    , cancellationToken: CancellationToken.None).ConfigureAwait(true);
                 _ = succeededDeleDatabase.Should().BeTrue();
 
                 Type type = typeof(HereTheSQLServerScriptsCanBeFound);
 
                 bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
                     , migrationConfiguration: config
-                    , cancellationToken: token).ConfigureAwait(true);
+                    , cancellationToken: CancellationToken.None).ConfigureAwait(true);
                 _ = succeededRunningMigrations.Should().BeTrue();
 
                 //now run the migrations again
@@ -230,7 +151,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 bool succeeded = await migrator2.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
                     , migrationConfiguration: config
-                    , cancellationToken: token).ConfigureAwait(true);
+                    , cancellationToken: CancellationToken.None).ConfigureAwait(true);
                 _ = succeeded.Should().BeTrue();
 
                 _ = loggerMockSecondtRun
@@ -256,25 +177,23 @@ namespace EasyDbMigratorTests.Integrationtests
             }
             finally
             {
-                await _dockerEnvironmentSql.DisposeAsync().ConfigureAwait(true);
-                source.Dispose();
+                await dockerEnvironmentSql.DisposeAsync().ConfigureAwait(true);
             }
         }
 
         [Fact]
         [Trait("Category", "Integrationtest")]
-        public async Task can_cancel_the_migration_just_before_the_scripts_will_run()
+        public async Task can_cancel_the_migration_proces()
         {
-            DockerEnvironmentBuilder environmentBuilder = new();
-            _dockerEnvironmentSql = SetupDockerTestEnvironment(environmentBuilder);
+            var dockerEnvironmentSql = SetupSQLDockerTestEnvironment();
 
             CancellationTokenSource source = new();
             CancellationToken token = source.Token;
 
             try
             {
-                await _dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
-                string connectionString = _dockerEnvironmentSql.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
+                await dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
+                string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(_databaseName).GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString: connectionString
                     , databaseName: _databaseName);
@@ -318,17 +237,15 @@ namespace EasyDbMigratorTests.Integrationtests
             }
             finally
             {
-                await _dockerEnvironmentSql.DisposeAsync().ConfigureAwait(true);
+                await dockerEnvironmentSql.DisposeAsync().ConfigureAwait(true);
                 source.Dispose();
             }
         }
 
-        private DockerEnvironment SetupDockerTestEnvironment(DockerEnvironmentBuilder environmentBuilder)
+        private DockerEnvironment SetupSQLDockerTestEnvironment()
         {
-            if (_dockerEnvironmentSql != null)
-            {
-                return _dockerEnvironmentSql;
-            }
+            var environmentBuilder = new DockerEnvironmentBuilder();
+            const string password = "stuffy6!";
 
             IDictionary<ushort, ushort> ports = new Dictionary<ushort, ushort>();
             ports.Add(1433, 1433);
@@ -338,9 +255,9 @@ namespace EasyDbMigratorTests.Integrationtests
                  {
                      return p with
                      {
-                         Name = _databaseName
-                         , SAPassword = _password
-                         , Ports = ports
+                         Name = _databaseName,
+                         SAPassword = password,
+                         Ports = ports
                      };
                  }).Build();
         }
