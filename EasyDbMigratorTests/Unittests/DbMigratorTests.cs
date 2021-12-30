@@ -276,7 +276,7 @@ namespace EasyDbMigratorTests.Unittests
         public async Task when_migration_process_goes_ok()
         {
             const string databaseName = "EasyDbMigrator";
-            const string connectionString = "someconnectionstring";
+            const string connectionString = "connectionstring";
 
             MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
                 , databaseName: databaseName);
@@ -325,9 +325,11 @@ namespace EasyDbMigratorTests.Unittests
                 , directoryHelper: directoryHelperMock.Object
                 , dataTimeHelper: datetimeHelperMock.Object);
 
-            _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
+            bool result  = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
                 , cancellationToken: CancellationToken.None).ConfigureAwait(true);
+
+            _ = result.Should().BeTrue();
 
             _ = loggerMock
                 .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -344,7 +346,7 @@ namespace EasyDbMigratorTests.Unittests
         public async Task can_use_filedirectory_for_scripts()
         {
             const string databaseName = "EasyDbMigrator";
-            const string connectionString = "someconnectionstring";
+            const string connectionString = "connectionstring";
 
             MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
                 , databaseName: databaseName
@@ -394,9 +396,11 @@ namespace EasyDbMigratorTests.Unittests
                 , directoryHelper: directoryHelperMock.Object
                 , dataTimeHelper: datetimeHelperMock.Object);
 
-            _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
+            bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
                 , cancellationToken: CancellationToken.None).ConfigureAwait(true);
+
+            _ = result.Should().BeTrue();
 
             _ = loggerMock
                 .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -461,9 +465,11 @@ namespace EasyDbMigratorTests.Unittests
                 , directoryHelper: directoryHelperMock.Object
                 , dataTimeHelper: datetimeHelperMock.Object);
 
-            _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
+            bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
                 , cancellationToken: CancellationToken.None).ConfigureAwait(true);
+
+            _ = result.Should().BeFalse();
 
             _ = loggerMock
                 .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -521,9 +527,11 @@ namespace EasyDbMigratorTests.Unittests
                 , directoryHelper: directoryHelperMock.Object
                 , dataTimeHelper: datetimeHelperMock.Object);                
 
-            _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
+            bool result  = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
                 , cancellationToken: CancellationToken.None).ConfigureAwait(true);
+
+            _ = result.Should().BeFalse();
 
             _ = loggerMock
                 .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -586,9 +594,11 @@ namespace EasyDbMigratorTests.Unittests
                 , directoryHelper: directoryHelperMock.Object
                 , dataTimeHelper: datetimeHelperMock.Object);
 
-            _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
+            bool result  = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
                 , cancellationToken: CancellationToken.None).ConfigureAwait(true);
+
+            _ = result.Should().BeFalse();
 
             _ = loggerMock
                .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -655,9 +665,9 @@ namespace EasyDbMigratorTests.Unittests
                 , directoryHelper: directoryHelperMock.Object
                 , dataTimeHelper: datetimeHelperMock.Object);
 
-            _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
-                , migrationConfiguration: config
-                , cancellationToken: CancellationToken.None).ConfigureAwait(true);
+            bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType, migrationConfiguration: config, cancellationToken: CancellationToken.None).ConfigureAwait(true);
+
+            _ = result.Should().BeFalse();
 
             _ = loggerMock
                   .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -738,9 +748,11 @@ namespace EasyDbMigratorTests.Unittests
 
             source.Cancel();
 
-            _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
+            bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
                 , cancellationToken: token).ConfigureAwait(true);
+
+            _ = result.Should().BeTrue();
 
             _ = loggerMock
                   .CheckIfLoggerWasCalled("migration process was canceled from the outside", LogLevel.Warning, Times.Exactly(1), checkExceptionNotNull: false);
@@ -812,9 +824,11 @@ namespace EasyDbMigratorTests.Unittests
                 , directoryHelper: directoryHelperMock.Object
                 , dataTimeHelper: datetimeHelperMock.Object);
 
-            _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
+            bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                     , migrationConfiguration: config
                     , cancellationToken: token).ConfigureAwait(true);
+
+            _ = result.Should().BeFalse();
 
             _ = loggerMock
                   .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -890,9 +904,11 @@ namespace EasyDbMigratorTests.Unittests
                 , directoryHelper: directoryHelperMock.Object
                 , dataTimeHelper: datetimeHelperMock.Object);
 
-            _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
+            bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
                 , cancellationToken: CancellationToken.None).ConfigureAwait(true);
+
+            _ = result.Should().BeTrue();
 
             _ = loggerMock
                  .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
@@ -961,9 +977,11 @@ namespace EasyDbMigratorTests.Unittests
             //exclude some scripts
             migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: new List<string> { "20211230_001_Script1.sql" });
 
-            _ = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
+            bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
                 , cancellationToken: CancellationToken.None).ConfigureAwait(true);
+
+            _ = result.Should().BeTrue();
 
             _ = loggerMock
                 .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
