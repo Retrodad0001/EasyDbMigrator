@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator
 {
-    public class DbMigrator : IDbMigrator
+    public partial class DbMigrator : IDbMigrator
     {
         private readonly ILogger _logger;
         private readonly IDatabaseConnector _databaseconnector;
@@ -296,8 +296,8 @@ namespace EasyDbMigrator
 
                 if (result.Value == RunMigrationResult.MigrationWasCancelled)
                 {
-                    _logger.Log(logLevel: LogLevel.Warning, message: $"Whole migration process was canceled");
-                    return new Result<bool>(wasSuccessful: true);
+                    _logger.Log(logLevel: LogLevel.Warning, message: $"migration process was canceled");
+                    return new Result<bool>(wasSuccessful: false);
                 }
                 else if (result.Value == RunMigrationResult.MigrationScriptExecuted)
                 {
@@ -317,7 +317,7 @@ namespace EasyDbMigrator
             if (skipBecauseOfErrorWithPreviousScript)
                 return new Result<bool>(wasSuccessful: false);
             else
-                return new Result<bool>(wasSuccessful: true); ;
+                return new Result<bool>(wasSuccessful: true);
         }
 
         private static List<Script> RemoveExcludedScripts(List<Script> scripts, List<string> excludedscripts)
