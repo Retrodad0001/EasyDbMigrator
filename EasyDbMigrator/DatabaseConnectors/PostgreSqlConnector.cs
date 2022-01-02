@@ -73,7 +73,7 @@ namespace EasyDbMigrator.DatabaseConnectors
 
             return result;
         }
-       
+
         public async Task<Result<RunMigrationResult>> RunDbMigrationScriptAsync(MigrationConfiguration migrationConfiguration
             , Script script
             , DateTimeOffset executedDateTime

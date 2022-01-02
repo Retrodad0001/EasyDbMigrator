@@ -38,9 +38,9 @@ namespace EasyDbMigrator
 
             if (directoryHelper is null)
                 throw new ArgumentNullException(nameof(directoryHelper));
-           
+
             _directoryHelper = directoryHelper;
-            
+
             if (dataTimeHelper is null)
                 throw new ArgumentNullException(nameof(dataTimeHelper));
             _dataTimeHelper = dataTimeHelper;

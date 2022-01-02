@@ -10,7 +10,7 @@ namespace EasyDbMigratorTests.Unittests
     public class MigrationConfigurationTests
     {
         [Theory]
-        [InlineData("xxxxxx" , false)]
+        [InlineData("xxxxxx", false)]
         [InlineData("xxxxxx xxxxxx", true)]
         [InlineData("", true)]
         [InlineData(" ", true)]
@@ -36,7 +36,7 @@ namespace EasyDbMigratorTests.Unittests
             Action act = () =>
             {
                 MigrationConfiguration sut = new MigrationConfiguration(connectionString: connentionsting
-                    ,databaseName: "databasename");
+                    , databaseName: "databasename");
             };
 
             if (shouldThrowException)

@@ -3,14 +3,13 @@ using FluentAssertions;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
-
 namespace EasyDbMigratorTests.Unittests
 {
     [ExcludeFromCodeCoverage]
     public class ResultTests
     {
         [ExcludeFromCodeCoverage]
-        private class MyCustomTypeUsedInResult {  }
+        private class MyCustomTypeUsedInResult { }
 
         [Fact]
         public void can_create_succes_result_with_custom_type()

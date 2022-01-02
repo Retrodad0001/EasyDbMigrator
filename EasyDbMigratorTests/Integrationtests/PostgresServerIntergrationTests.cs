@@ -94,7 +94,7 @@ namespace EasyDbMigratorTests.Integrationtests
         public async Task can_skip_scripts_if_they_allready_run_before()
         {
             var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment();
-            
+
             try
             {
                 await dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(true);
@@ -236,7 +236,7 @@ namespace EasyDbMigratorTests.Integrationtests
             }
         }
 
-        private DockerEnvironment SetupPostgresServerTestEnvironment()
+        private static DockerEnvironment SetupPostgresServerTestEnvironment()
         {
             var environmentBuilder = new DockerEnvironmentBuilder();
 

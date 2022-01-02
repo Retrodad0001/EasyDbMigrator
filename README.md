@@ -1,15 +1,14 @@
 # The Latest news and Roadmap
 
-## Future release
+## Next Release (2.0.0)
 - Create fancy cross-platform UI so migrations can be run manual (in .Net MAUI, so i must wait for stable release MAUI first)
 - Run production scripts against multiple databases parallel, so it can be used for multitenant platforms
 
-## working on milestone: 2.0.0 (next release)
+## 1.4.0 (the latest release)
 - updated all internal packages for stability and security (i do this at least every month and when an new package is published)
-- Can choose between different script naming conventions
 - only support for .net 6.0 LTS what is needed for future development (remove .net 5 and .net core 3.1 LTS support)
 
-## 1.3.0 (the latest release)
+## 1.3.0 
 - support for .net 6 LTS
 - updated all internal packages for stability and security
 

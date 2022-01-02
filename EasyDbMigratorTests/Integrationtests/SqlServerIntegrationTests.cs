@@ -242,7 +242,7 @@ namespace EasyDbMigratorTests.Integrationtests
             }
         }
 
-        private DockerEnvironment SetupSQLDockerTestEnvironment()
+        private static DockerEnvironment SetupSQLDockerTestEnvironment()
         {
             var environmentBuilder = new DockerEnvironmentBuilder();
             const string password = "stuffy6!";
