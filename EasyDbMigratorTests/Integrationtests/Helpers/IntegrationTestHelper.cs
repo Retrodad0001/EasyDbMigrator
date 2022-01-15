@@ -15,7 +15,7 @@ namespace EasyDbMigratorTests.Integrationtests.Helpers
             List<DbMigrationsRunRowSqlServer> expectedRows
             , string testDatabaseName)
         {
-            using SqlConnection connection = new SqlConnection(connectionString);
+            using SqlConnection connection = new(connectionString);
             connection.Open();
 
             List<DbMigrationsRunRowSqlServer> actual = (List<DbMigrationsRunRowSqlServer>)connection.Query<DbMigrationsRunRowSqlServer>(@$"
@@ -32,7 +32,7 @@ namespace EasyDbMigratorTests.Integrationtests.Helpers
         public static bool CheckMigrationsTablePostgresSever(string connectionString,
            List<DbMigrationsRunRowPostgressServer> expectedRows)
         {
-            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+            using NpgsqlConnection connection = new(connectionString);
             connection.Open();
 
             List<DbMigrationsRunRowPostgressServer> actual = (List<DbMigrationsRunRowPostgressServer>)connection.Query<DbMigrationsRunRowPostgressServer>(@$"

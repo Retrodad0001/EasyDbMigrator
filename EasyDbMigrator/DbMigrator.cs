@@ -15,7 +15,7 @@ namespace EasyDbMigrator
         private readonly IAssemblyResourceHelper _assemblyResourceHelper;
         private readonly IDirectoryHelper _directoryHelper;
         private readonly IDataTimeHelper _dataTimeHelper;
-        private readonly List<string> _excludedScriptsList = new List<string>();
+        private readonly List<string> _excludedScriptsList = new();
 
         public DbMigrator(ILogger logger
             , IDatabaseConnector databaseconnector
@@ -71,7 +71,7 @@ namespace EasyDbMigrator
                 throw new ArgumentNullException(nameof(databaseConnector));
             }
 
-            DbMigrator result = new DbMigrator(logger: logger
+            DbMigrator result = new(logger: logger
                 , databaseconnector: databaseConnector
                 , assemblyResourceHelper: new AssemblyResourceHelper()
                 , directoryHelper: new DirectoryHelper()
@@ -112,7 +112,7 @@ namespace EasyDbMigrator
                 throw new ArgumentNullException(nameof(databaseConnector));
             }
 
-            DbMigrator result = new DbMigrator(logger: logger
+            DbMigrator result = new(logger: logger
                , databaseconnector: databaseConnector
                , assemblyResourceHelper: new AssemblyResourceHelper()
                , directoryHelper: new DirectoryHelper()

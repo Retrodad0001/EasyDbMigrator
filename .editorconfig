@@ -261,7 +261,7 @@ dotnet_diagnostic.CA1822.severity = none
 dotnet_diagnostic.CA1707.severity = none
 
 # IDE0090: Use 'new(...)'
-dotnet_diagnostic.IDE0090.severity = silent
+dotnet_diagnostic.IDE0090.severity = warning
 
 # IDE0060: Remove unused parameter
 dotnet_diagnostic.IDE0060.severity = warning
@@ -429,6 +429,7 @@ dotnet_diagnostic.IDE0016.severity=warning
 dotnet_diagnostic.IDE0040.severity=warning
 dotnet_diagnostic.IDE0039.severity=silent
 dotnet_diagnostic.xUnit1004.severity=warning
+dotnet_diagnostic.CA1805.severity=warning
 
 [*.{cs,vb}]
 dotnet_style_readonly_field=true:warning
@@ -456,3 +457,6 @@ dotnet_diagnostic.CA2007.severity=suggestion
 dotnet_diagnostic.CA2213.severity=error
 dotnet_diagnostic.CA1826.severity=warning
 dotnet_diagnostic.CA2012.severity=error
+dotnet_diagnostic.CA1834.severity=warning
+dotnet_diagnostic.CA1836.severity=warning
+dotnet_diagnostic.CA1849.severity=error

@@ -16,7 +16,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                Script sut = new Script(filename: filename, content: "xx");
+                Script sut = new(filename: filename, content: "xx");
             };
 
             if (shouldThrowException)

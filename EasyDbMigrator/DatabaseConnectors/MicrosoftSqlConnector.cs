@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace EasyDbMigrator.DatabaseConnectors
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
-    public class MicrosoftSqlConnector : IDatabaseConnector
+    public sealed class MicrosoftSqlConnector : IDatabaseConnector
     {
         private readonly AsyncPolicy _sqlDatabasePolicy = Policy.Handle<Exception>()
             .WaitAndRetryAsync(retryCount: 3
@@ -88,7 +88,7 @@ namespace EasyDbMigrator.DatabaseConnectors
             {
                 Result<RunMigrationResult> result = await _sqlDatabasePolicy.ExecuteAsync(async () =>
                 {
-                    using SqlConnection connection = new SqlConnection(migrationConfiguration.ConnectionString);
+                    using SqlConnection connection = new(migrationConfiguration.ConnectionString);
                     await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
                     string checkIfScriptHasExecuted = $@"USE {migrationConfiguration.DatabaseName} 
@@ -97,7 +97,7 @@ namespace EasyDbMigrator.DatabaseConnectors
                          WHERE Filename = '{script.FileName}'
                         ";
 
-                    using SqlCommand cmdcheckNotExecuted = new SqlCommand(checkIfScriptHasExecuted, connection);
+                    using SqlCommand cmdcheckNotExecuted = new(checkIfScriptHasExecuted, connection);
                     var result = _ = await cmdcheckNotExecuted.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
 
                     if (result != null)
@@ -115,8 +115,8 @@ namespace EasyDbMigrator.DatabaseConnectors
                     transaction = await connection.BeginTransactionAsync(isolationLevel: IsolationLevel.Serializable
                         , cancellationToken: cancellationToken).ConfigureAwait(false) as SqlTransaction;
 
-                    using SqlCommand cmdScript = new SqlCommand(script.Content, connection, transaction);
-                    using SqlCommand cmdUpdateVersioningTable = new SqlCommand(updateVersioningTableScript, connection, transaction);
+                    using SqlCommand cmdScript = new(script.Content, connection, transaction);
+                    using SqlCommand cmdUpdateVersioningTable = new(updateVersioningTableScript, connection, transaction);
 
                     _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
                     _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -173,8 +173,8 @@ namespace EasyDbMigrator.DatabaseConnectors
 
                 await _sqlDatabasePolicy.ExecuteAsync(async () =>
                 {
-                    using SqlConnection connection = new SqlConnection(connectionString);
-                    using SqlCommand command = new SqlCommand(sqlScriptContent, connection);
+                    using SqlConnection connection = new(connectionString);
+                    using SqlCommand command = new(sqlScriptContent, connection);
 
                     await command.Connection.OpenAsync(cancellationToken).ConfigureAwait(false);
                     _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);

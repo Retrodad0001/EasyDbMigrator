@@ -7,22 +7,22 @@ namespace EasyDbMigrator
 {
 
     [ExcludeFromCodeCoverage] //tested with integrationtests
-    public class DirectoryHelper : IDirectoryHelper
+    public sealed class DirectoryHelper : IDirectoryHelper
     {
         public async Task<List<Script>> TryGetScriptsFromDirectoryAsync(string directory)
         {
-            List<Script> scripts = new List<Script>();
+            List<Script> scripts = new();
 
-            DirectoryInfo directoryIno = new DirectoryInfo(directory);
+            DirectoryInfo directoryIno = new(directory);
             FileInfo[] files = directoryIno.GetFiles();
 
             foreach (FileInfo file in files)
             {
-                using FileStream fileStream = new FileStream(file.FullName, FileMode.Open);
-                using StreamReader reader = new StreamReader(fileStream);
+                using FileStream fileStream = new(file.FullName, FileMode.Open);
+                using StreamReader reader = new(fileStream);
 
                 string content = await reader.ReadToEndAsync().ConfigureAwait(false);
-                Script script = new Script(filename: file.FullName, content: content);
+                Script script = new(filename: file.FullName, content: content);
             }
 
             return scripts;

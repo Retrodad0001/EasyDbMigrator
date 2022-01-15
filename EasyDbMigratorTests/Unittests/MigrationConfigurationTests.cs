@@ -18,7 +18,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                MigrationConfiguration sut = new MigrationConfiguration(connectionString: "connection string"
+                MigrationConfiguration sut = new(connectionString: "connection string"
                     , databaseName: databasename);
             };
 
@@ -35,7 +35,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                MigrationConfiguration sut = new MigrationConfiguration(connectionString: connentionsting
+                MigrationConfiguration sut = new(connectionString: connentionsting
                     , databaseName: "databasename");
             };
 

@@ -17,7 +17,6 @@ namespace EasyDbMigratorTests.Unittests
     [ExcludeFromCodeCoverage]
     public class DbMigratorTests
     {
-
         [Fact]
         public void when_constructing_the_parameter_directoryhelper_schould_be_provided()
         {
@@ -25,10 +24,10 @@ namespace EasyDbMigratorTests.Unittests
             {
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
-                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> datetimeHelperMock = new();
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
-                DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+                DbMigrator migrator = new(logger: loggerMock.Object
                     , databaseconnector: new MicrosoftSqlConnector()
                     , assemblyResourceHelper: new AssemblyResourceHelper()
                     , directoryHelper: null
@@ -45,11 +44,11 @@ namespace EasyDbMigratorTests.Unittests
             {
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
-                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> datetimeHelperMock = new();
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
                 IDirectoryHelper directoryHelper = new DirectoryHelper();
 
-                DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+                DbMigrator migrator = new(logger: loggerMock.Object
                     , databaseconnector: null
                     , assemblyResourceHelper: new AssemblyResourceHelper()
                     , directoryHelper: directoryHelper
@@ -65,11 +64,11 @@ namespace EasyDbMigratorTests.Unittests
             Action act = () =>
             {
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
-                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> datetimeHelperMock = new();
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
                 IDirectoryHelper directoryHelper = new DirectoryHelper();
 
-                DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+                DbMigrator migrator = new(logger: loggerMock.Object
                     , databaseconnector: new MicrosoftSqlConnector()
                     , assemblyResourceHelper: null
                     , directoryHelper: directoryHelper
@@ -84,11 +83,11 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> datetimeHelperMock = new();
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
                 IDirectoryHelper directoryHelper = new DirectoryHelper();
 
-                DbMigrator migrator = new DbMigrator(logger: null
+                DbMigrator migrator = new(logger: null
                     , databaseconnector: new MicrosoftSqlConnector()
                     , assemblyResourceHelper: new AssemblyResourceHelper()
                     , directoryHelper: directoryHelper
@@ -103,12 +102,12 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> datetimeHelperMock = new();
                 DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 IDirectoryHelper directoryHelper = new DirectoryHelper();
 
-                DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+                DbMigrator migrator = new(logger: loggerMock.Object
                     , databaseconnector: new MicrosoftSqlConnector()
                     , assemblyResourceHelper: new AssemblyResourceHelper()
                     , directoryHelper: directoryHelper
@@ -123,7 +122,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
+                MigrationConfiguration config = new(connectionString: "connection string"
                     , databaseName: "databasename");
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
@@ -141,7 +140,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
+                MigrationConfiguration config = new(connectionString: "connection string"
                     , databaseName: "databasename");
                 DbMigrator migrator = DbMigrator.Create(migrationConfiguration: config
                     , logger: null
@@ -170,7 +169,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
+                MigrationConfiguration config = new(connectionString: "connection string"
                   , databaseName: "databasename");
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 DbMigrator migrator = DbMigrator.Create(migrationConfiguration: config
@@ -186,11 +185,11 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
+                MigrationConfiguration config = new(connectionString: "connection string"
                     , databaseName: "databasename");
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-                Mock<IDataTimeHelper> dataTimeHelperMock = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> dataTimeHelperMock = new();
                 DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
                     , logger: loggerMock.Object
                     , dataTimeHelperMock: dataTimeHelperMock.Object
@@ -206,9 +205,9 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
+                MigrationConfiguration config = new(connectionString: "connection string"
                     , databaseName: "databasename");
-                Mock<IDataTimeHelper> dataTimeHelperMock = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> dataTimeHelperMock = new();
 
                 DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
                     , logger: null
@@ -225,7 +224,7 @@ namespace EasyDbMigratorTests.Unittests
             Action act = () =>
             {
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
-                Mock<IDataTimeHelper> dataTimeHelperMock = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> dataTimeHelperMock = new();
                 DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: null
                     , logger: loggerMock.Object
                     , dataTimeHelperMock: dataTimeHelperMock.Object
@@ -240,7 +239,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
+                MigrationConfiguration config = new(connectionString: "connection string"
                     , databaseName: "databasename");
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
@@ -258,9 +257,9 @@ namespace EasyDbMigratorTests.Unittests
         {
             Action act = () =>
             {
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection string"
+                MigrationConfiguration config = new(connectionString: "connection string"
                     , databaseName: "databasename");
-                Mock<IDataTimeHelper> dataTimeHelperMock = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> dataTimeHelperMock = new();
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
@@ -278,7 +277,7 @@ namespace EasyDbMigratorTests.Unittests
             const string databaseName = "EasyDbMigrator";
             const string connectionString = "connectionstring";
 
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
+            MigrationConfiguration config = new(connectionString: connectionString
                 , databaseName: databaseName);
 
             Type someType = typeof(DbMigratorTests);
@@ -286,9 +285,9 @@ namespace EasyDbMigratorTests.Unittests
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-            Script script1 = new Script("20211230_001_Script1.sql", "some content");
-            Script script2 = new Script("20211230_002_Script2.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            Script script1 = new("20211230_001_Script1.sql", "some content");
+            Script script2 = new("20211230_002_Script2.sql", "some content");
+            List<Script> scripts = new();
             scripts.Add(script1);
             scripts.Add(script2);
 
@@ -308,7 +307,7 @@ namespace EasyDbMigratorTests.Unittests
                 , It.IsAny<CancellationToken>()
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
-            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
+            Result<RunMigrationResult> resultRunMigrations = new(wasSuccessful: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
@@ -316,10 +315,10 @@ namespace EasyDbMigratorTests.Unittests
 
             DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
-            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+            DbMigrator migrator = new(logger: loggerMock.Object
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
                 , directoryHelper: directoryHelperMock.Object
@@ -348,7 +347,7 @@ namespace EasyDbMigratorTests.Unittests
             const string databaseName = "EasyDbMigrator";
             const string connectionString = "connectionstring";
 
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
+            MigrationConfiguration config = new(connectionString: connectionString
                 , databaseName: databaseName
                 , ScriptsDirectory: "some directory");
 
@@ -357,9 +356,9 @@ namespace EasyDbMigratorTests.Unittests
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-            Script script1 = new Script("20211230_001_Scripta.sql", "some content");
-            Script script2 = new Script("20211230_002_Scriptb.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            Script script1 = new("20211230_001_Scripta.sql", "some content");
+            Script script2 = new("20211230_002_Scriptb.sql", "some content");
+            List<Script> scripts = new();
             scripts.Add(script1);
             scripts.Add(script2);
 
@@ -379,7 +378,7 @@ namespace EasyDbMigratorTests.Unittests
                 , It.IsAny<CancellationToken>()
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
-            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
+            Result<RunMigrationResult> resultRunMigrations = new(wasSuccessful: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
@@ -387,10 +386,10 @@ namespace EasyDbMigratorTests.Unittests
 
             DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
-            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+            DbMigrator migrator = new(logger: loggerMock.Object
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
                 , directoryHelper: directoryHelperMock.Object
@@ -418,7 +417,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             const string databaseName = "EasyDbMigrator";
 
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
+            MigrationConfiguration config = new(connectionString: "connection"
                 , databaseName: databaseName);
 
             Type someType = typeof(DbMigratorTests);
@@ -426,9 +425,9 @@ namespace EasyDbMigratorTests.Unittests
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-            Script script1 = new Script("20211230_001_Script1.sql", "some content");
-            Script script2 = new Script("20211230_002_Script2.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            Script script1 = new("20211230_001_Script1.sql", "some content");
+            Script script2 = new("20211230_002_Script2.sql", "some content");
+            List<Script> scripts = new();
             scripts.Add(script1);
             scripts.Add(script2);
 
@@ -448,7 +447,7 @@ namespace EasyDbMigratorTests.Unittests
                 , It.IsAny<CancellationToken>()
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
-            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
+            Result<RunMigrationResult> resultRunMigrations = new(wasSuccessful: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
@@ -456,10 +455,10 @@ namespace EasyDbMigratorTests.Unittests
 
             DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
-            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+            DbMigrator migrator = new(logger: loggerMock.Object
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
                 , directoryHelper: directoryHelperMock.Object
@@ -486,7 +485,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             const string databaseName = "EasyDbMigrator";
 
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
+            MigrationConfiguration config = new(connectionString: "connection"
                 , databaseName: databaseName);
 
             Type someType = typeof(DbMigratorTests);
@@ -510,7 +509,7 @@ namespace EasyDbMigratorTests.Unittests
                 , It.IsAny<CancellationToken>()
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
-            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
+            Result<RunMigrationResult> resultRunMigrations = new(wasSuccessful: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
@@ -518,10 +517,10 @@ namespace EasyDbMigratorTests.Unittests
 
             DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
-            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+            DbMigrator migrator = new(logger: loggerMock.Object
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
                 , directoryHelper: directoryHelperMock.Object
@@ -546,7 +545,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             const string databaseName = "EasyDbMigrator";
 
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
+            MigrationConfiguration config = new(connectionString: "connection"
                 , databaseName: databaseName);
 
             Type someType = typeof(DbMigratorTests);
@@ -554,9 +553,9 @@ namespace EasyDbMigratorTests.Unittests
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-            Script script1 = new Script("20211230_001_Script1.sql", "some content");
-            Script script2 = new Script("20211230_002_Script2.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            Script script1 = new("20211230_001_Script1.sql", "some content");
+            Script script2 = new("20211230_002_Script2.sql", "some content");
+            List<Script> scripts = new();
             scripts.Add(script1);
             scripts.Add(script2);
 
@@ -576,7 +575,7 @@ namespace EasyDbMigratorTests.Unittests
                 , It.IsAny<CancellationToken>()
                )).ReturnsAsync(new Result<bool>(wasSuccessful: false, exception: new Exception()));
 
-            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
+            Result<RunMigrationResult> resultRunMigrations = new(wasSuccessful: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
@@ -585,10 +584,10 @@ namespace EasyDbMigratorTests.Unittests
 
             DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
-            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+            DbMigrator migrator = new(logger: loggerMock.Object
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
                 , directoryHelper: directoryHelperMock.Object
@@ -613,17 +612,17 @@ namespace EasyDbMigratorTests.Unittests
         {
             const string databaseName = "EasyDbMigrator";
 
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
+            MigrationConfiguration config = new(connectionString: "connection"
                 , databaseName: databaseName);
 
             Type someType = typeof(DbMigratorTests);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-            Script script1 = new Script("20211230_001_Script1.sql", "some content");
-            Script script2 = new Script("20211230_002_Script2.sql", "some content");
-            Script script3 = new Script("20211230_003_Script3.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            Script script1 = new("20211230_001_Script1.sql", "some content");
+            Script script2 = new("20211230_002_Script2.sql", "some content");
+            Script script3 = new("20211230_003_Script3.sql", "some content");
+            List<Script> scripts = new();
             scripts.Add(script1);
             scripts.Add(script2);
             scripts.Add(script3);
@@ -656,10 +655,10 @@ namespace EasyDbMigratorTests.Unittests
 
             DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
-            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+            DbMigrator migrator = new(logger: loggerMock.Object
                 , databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
                 , directoryHelper: directoryHelperMock.Object
@@ -691,20 +690,20 @@ namespace EasyDbMigratorTests.Unittests
         public async Task can_cancel_the_migration_proces_before_the_first_script_has_run()
         {
             const string databaseName = "EasyDbMigrator";
-            using CancellationTokenSource source = new CancellationTokenSource();
+            using CancellationTokenSource source = new();
             CancellationToken token = source.Token;
 
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
+            MigrationConfiguration config = new(connectionString: "connection"
                 , databaseName: databaseName);
 
             Type someType = typeof(DbMigratorTests);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-            Script script1 = new Script("20211230_001_Script1.sql", "some content");
-            Script script2 = new Script("20211230_002_Script2.sql", "some content");
-            Script script3 = new Script("20211230_003_Script3.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            Script script1 = new("20211230_001_Script1.sql", "some content");
+            Script script2 = new("20211230_002_Script2.sql", "some content");
+            Script script3 = new("20211230_003_Script3.sql", "some content");
+            List<Script> scripts = new();
             scripts.Add(script1);
             scripts.Add(script2);
             scripts.Add(script3);
@@ -737,10 +736,10 @@ namespace EasyDbMigratorTests.Unittests
 
             DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
-            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+            DbMigrator migrator = new(logger: loggerMock.Object
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
                 , directoryHelper: directoryHelperMock.Object
@@ -769,20 +768,20 @@ namespace EasyDbMigratorTests.Unittests
         public async Task can_cancel_the_migration_proces_after_the_first_script_has_run()
         {
             const string databaseName = "EasyDbMigrator";
-            using CancellationTokenSource source = new CancellationTokenSource();
+            using CancellationTokenSource source = new();
             CancellationToken token = source.Token;
 
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
+            MigrationConfiguration config = new(connectionString: "connection"
                 , databaseName: databaseName);
 
             Type someType = typeof(DbMigratorTests);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-            Script script1 = new Script("20211230_001_Script1.sql", "some content");
-            Script script2 = new Script("20211230_002_Script2.sql", "some content");
-            Script script3 = new Script("20211230_003_Script3.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            Script script1 = new("20211230_001_Script1.sql", "some content");
+            Script script2 = new("20211230_002_Script2.sql", "some content");
+            Script script3 = new("20211230_003_Script3.sql", "some content");
+            List<Script> scripts = new();
             scripts.Add(script1);
             scripts.Add(script2);
             scripts.Add(script3);
@@ -815,10 +814,10 @@ namespace EasyDbMigratorTests.Unittests
 
             DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
-            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+            DbMigrator migrator = new(logger: loggerMock.Object
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
                 , directoryHelper: directoryHelperMock.Object
@@ -852,17 +851,17 @@ namespace EasyDbMigratorTests.Unittests
         {
             const string databaseName = "EasyDbMigrator";
 
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
+            MigrationConfiguration config = new(connectionString: "connection"
                 , databaseName: databaseName);
 
             Type someType = typeof(DbMigratorTests);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-            Script script1 = new Script("20211230_001_Script1.sql", "some content");
-            Script script2 = new Script("20211230_002_Script2.sql", "some content");
-            Script script3 = new Script("20211230_003_Script3.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            Script script1 = new("20211230_001_Script1.sql", "some content");
+            Script script2 = new("20211230_002_Script2.sql", "some content");
+            Script script3 = new("20211230_003_Script3.sql", "some content");
+            List<Script> scripts = new();
             scripts.Add(script1);
             scripts.Add(script2);
             scripts.Add(script3);
@@ -895,10 +894,10 @@ namespace EasyDbMigratorTests.Unittests
 
             DateTimeOffset ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
-            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+            DbMigrator migrator = new(logger: loggerMock.Object
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
                 , directoryHelper: directoryHelperMock.Object
@@ -926,7 +925,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             const string databaseName = "EasyDbMigrator";
 
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: "connection"
+            MigrationConfiguration config = new(connectionString: "connection"
                 , databaseName: databaseName);
 
             Type someType = typeof(DbMigratorTests);
@@ -934,9 +933,9 @@ namespace EasyDbMigratorTests.Unittests
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-            Script script1 = new Script("20211230_001_Script1.sql", "some content");
-            Script script2 = new Script("20211230_002_Script2.sql", "some content");
-            List<Script> scripts = new List<Script>();
+            Script script1 = new("20211230_001_Script1.sql", "some content");
+            Script script2 = new("20211230_002_Script2.sql", "some content");
+            List<Script> scripts = new();
             scripts.Add(script1);
             scripts.Add(script2);
 
@@ -956,19 +955,19 @@ namespace EasyDbMigratorTests.Unittests
                  , It.IsAny<CancellationToken>()
                )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
-            Result<RunMigrationResult> resultRunMigrations = new Result<RunMigrationResult>(wasSuccessful: true, exception: null);
+            Result<RunMigrationResult> resultRunMigrations = new(wasSuccessful: true, exception: null);
             _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                     , It.IsAny<Script>()
                     , It.IsAny<DateTimeOffset>()
                      , It.IsAny<CancellationToken>()
                      )).ReturnsAsync(resultRunMigrations);
 
-            DateTime ExecutedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
+            DateTime ExecutedDataTime = new(2021, 12, 31, 2, 16, 0);
 
-            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new();
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
-            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+            DbMigrator migrator = new(logger: loggerMock.Object
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
                 , directoryHelper: directoryHelperMock.Object
@@ -999,7 +998,7 @@ namespace EasyDbMigratorTests.Unittests
             const string databaseName = "EasyDbMigrator";
             const string connectionstring = "connection";
 
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring
+            MigrationConfiguration config = new(connectionString: connectionstring
                 , databaseName: databaseName);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
@@ -1009,13 +1008,13 @@ namespace EasyDbMigratorTests.Unittests
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
 
             var directoryHelperMock = new Mock<IDirectoryHelper>();
-            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new();
 
             _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
                , It.IsAny<CancellationToken>()
                )).ReturnsAsync(new Result<bool>(wasSuccessful: false, exception: new Exception()));
 
-            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+            DbMigrator migrator = new(logger: loggerMock.Object
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
                 , directoryHelper: directoryHelperMock.Object
@@ -1036,7 +1035,7 @@ namespace EasyDbMigratorTests.Unittests
             const string databaseName = "EasyDbMigrator";
             const string connectionstring = "connection";
 
-            MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring
+            MigrationConfiguration config = new(connectionString: connectionstring
                 , databaseName: databaseName);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
@@ -1047,13 +1046,13 @@ namespace EasyDbMigratorTests.Unittests
 
             var directoryHelperMock = new Mock<IDirectoryHelper>();
 
-            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new();
 
             _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<CancellationToken>()
                  )).ReturnsAsync(new Result<bool>(wasSuccessful: true));
 
-            DbMigrator migrator = new DbMigrator(logger: loggerMock.Object
+            DbMigrator migrator = new(logger: loggerMock.Object
                 , databaseconnector: databaseConnectorMock.Object
                 , assemblyResourceHelper: assemblyResourceHelperMock.Object
                 , directoryHelper: directoryHelperMock.Object

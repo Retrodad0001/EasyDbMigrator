@@ -5,10 +5,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
+//TODO add coding style preference .net standard en review when new vs studio releases
+
 namespace EasyDbMigrator.DatabaseConnectors
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
-    public class PostgreSqlConnector : IDatabaseConnector
+    public sealed class PostgreSqlConnector : IDatabaseConnector
     {
         private readonly AsyncPolicy _postgreSqlDatabasePolicy = Policy.Handle<Exception>()
              .WaitAndRetryAsync(retryCount: 3
@@ -88,7 +90,7 @@ namespace EasyDbMigrator.DatabaseConnectors
                 Result<RunMigrationResult> result = await _postgreSqlDatabasePolicy.ExecuteAsync(async () =>
                 {
 
-                    using NpgsqlConnection connection = new NpgsqlConnection(migrationConfiguration.ConnectionString);
+                    using NpgsqlConnection connection = new(migrationConfiguration.ConnectionString);
                     await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
                     string checkIfScriptHasExecuted = $@"
@@ -98,7 +100,7 @@ namespace EasyDbMigrator.DatabaseConnectors
 
                         ";
 
-                    using NpgsqlCommand cmdcheckNotExecuted = new NpgsqlCommand(checkIfScriptHasExecuted, connection);
+                    using NpgsqlCommand cmdcheckNotExecuted = new(checkIfScriptHasExecuted, connection);
                     var result = _ = await cmdcheckNotExecuted.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
 
                     if (result != null)
@@ -115,10 +117,10 @@ namespace EasyDbMigrator.DatabaseConnectors
 
                     transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
-                    using NpgsqlCommand cmdScript = new NpgsqlCommand(script.Content
+                    using NpgsqlCommand cmdScript = new(script.Content
                         , connection
                         , transaction);
-                    using NpgsqlCommand cmdUpdateVersioningTable = new NpgsqlCommand(updateVersioningTableScript, connection, transaction);
+                    using NpgsqlCommand cmdUpdateVersioningTable = new(updateVersioningTableScript, connection, transaction);
 
                     _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                     _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
@@ -175,10 +177,10 @@ namespace EasyDbMigrator.DatabaseConnectors
 
                 await _postgreSqlDatabasePolicy.ExecuteAsync(async () =>
                 {
-                    using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+                    using NpgsqlConnection connection = new(connectionString);
                     await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
-                    using NpgsqlCommand command = new NpgsqlCommand(sqlScriptContent, connection);
+                    using NpgsqlCommand command = new(sqlScriptContent, connection);
 
                     _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                 }).ConfigureAwait(false);

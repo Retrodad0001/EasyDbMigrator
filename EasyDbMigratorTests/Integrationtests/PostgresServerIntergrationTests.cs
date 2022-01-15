@@ -34,13 +34,13 @@ namespace EasyDbMigratorTests.Integrationtests
                 await dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(true);
                 var connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(_databaseName).GetConnectionString();
 
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
+                MigrationConfiguration config = new(connectionString: connectionString
                     , databaseName: _databaseName);
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
-                DateTime ExecutedDataTime = new DateTime(2021, 10, 17, 12, 10, 10);
+                Mock<IDataTimeHelper> datetimeHelperMock = new();
+                DateTime ExecutedDataTime = new(2021, 10, 17, 12, 10, 10);
 
                 _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
@@ -49,7 +49,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     , dataTimeHelperMock: datetimeHelperMock.Object
                     , databaseConnector: new PostgreSqlConnector());
 
-                List<string> scriptsToExclude = new List<string>();
+                List<string> scriptsToExclude = new();
                 scriptsToExclude.Add("20211230_001_DoStuffScript.sql");
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 
@@ -71,7 +71,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     .CheckIfLoggerWasCalled("script: 20211231_001_Script1p.sql was run", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false)
                     .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
 
-                List<DbMigrationsRunRowPostgressServer> expectedRows = new List<DbMigrationsRunRowPostgressServer>();
+                List<DbMigrationsRunRowPostgressServer> expectedRows = new();
                 expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 1, executed: ExecutedDataTime, filename: "20211230_002_Script2p.sql", version: "1.0.0"));
                 expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 2, executed: ExecutedDataTime, filename: "20211231_001_Script1p.sql", version: "1.0.0"));
 
@@ -100,13 +100,13 @@ namespace EasyDbMigratorTests.Integrationtests
                 await dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(true);
                 var connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(_databaseName).GetConnectionString();
 
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
+                MigrationConfiguration config = new(connectionString: connectionString
                     , databaseName: _databaseName);
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-                Mock<IDataTimeHelper> datetimeHelperMock1 = new Mock<IDataTimeHelper>();
-                DateTime ExecutedFirsttimeDataTime = new DateTime(2021, 12, 30, 2, 16, 1);
+                Mock<IDataTimeHelper> datetimeHelperMock1 = new();
+                DateTime ExecutedFirsttimeDataTime = new(2021, 12, 30, 2, 16, 1);
 
                 _ = datetimeHelperMock1.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedFirsttimeDataTime);
 
@@ -115,7 +115,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     , dataTimeHelperMock: datetimeHelperMock1.Object
                     , databaseConnector: new PostgreSqlConnector());
 
-                List<string> scriptsToExclude = new List<string>();
+                List<string> scriptsToExclude = new();
                 scriptsToExclude.Add("20211230_001_DoStuffScript.sql");
 
                 migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
@@ -133,9 +133,9 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 // now run the migrations again
                 var loggerMockSecondtRun = new Mock<ILogger<DbMigrator>>();
-                DateTime ExecutedSecondtimeDataTime = new DateTime(2021, 12, 31, 2, 16, 1);
+                DateTime ExecutedSecondtimeDataTime = new(2021, 12, 31, 2, 16, 1);
 
-                Mock<IDataTimeHelper> datetimeHelperMock2 = new Mock<IDataTimeHelper>();
+                Mock<IDataTimeHelper> datetimeHelperMock2 = new();
                 _ = datetimeHelperMock2.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedSecondtimeDataTime);
 
                 DbMigrator migrator2 = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
@@ -158,7 +158,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), checkExceptionNotNull: false);
 
                 //  version - table should not be updated for the second time
-                List<DbMigrationsRunRowPostgressServer> expectedRows = new List<DbMigrationsRunRowPostgressServer>();
+                List<DbMigrationsRunRowPostgressServer> expectedRows = new();
                 expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 1, executed: ExecutedFirsttimeDataTime, filename: "20211230_002_Script2p.sql", version: "1.0.0"));
                 expectedRows.Add(new DbMigrationsRunRowPostgressServer(id: 2, executed: ExecutedFirsttimeDataTime, filename: "20211231_001_Script1p.sql", version: "1.0.0"));
 
@@ -182,7 +182,7 @@ namespace EasyDbMigratorTests.Integrationtests
         {
 
             var _dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment();
-            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationTokenSource source = new();
             CancellationToken token = source.Token;
 
             try
@@ -190,13 +190,13 @@ namespace EasyDbMigratorTests.Integrationtests
                 await _dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(true);
                 var connectionString = _dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(_databaseName).GetConnectionString();
 
-                MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionString
+                MigrationConfiguration config = new(connectionString: connectionString
                     , databaseName: _databaseName);
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-                Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
-                DateTime ExecutedDataTime = new DateTime(2021, 10, 17, 12, 10, 10);
+                Mock<IDataTimeHelper> datetimeHelperMock = new();
+                DateTime ExecutedDataTime = new(2021, 10, 17, 12, 10, 10);
 
                 _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(ExecutedDataTime);
 
@@ -205,7 +205,7 @@ namespace EasyDbMigratorTests.Integrationtests
                     , dataTimeHelperMock: datetimeHelperMock.Object
                     , databaseConnector: new PostgreSqlConnector());
 
-                List<string> scriptsToExclude = new List<string>();
+                List<string> scriptsToExclude = new();
                 scriptsToExclude.Add("20211230_001_DoStuffScript.sql");
                 migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
 

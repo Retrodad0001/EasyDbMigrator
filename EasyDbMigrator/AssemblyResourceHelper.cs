@@ -32,18 +32,18 @@ namespace EasyDbMigrator
 
             string[] filenames = TryGetManifestResourceNamesFromAssembly(typeOfClassWhereScriptsAreLocated);
 
-            List<Script> scripts = new List<Script>();
+            List<Script> scripts = new();
             foreach (string filename in filenames)
             {
                 using Stream? stream = assembly.GetManifestResourceStream(filename);
                 if (stream is null)
                     throw new InvalidOperationException($"steam cannot be null for resource name: {filename}");
 
-                using StreamReader reader = new StreamReader(stream);
+                using StreamReader reader = new(stream);
                 string filenameWithNoNamespaces = RemoveTheNamespaceFromName(filename);
 
                 string sqlScriptContent = await reader.ReadToEndAsync().ConfigureAwait(false); ;
-                Script newSript = new Script(filename: filenameWithNoNamespaces, content: sqlScriptContent);
+                Script newSript = new(filename: filenameWithNoNamespaces, content: sqlScriptContent);
                 scripts.Add(newSript);
             }
 
