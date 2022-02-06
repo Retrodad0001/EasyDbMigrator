@@ -1,4 +1,4 @@
-name: CD
+name: Build , unittest and update NuGet
 
 on:
   push:
