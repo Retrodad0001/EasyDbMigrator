@@ -1,11 +1,11 @@
-name: CD
+name: Build , unittest and update NuGet
 
 on:
   push:
-    branches: [ master ]
+    branches: [ '**'  ]
   pull_request:
-    branches: [ master ]
-
+    branches: [ '**'  ]
+    
 jobs:
   BuildAndTest:
     name: build, test and codecoverage
