@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 namespace EasyDbMigrator
 {
     public sealed record Script
-
     {
         public string FileName { get; private set; }
         public string Content { get; private set; }

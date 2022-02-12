@@ -5,8 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-//TODO add coding style preference .net standard en review when new vs studio releases
-
 namespace EasyDbMigrator.DatabaseConnectors
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
@@ -14,7 +12,7 @@ namespace EasyDbMigrator.DatabaseConnectors
     {
         private readonly AsyncPolicy _postgreSqlDatabasePolicy = Policy.Handle<Exception>()
              .WaitAndRetryAsync(retryCount: 3
-            , sleepDurationProvider: times => TimeSpan.FromSeconds(times * 1));
+            , sleepDurationProvider: times => TimeSpan.FromSeconds(times * 2));
 
         public async Task<Result<bool>> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken)

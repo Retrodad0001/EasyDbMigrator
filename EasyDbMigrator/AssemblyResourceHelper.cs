@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace EasyDbMigrator
 {
     [ExcludeFromCodeCoverage] //is tested with integrationtest
-    public class AssemblyResourceHelper : IAssemblyResourceHelper
+    public sealed class AssemblyResourceHelper : IAssemblyResourceHelper
     {
         public static string[] TryGetManifestResourceNamesFromAssembly(Type typeOfClassWhereScriptsAreLocated)
         {

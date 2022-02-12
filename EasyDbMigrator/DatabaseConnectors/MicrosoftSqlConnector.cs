@@ -13,7 +13,7 @@ namespace EasyDbMigrator.DatabaseConnectors
     {
         private readonly AsyncPolicy _sqlDatabasePolicy = Policy.Handle<Exception>()
             .WaitAndRetryAsync(retryCount: 3
-            , sleepDurationProvider: times => TimeSpan.FromSeconds(times * 1));
+            , sleepDurationProvider: times => TimeSpan.FromSeconds(times * 2));
 
         public async Task<Result<bool>> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken)

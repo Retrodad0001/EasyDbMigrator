@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator
 {
-    public partial class DbMigrator : IDbMigrator
+    public class DbMigrator : IDbMigrator
     {
         private readonly ILogger _logger;
         private readonly IDatabaseConnector _databaseconnector;
