@@ -2,9 +2,8 @@ name: Build , unittest and update NuGet
 
 on:
   push:
-    branches: [ '**'  ]
-  pull_request:
-    branches: [ '**'  ]
+    branches:
+      - "**"
     
 jobs:
   BuildAndTest:
