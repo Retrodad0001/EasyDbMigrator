@@ -22,7 +22,7 @@ jobs:
         dotnet-version: 6.0.x
     
     - name: Pack
-      run: dotnet pack EasyDbMigrator\\EasyDbMigrator\\EasyDbMigrator.csproj -c Release
+      run: dotnet pack EasyDbMigrator\\EasyDbMigrator.csproj -c Release
   
     - name: Publish to GitHub packages 
-      run: dotnet nuget push EasyDbMigrator\\EasyDbMigrator\\Release\\*.nupkg --api-key oy2fu6vok2pyhtskpl7abbsfeidoqdmuphxoudur5xxgja --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push EasyDbMigrator\\Release\\*.nupkg --api-key oy2fu6vok2pyhtskpl7abbsfeidoqdmuphxoudur5xxgja --source https://api.nuget.org/v3/index.json
