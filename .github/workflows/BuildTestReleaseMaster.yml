@@ -22,7 +22,7 @@ jobs:
         dotnet-version: 6.0.x
     
     - name: Package
-      run: dotnet pack -c Release -o . EasyDbMigrator\EasyDbMigrator.csproj -Verbosity:diagnostic
+      run: dotnet pack -c Release -o . EasyDbMigrator\\EasyDbMigrator.csproj -Verbosity:diagnostic
     
     - name: Publish
       run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json -source -SkipDuplicate
