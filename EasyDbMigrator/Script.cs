@@ -27,6 +27,8 @@ namespace EasyDbMigrator
             SplitUpNameofScript(filename);
         }
 
+
+
         private void SplitUpNameofScript(string filename)
         {
             int yearPart = int.Parse(filename.Substring(0, 4));
