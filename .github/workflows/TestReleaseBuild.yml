@@ -8,7 +8,7 @@ on:
     
 jobs:
   BuildReleaseVersion:
-    name: Deploy
+    name: Build Release Version
     runs-on: ubuntu-latest
     timeout-minutes: 10
     

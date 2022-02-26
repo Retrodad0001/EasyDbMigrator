@@ -1,4 +1,4 @@
-name: Build, Test (Debug version)
+name: Build, Test, CodeCoverage (Debug version)
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: [ '**'  ]
     
 jobs:
-  BuildAndTest:
-    name: build, test and codecoverage
+  BuildAndTestCodeCoverage:
+    name: debug build, test and code coverage
     runs-on: ubuntu-latest
     timeout-minutes: 15
   

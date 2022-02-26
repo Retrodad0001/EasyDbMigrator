@@ -17,7 +17,7 @@ on:
 
 jobs:
   analyze:
-    name: Analyze
+    name: Static Security Analyze 
     runs-on: ubuntu-latest
     permissions:
       actions: read
