@@ -1,4 +1,4 @@
-name: BuldTestAndRelease
+name: Buld Test and Release
 
 on:
   push:
@@ -7,19 +7,49 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  BuildAndTest:
+    name: build, test and codecoverage
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
+  
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET
+    - name: Check out Repo
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core 6.0.x LTS
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
+   
     - name: Restore dependencies
       run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    
+    - name: Build debug version
+      run: dotnet build --configuration Debug --no-restore
+    
+    - name: Run unittest with code-coverage
+      run: dotnet test --no-build --verbosity normal --filter Category!=Integrationtest /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+    
+    - name: Upload code coverage to Codecov
+      uses: codecov/codecov-action@v1
+
+  Release:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: [BuildAndTest]
+    timeout-minutes: 10
+    
+    steps:
+    - name: Check out Repo
+      uses: actions/checkout@v2
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Package
+      run: dotnet pack -c Release -o . GrpcBrowser/GrpcBrowser.csproj
+    
+    - name: Publish
+      run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json
+
