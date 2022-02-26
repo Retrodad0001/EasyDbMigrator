@@ -1,4 +1,4 @@
-name: Build Test and Release Master
+name: Release Master
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
         dotnet-version: 6.0.x
     
     - name: Package
-      run: dotnet pack -c Release -o . EasyDbMigrator\EasyDbMigrator.csproj -Verbosity [detailed]
+      run: dotnet pack -c Release -o . EasyDbMigrator\EasyDbMigrator.csproj -Verbosity:diagnostic
     
     - name: Publish
       run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json -source -SkipDuplicate
