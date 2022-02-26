@@ -2,10 +2,9 @@ name: Build, Test (Debug)
 
 on:
   push:
-    branches:
-      - "**"
-    branches-ignore:
-       - "**"
+    branches: [ '**'  ]
+  pull_request:
+    branches: [ '**'  ]
     
 jobs:
   BuildAndTest:
