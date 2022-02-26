@@ -1,4 +1,4 @@
-name: Release Master
+name: Release Master NuGet
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   Release:
-    name: Deploy
+    name: Release to Nuget
     runs-on: ubuntu-latest
     timeout-minutes: 10
     
