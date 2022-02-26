@@ -1,4 +1,4 @@
-name: Buld Test and Release
+name: Buld Test and Release Master
 
 on:
   push:
