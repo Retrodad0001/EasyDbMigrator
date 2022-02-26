@@ -4,7 +4,6 @@ on:
   push:
     branches: [ master ]
  
-
 jobs:
   Release:
     name: Release to Nuget
