@@ -6,9 +6,9 @@ namespace EasyDbMigrator
     public struct Result<T>
     {
         public bool HasFailure => !WasSuccessful;
-        public bool WasSuccessful { get; private set; }
-        public Exception? Exception { get; private set; }
-        public T? Value { get; private set; }
+        public bool WasSuccessful { get; }
+        public Exception? Exception { get; }
+        public T? Value { get; }
 
         public Result(bool wasSuccessful, Exception? exception = null)
         {
@@ -27,7 +27,7 @@ namespace EasyDbMigrator
         [ExcludeFromCodeCoverage] //this method is used for debug only
         public override string ToString()
         {
-            return $"isSucces: {WasSuccessful} exception: {Exception}";
+            return $"isSuccess: {WasSuccessful} exception: {Exception}";
         }
     }
 }

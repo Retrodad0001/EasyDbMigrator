@@ -14,6 +14,6 @@ namespace EasyDbMigrator
             , MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken = default(CancellationToken));
 
-        void ExcludeTheseScriptsInRun(List<string> scriptsToExcludeByname);
+        void ExcludeTheseScriptsInRun(List<string> scriptsToExcludeByName);
     }
 }

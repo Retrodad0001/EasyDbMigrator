@@ -5,8 +5,8 @@ namespace EasyDbMigrator
 { 
     public sealed record Script
     {
-        public string FileName { get; private set; }
-        public string Content { get; private set; }
+        public string FileName { get; }
+        public string Content { get; }
         public DateTime DatePartOfName { get; private set; }
         public int SequenceNumberPart { get; private set; }
 

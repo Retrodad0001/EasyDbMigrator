@@ -7,9 +7,9 @@ using Xunit.Abstractions;
 namespace EasyDbMigrator.IntegrationTestHelpers
 {
     [ExcludeFromCodeCoverage]
-    public sealed class XUnitLoghelper<T> : XUnitLoghelper, ILogger<T>
+    public sealed class XUnitLogHelper<T> : XUnitLogHelper, ILogger<T>
     {
-        public XUnitLoghelper(ITestOutputHelper testOutputHelper
+        public XUnitLogHelper(ITestOutputHelper testOutputHelper
             , LoggerExternalScopeProvider scopeProvider)
             : base(testOutputHelper, scopeProvider, typeof(T).FullName)
         {
@@ -17,7 +17,7 @@ namespace EasyDbMigrator.IntegrationTestHelpers
     }
 
     [ExcludeFromCodeCoverage]
-    public class XUnitLoghelper : ILogger
+    public class XUnitLogHelper : ILogger
     {
         private readonly ITestOutputHelper _testOutputHelper;
         private readonly string? _categoryName;
@@ -25,15 +25,15 @@ namespace EasyDbMigrator.IntegrationTestHelpers
 
         public static ILogger CreateLogger(ITestOutputHelper testOutputHelper)
         {
-            return new XUnitLoghelper(testOutputHelper, new LoggerExternalScopeProvider(), string.Empty);
+            return new XUnitLogHelper(testOutputHelper, new LoggerExternalScopeProvider(), string.Empty);
         }
 
         public static ILogger<T> CreateLogger<T>(ITestOutputHelper testOutputHelper)
         {
-            return new XUnitLoghelper<T>(testOutputHelper, new LoggerExternalScopeProvider());
+            return new XUnitLogHelper<T>(testOutputHelper, new LoggerExternalScopeProvider());
         }
 
-        public XUnitLoghelper(ITestOutputHelper testOutputHelper, LoggerExternalScopeProvider scopeProvider, string? categoryName)
+        public XUnitLogHelper(ITestOutputHelper testOutputHelper, LoggerExternalScopeProvider scopeProvider, string? categoryName)
         {
             if (string.IsNullOrEmpty(categoryName))
             {
@@ -86,7 +86,7 @@ namespace EasyDbMigrator.IntegrationTestHelpers
                 LogLevel.Warning => "warning",
                 LogLevel.Error => "Error",
                 LogLevel.Critical => "Critical",
-                LogLevel.None => throw new NotImplementedException(),
+                LogLevel.None => throw new Exception("this is a problem"),
                 _ => throw new ArgumentOutOfRangeException(nameof(logLevel))
             };
         }

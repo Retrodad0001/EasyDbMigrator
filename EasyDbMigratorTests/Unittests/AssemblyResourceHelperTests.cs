@@ -15,7 +15,7 @@ namespace EasyDbMigratorTests.Unittests
         {
             var sut = new AssemblyResourceHelper();
 
-            var result = await sut.TryGetScriptsFromAssembly(typeof(HereTheSQLServerScriptsCanBeFound)).ConfigureAwait(true);
+            var result = await sut.TryGetScriptsFromAssembly(typeof(HereTheSqlServerScriptsCanBeFound)).ConfigureAwait(true);
 
             _ = result.Should().HaveCount(3);
             _ = result.TrueForAll(script => script.FileName != string.Empty);

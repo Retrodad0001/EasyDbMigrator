@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-//TODO add auto format in build
-
-namespace ExampleTestLibWithPostgreSQLServerScripts
+namespace ExampleTestLibWithPostGreSQLServerScripts
 {
     [ExcludeFromCodeCoverage] //used for testing no production code!
     public class HereThePostgreSQLServerScriptsCanBeFound

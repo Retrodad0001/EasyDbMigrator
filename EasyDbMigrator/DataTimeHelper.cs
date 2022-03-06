@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigrator
 {
-    [ExcludeFromCodeCoverage] //tested in integrationtest
+    [ExcludeFromCodeCoverage] //tested in integrationTest
     public sealed class DataTimeHelper : IDataTimeHelper
     {
         public DateTimeOffset GetCurrentUtcTime()

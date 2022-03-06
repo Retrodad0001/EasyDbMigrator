@@ -3,7 +3,7 @@
 namespace ExampleTestLibWithSqlServerScripts
 {
     [ExcludeFromCodeCoverage] //used for testing no production code!
-    public class HereTheSQLServerScriptsCanBeFound
+    public class HereTheSqlServerScriptsCanBeFound
     {
         //needed so the tool knows in witch assembly the resources are
     }

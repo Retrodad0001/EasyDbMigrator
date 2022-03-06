@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator.DatabaseConnectors
 {
-    [ExcludeFromCodeCoverage] //is tested with integrationtest that will not be included in code coverage
+    [ExcludeFromCodeCoverage] //is tested with integrationTest that will not be included in code coverage
     public sealed class PostgreSqlConnector : IDatabaseConnector
     {
         private readonly AsyncPolicy _postgreSqlDatabasePolicy = Policy.Handle<Exception>()
@@ -21,20 +21,22 @@ namespace EasyDbMigrator.DatabaseConnectors
                DROP DATABASE IF EXISTS  {migrationConfiguration.DatabaseName}
                 ";
 
-            Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
-                 , scriptName: "EasyDbMigrator.Integrationtest_dropDatabase"
+            var result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
+                 , scriptName: @"EasyDbMigrator.Integrationtest_dropDatabase"
                  , sqlScriptContent: query
                  , cancellationToken: cancellationToken).ConfigureAwait(false); ;
 
             return result;
         }
 
-        public async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExcistAsync(MigrationConfiguration migrationConfiguration
+        public async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExistAsync(MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken)
         {
 
             if (cancellationToken.IsCancellationRequested)
+            {
                 return new Result<bool>(wasSuccessful: true);
+            }
 
             string sqlScriptCreateMigrationTable = @$" 
 
@@ -46,7 +48,7 @@ namespace EasyDbMigrator.DatabaseConnectors
                 );
                 ";
 
-            Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
+            Result<bool> result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
                 , scriptName: "EasyDbMigrator.SetupDbMigrationsRunTable"
                 , sqlScriptContent: sqlScriptCreateMigrationTable
                 , cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -59,14 +61,16 @@ namespace EasyDbMigrator.DatabaseConnectors
         {
 
             if (cancellationToken.IsCancellationRequested)
+            {
                 return new Result<bool>(wasSuccessful: true);
+            }
 
             string sqlScriptCreateDatabase = @$"
                     SELECT 'CREATE DATABASE {migrationConfiguration.DatabaseName}'
                     WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{migrationConfiguration.DatabaseName}')
                     ";
 
-            Result<bool> result = await TryExcecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
+            Result<bool> result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
                 , scriptName: "SetupEmptyDb"
                 , sqlScriptContent: sqlScriptCreateDatabase
                 , cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -80,7 +84,9 @@ namespace EasyDbMigrator.DatabaseConnectors
             , CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
+            {
                 return new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.MigrationWasCancelled);
+            }
 
             NpgsqlTransaction? transaction = null;
             try
@@ -98,8 +104,8 @@ namespace EasyDbMigrator.DatabaseConnectors
 
                         ";
 
-                    using NpgsqlCommand cmdcheckNotExecuted = new(checkIfScriptHasExecuted, connection);
-                    var result = _ = await cmdcheckNotExecuted.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+                    using NpgsqlCommand cmdCheckNotExecuted = new(checkIfScriptHasExecuted, connection);
+                    var result = _ = await cmdCheckNotExecuted.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
 
                     if (result != null)
                     {
@@ -142,29 +148,31 @@ namespace EasyDbMigrator.DatabaseConnectors
                         await transaction.RollbackAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
                         await transaction.DisposeAsync().ConfigureAwait(false);
                         return new Result<RunMigrationResult>(wasSuccessful: true
-                            , RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted
+                            , RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted
                             , exception: ex);
                     }
                     catch (Exception ex2)
                     {
                         return new Result<RunMigrationResult>(wasSuccessful: true
-                            , RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted
+                            , RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted
                             , exception: new ApplicationException($"{ex} + {ex2.Message}"));
                     }
                 }
 
-                return new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted, ex);
+                return new Result<RunMigrationResult>(wasSuccessful: true, RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted, ex);
             }
         }
 
-        private async Task<Result<bool>> TryExcecuteSingleScriptAsync(string connectionString
+        private async Task<Result<bool>> TryExecuteSingleScriptAsync(string connectionString
          , string scriptName
          , string sqlScriptContent
          , CancellationToken cancellationToken)
 
         {
             if (cancellationToken.IsCancellationRequested)
+            {
                 return new Result<bool>(wasSuccessful: true);
+            }
 
             try
             {

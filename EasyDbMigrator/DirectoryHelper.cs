@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace EasyDbMigrator
 {
 
-    [ExcludeFromCodeCoverage] //tested with integrationtests
+    [ExcludeFromCodeCoverage] //tested with integrationTests
     public sealed class DirectoryHelper : IDirectoryHelper
     {
         public async Task<List<Script>> TryGetScriptsFromDirectoryAsync(string directory)

@@ -23,9 +23,13 @@ namespace EasyDbMigratorTests.Unittests
             };
 
             if (shouldThrowException)
+            {
                 _ = act.Should().Throw<ArgumentException>();
+            }
             else
+            {
                 _ = act.Should().NotThrow();
+            }
         }
 
         [Theory]
@@ -40,9 +44,13 @@ namespace EasyDbMigratorTests.Unittests
             };
 
             if (shouldThrowException)
+            {
                 _ = act.Should().Throw<ArgumentException>();
+            }
             else
+            {
                 _ = act.Should().NotThrow();
+            }
         }
     }
 }

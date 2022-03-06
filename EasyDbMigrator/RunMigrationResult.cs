@@ -4,7 +4,7 @@
     {
         MigrationScriptExecuted,
         ScriptSkippedBecauseAlreadyRun,
-        ExceptionWasThownWhenScriptWasExecuted,
+        ExceptionWasThrownWhenScriptWasExecuted,
         MigrationWasCancelled,
     }
 }

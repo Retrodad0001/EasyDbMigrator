@@ -2,9 +2,9 @@
 {
     public record MigrationConfiguration
     {
-        public string ConnectionString { get; private set; }
-        public string DatabaseName { get; private set; }
-        public string? ScriptsDirectory { get; private set; }
+        public string ConnectionString { get; }
+        public string DatabaseName { get; }
+        public string? ScriptsDirectory { get; }
 
         public MigrationConfiguration(string connectionString, string databaseName, string? ScriptsDirectory = null)
         {

@@ -17,7 +17,7 @@ namespace EasyDbMigrator.IntegrationTestHelpers
 
         public ILogger CreateLogger(string categoryName)
         {
-            return new XUnitLoghelper(_testOutputHelper, _scopeProvider, categoryName);
+            return new XUnitLogHelper(_testOutputHelper, _scopeProvider, categoryName);
         }
 
         public void Dispose()

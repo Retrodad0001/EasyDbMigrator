@@ -8,41 +8,56 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator
 {
+    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class DbMigrator : IDbMigrator
     {
         private readonly ILogger _logger;
-        private readonly IDatabaseConnector _databaseconnector;
+        private readonly IDatabaseConnector _databaseConnector;
         private readonly IAssemblyResourceHelper _assemblyResourceHelper;
         private readonly IDirectoryHelper _directoryHelper;
         private readonly IDataTimeHelper _dataTimeHelper;
         private readonly List<string> _excludedScriptsList = new();
 
         public DbMigrator(ILogger logger
-            , IDatabaseConnector databaseconnector
+            , IDatabaseConnector databaseConnector
             , IAssemblyResourceHelper assemblyResourceHelper
             , IDirectoryHelper directoryHelper
             , IDataTimeHelper dataTimeHelper)
         {
 
             if (logger is null)
+            {
                 throw new ArgumentNullException(nameof(logger));
+            }
+
             _logger = logger;
 
-            if (databaseconnector is null)
-                throw new ArgumentNullException(nameof(databaseconnector));
-            _databaseconnector = databaseconnector;
+            if (databaseConnector is null)
+            {
+                throw new ArgumentNullException(nameof(databaseConnector));
+            }
+
+            _databaseConnector = databaseConnector;
 
             if (assemblyResourceHelper is null)
+            {
                 throw new ArgumentNullException(nameof(assemblyResourceHelper));
+            }
+
             _assemblyResourceHelper = assemblyResourceHelper;
 
             if (directoryHelper is null)
+            {
                 throw new ArgumentNullException(nameof(directoryHelper));
+            }
 
             _directoryHelper = directoryHelper;
 
             if (dataTimeHelper is null)
+            {
                 throw new ArgumentNullException(nameof(dataTimeHelper));
+            }
+
             _dataTimeHelper = dataTimeHelper;
         }
 
@@ -51,6 +66,7 @@ namespace EasyDbMigrator
         /// </summary>
         /// <param name="migrationConfiguration">the configuration settings DBMigrator uses to perform its tasks</param>
         /// <param name="logger">the ILogger logging object u want that the DBMigrator should use</param>
+        /// <param name="databaseConnector">select SQL Server or PostgresSever Connection</param>
         /// <returns></returns>
         public static DbMigrator Create(MigrationConfiguration migrationConfiguration
             , ILogger logger
@@ -72,7 +88,7 @@ namespace EasyDbMigrator
             }
 
             DbMigrator result = new(logger: logger
-                , databaseconnector: databaseConnector
+                , databaseConnector: databaseConnector
                 , assemblyResourceHelper: new AssemblyResourceHelper()
                 , directoryHelper: new DirectoryHelper()
                 , dataTimeHelper: new DataTimeHelper());
@@ -85,7 +101,8 @@ namespace EasyDbMigrator
         /// </summary>
         /// <param name="migrationConfiguration">the configuration settings DBMigrator uses to perform its tasks</param>
         /// <param name="logger">the ILogger logging object u want that the DBMigrator should use</param>
-        /// <param name="dataTimeHelperMock">used for mocking and testing time specific scenario's </param>
+        /// <param name="dataTimeHelperMock">used for mocking and testing time specific scenario's</param>
+        /// <param name="databaseConnector">select SQL Server or PostgresSever Connection</param>
         /// <returns></returns>
         public static DbMigrator CreateForLocalIntegrationTesting(MigrationConfiguration migrationConfiguration
             , ILogger logger
@@ -113,7 +130,7 @@ namespace EasyDbMigrator
             }
 
             DbMigrator result = new(logger: logger
-               , databaseconnector: databaseConnector
+               , databaseConnector: databaseConnector
                , assemblyResourceHelper: new AssemblyResourceHelper()
                , directoryHelper: new DirectoryHelper()
                , dataTimeHelper: dataTimeHelperMock);
@@ -122,19 +139,18 @@ namespace EasyDbMigrator
         }
 
         /// <summary>
-        /// If the database exist( specified by the parameter databasename) 
+        /// If the database exist( specified by the parameter databaseName) 
         /// it will rollback all the transactions and drop the database. 
         /// Use this only for testing in non-production environments !
         /// </summary>
-        /// <param name="databaseName">the name of the database u want to drop</param>
-        /// <param name="connectionString">the connection-string to the database-server</param>
+        /// <param name="migrationConfiguration">the settings to use for this migration</param>
         /// <param name="cancellationToken">The cancellation instruction</param>
         /// <returns></returns>
         public virtual async Task<bool> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken = default)
         {
 
-            Result<bool> succeeded = await _databaseconnector.TryDeleteDatabaseIfExistAsync(migrationConfiguration: migrationConfiguration
+            Result<bool> succeeded = await _databaseConnector.TryDeleteDatabaseIfExistAsync(migrationConfiguration: migrationConfiguration
                 , cancellationToken: cancellationToken).ConfigureAwait(false);
 
             if (succeeded.HasFailure)
@@ -151,7 +167,8 @@ namespace EasyDbMigrator
         /// Run all the migration scripts(embedded resources) specified in the 
         /// assembly where the type (see param typeOfClassWhereScriptsAreLocated) exist
         /// </summary>
-        /// <param name="typeWhereMigrationsScriptsExists"></param>
+        /// <param name="typeOfClassWhereScriptsAreLocated">the location of the migrationFiles</param>
+        /// <param name="migrationConfiguration">the settings to use for this migration</param>
         /// <param name="cancellationToken">The cancellation instruction</param>
         /// <returns></returns>
         public virtual async Task<bool> TryApplyMigrationsAsync(Type typeOfClassWhereScriptsAreLocated
@@ -217,10 +234,10 @@ namespace EasyDbMigrator
         /// <summary>
         /// Specificity the scripts (by name) what u want to exclude from the migration run
         /// </summary>
-        /// <param name="scriptsToExclude"></param>
-        public virtual void ExcludeTheseScriptsInRun(List<string> scriptsToExcludeByname)
+        /// <param name="scriptsToExcludeByName"></param>
+        public virtual void ExcludeTheseScriptsInRun(List<string> scriptsToExcludeByName)
         {
-            _excludedScriptsList.AddRange(scriptsToExcludeByname);
+            _excludedScriptsList.AddRange(scriptsToExcludeByName);
         }
 
         private static bool IsCancellationRequested(CancellationToken cancellationToken)
@@ -237,7 +254,7 @@ namespace EasyDbMigrator
         private async Task<Result<bool>> TrySetupEmptyDataBaseWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken)
         {
-            var result = await _databaseconnector.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: migrationConfiguration
+            Result<bool> result = await _databaseConnector.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: migrationConfiguration
                 , cancellationToken: cancellationToken).ConfigureAwait(false);
 
             return result;
@@ -246,7 +263,7 @@ namespace EasyDbMigrator
         private async Task<Result<bool>> TrySetupDbMigrationsTableWhenNotExistAsync(MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken)
         {
-            var result = await _databaseconnector.TrySetupDbMigrationsRunTableWhenNotExcistAsync(migrationConfiguration: migrationConfiguration
+            Result<bool> result = await _databaseConnector.TrySetupDbMigrationsRunTableWhenNotExistAsync(migrationConfiguration: migrationConfiguration
                 , cancellationToken: cancellationToken).ConfigureAwait(false);
 
             return result;
@@ -254,18 +271,22 @@ namespace EasyDbMigrator
 
         private async Task<Result<List<Script>>> TryLoadingScripts(Type typeOfClassWhereScriptsAreLocated, MigrationConfiguration migrationConfiguration)
         {
-            List<Script> unOrderedScripts;
-
             try
             {
+                List<Script> unOrderedScripts;
+              
                 if (string.IsNullOrEmpty(migrationConfiguration.ScriptsDirectory))
+                {
                     unOrderedScripts = await _assemblyResourceHelper.TryGetScriptsFromAssembly(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated).ConfigureAwait(false);
+                }
                 else
+                {
                     unOrderedScripts = await _directoryHelper.TryGetScriptsFromDirectoryAsync(migrationConfiguration.ScriptsDirectory).ConfigureAwait(false);
+                }
 
                 _logger.Log(logLevel: LogLevel.Information, message: $"Total scripts found: {unOrderedScripts.Count}");
-                List<Script> unOrderedScriptsWithoutExludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedscripts: _excludedScriptsList);
-                List<Script> orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExludedScripts);
+                List<Script> unOrderedScriptsWithoutExcludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedScripts: _excludedScriptsList);
+                List<Script> orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExcludedScripts);
                 return new Result<List<Script>>(wasSuccessful: true, value: orderedScriptsWithoutExcludedScripts);
             }
             catch (Exception ex)
@@ -289,7 +310,7 @@ namespace EasyDbMigrator
 
                 DateTimeOffset executedDateTime = _dataTimeHelper.GetCurrentUtcTime();
 
-                Result<RunMigrationResult> result = await _databaseconnector.RunDbMigrationScriptAsync(migrationConfiguration: migrationConfiguration
+                Result<RunMigrationResult> result = await _databaseConnector.RunDbMigrationScriptAsync(migrationConfiguration: migrationConfiguration
                     , script: script
                     , executedDateTime: executedDateTime
                     , cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -307,22 +328,19 @@ namespace EasyDbMigrator
                 {
                     _logger.Log(logLevel: LogLevel.Information, message: $"script: {script.FileName} was not run because script was already executed");
                 }
-                else if (result.Value == RunMigrationResult.ExceptionWasThownWhenScriptWasExecuted)
+                else if (result.Value == RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted)
                 {
                     _logger.Log(logLevel: LogLevel.Error, exception: result.Exception, message: $"script: {script.FileName} was not completed due to exception");
                     skipBecauseOfErrorWithPreviousScript = true;
                 }
             }
 
-            if (skipBecauseOfErrorWithPreviousScript)
-                return new Result<bool>(wasSuccessful: false);
-            else
-                return new Result<bool>(wasSuccessful: true);
+            return skipBecauseOfErrorWithPreviousScript ? new Result<bool>(wasSuccessful: false) : new Result<bool>(wasSuccessful: true);
         }
 
-        private static List<Script> RemoveExcludedScripts(List<Script> scripts, List<string> excludedscripts)
+        private static List<Script> RemoveExcludedScripts(List<Script> scripts, List<string> excludedScripts)
         {
-            var result = scripts.Where(p => !excludedscripts.Any(x => x == p.FileName)).ToList();
+            List<Script> result = scripts.Where(p => excludedScripts.All(x => x != p.FileName)).ToList();
             return result;
         }
 

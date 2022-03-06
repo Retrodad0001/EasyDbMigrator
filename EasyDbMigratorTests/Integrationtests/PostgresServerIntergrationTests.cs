@@ -2,7 +2,7 @@
 using EasyDbMigrator.DatabaseConnectors;
 using EasyDbMigratorTests.Integrationtests.Helpers;
 using EasyDbMigratorTests.TestHelpers;
-using ExampleTestLibWithPostgreSQLServerScripts;
+using ExampleTestLibWithPostGreSQLServerScripts;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -51,7 +51,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 List<string> scriptsToExclude = new();
                 scriptsToExclude.Add("20211230_001_DoStuffScript.sql");
-                migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
+                migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
                     , cancellationToken: CancellationToken.None).ConfigureAwait(true);
@@ -118,7 +118,7 @@ namespace EasyDbMigratorTests.Integrationtests
                 List<string> scriptsToExclude = new();
                 scriptsToExclude.Add("20211230_001_DoStuffScript.sql");
 
-                migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
+                migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
                     , cancellationToken: CancellationToken.None).ConfigureAwait(true);
@@ -143,7 +143,7 @@ namespace EasyDbMigratorTests.Integrationtests
                    , dataTimeHelperMock: datetimeHelperMock2.Object
                    , databaseConnector: new PostgreSqlConnector());
 
-                migrator2.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
+                migrator2.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
                 bool succeeded = await migrator2.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
                     , migrationConfiguration: config
@@ -207,7 +207,7 @@ namespace EasyDbMigratorTests.Integrationtests
 
                 List<string> scriptsToExclude = new();
                 scriptsToExclude.Add("20211230_001_DoStuffScript.sql");
-                migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByname: scriptsToExclude);
+                migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
                 bool succeededDeleDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
                     , cancellationToken: token).ConfigureAwait(true);
