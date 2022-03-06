@@ -22,7 +22,7 @@ namespace EasyDbMigrator
                 using StreamReader reader = new(fileStream);
 
                 string content = await reader.ReadToEndAsync().ConfigureAwait(false);
-                Script script = new(filename: file.FullName, content: content);
+                Script script = new(file.FullName, content);
             }
 
             return scripts;

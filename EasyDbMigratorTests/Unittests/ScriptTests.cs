@@ -38,7 +38,7 @@ namespace EasyDbMigratorTests.Unittests
             // ReSharper disable once SuggestVarOrType_SimpleTypes
             Action act = () =>
             {
-                Script sut = new(filename: "xx", content: content);
+                Script sut = new("xx", content);
             };
 
             if (shouldThrowException)

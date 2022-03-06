@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 
-namespace EasyDbMigratorTests.Integrationtests.Helpers
+namespace EasyDbMigratorTests.IntegrationTests.Helpers
 {
     [ExcludeFromCodeCoverage]
-    public sealed class IntegrationTestHelper
+    public static class IntegrationTestHelper
     {
         public static bool CheckMigrationsTableSqlSever(string connectionString,
             List<DbMigrationsRunRowSqlServer> expectedRows
@@ -18,7 +18,7 @@ namespace EasyDbMigratorTests.Integrationtests.Helpers
             using SqlConnection connection = new(connectionString);
             connection.Open();
 
-            List<DbMigrationsRunRowSqlServer> actual = (List<DbMigrationsRunRowSqlServer>)connection.Query<DbMigrationsRunRowSqlServer>(@$"
+            var actual = (List<DbMigrationsRunRowSqlServer>)connection.Query<DbMigrationsRunRowSqlServer>(@$"
                     use {testDatabaseName}
                     SELECT Id, Executed, Filename, Version 
                     FROM DbMigrationsRun");
@@ -30,12 +30,12 @@ namespace EasyDbMigratorTests.Integrationtests.Helpers
         }
 
         public static bool CheckMigrationsTablePostgresSever(string connectionString,
-           List<DbMigrationsRunRowPostgressServer> expectedRows)
+           List<DbMigrationsRunRowPostgresServer> expectedRows)
         {
             using NpgsqlConnection connection = new(connectionString);
             connection.Open();
 
-            List<DbMigrationsRunRowPostgressServer> actual = (List<DbMigrationsRunRowPostgressServer>)connection.Query<DbMigrationsRunRowPostgressServer>(@$"
+            var actual = (List<DbMigrationsRunRowPostgresServer>)connection.Query<DbMigrationsRunRowPostgresServer>(@$"
                     SELECT Id, Executed, Filename, Version 
                     FROM DbMigrationsRun");
 

@@ -12,9 +12,9 @@ namespace EasyDbMigratorTests.Unittests
         private class MyCustomTypeUsedInResult { }
 
         [Fact]
-        public void can_create_succes_result_with_custom_type()
+        public void Can_create_success_result_with_custom_type()
         {
-            Result<MyCustomTypeUsedInResult> result = new(wasSuccessful: true, new MyCustomTypeUsedInResult());
+            Result<MyCustomTypeUsedInResult> result = new(true, new MyCustomTypeUsedInResult());
 
             _ = result.WasSuccessful.Should().BeTrue();
             _ = result.HasFailure.Should().BeFalse();
@@ -23,9 +23,9 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_creating_failure_result_an_Exception_can_be_added()
+        public void When_creating_failure_result_an_Exception_can_be_added()
         {
-            Result<MyCustomTypeUsedInResult> result = new(wasSuccessful: false, new System.Exception());
+            Result<MyCustomTypeUsedInResult> result = new(false, new System.Exception());
 
             _ = result.WasSuccessful.Should().BeFalse();
             _ = result.HasFailure.Should().BeTrue();
@@ -34,9 +34,9 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_creating_failure_result_exception_is_not_mandatory()
+        public void When_creating_failure_result_exception_is_not_mandatory()
         {
-            Result<MyCustomTypeUsedInResult> result = new(wasSuccessful: false);
+            Result<MyCustomTypeUsedInResult> result = new(false);
 
             _ = result.WasSuccessful.Should().BeFalse();
             _ = result.HasFailure.Should().BeTrue();

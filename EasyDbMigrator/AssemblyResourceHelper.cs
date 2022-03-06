@@ -34,7 +34,7 @@ namespace EasyDbMigrator
                 string filenameWithNoNamespaces = RemoveTheNamespaceFromName(filename);
 
                 string sqlScriptContent = await reader.ReadToEndAsync().ConfigureAwait(false); ;
-                Script newScript = new(filename: filenameWithNoNamespaces, content: sqlScriptContent);
+                Script newScript = new(filenameWithNoNamespaces, sqlScriptContent);
                 scripts.Add(newScript);
             }
 

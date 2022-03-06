@@ -14,12 +14,13 @@ namespace EasyDbMigratorTests.Unittests
         [InlineData("xxxxxx xxxxxx", true)]
         [InlineData("", true)]
         [InlineData(" ", true)]
-        public void the_parameter_databasename_should_have_only_one_word(string databasename, bool shouldThrowException)
+        public void The_parameter_databasename_should_have_only_one_word(string databasename, bool shouldThrowException)
         {
-            Action act = () =>
+            var act = () =>
             {
-                MigrationConfiguration sut = new(connectionString: "connection string"
-                    , databaseName: databasename);
+                // ReSharper disable once UnusedVariable
+                MigrationConfiguration sut = new("connection string"
+                    , databasename);
             };
 
             if (shouldThrowException)
@@ -35,12 +36,13 @@ namespace EasyDbMigratorTests.Unittests
         [Theory]
         [InlineData("", true)]
         [InlineData(" ", true)]
-        public void the_parameter_connectionsring_should_be_correct(string connentionsting, bool shouldThrowException)
+        public void The_parameter_connectionString_should_be_correct(string connectionString, bool shouldThrowException)
         {
-            Action act = () =>
+            var act = () =>
             {
-                MigrationConfiguration sut = new(connectionString: connentionsting
-                    , databaseName: "databasename");
+                // ReSharper disable once UnusedVariable
+                MigrationConfiguration sut = new(connectionString
+                    , "databasename");
             };
 
             if (shouldThrowException)
