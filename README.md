@@ -35,7 +35,7 @@ It is possible to use EasyDbMigrator in your own application.
 # INFO:
 
 ### Builds:
-[![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/CD.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/CD.yml)
+[![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/BuildTestDebug.ymlbadge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/BuildTestDebug.yml)
 
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis-weekly.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis-weekly.yml)
 ### Code statistics:
