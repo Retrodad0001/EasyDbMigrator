@@ -34,7 +34,7 @@ It is possible to use EasyDbMigrator in your own application.
 
 # INFO:
 
-### Builds:
+### Action (jobs):
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/BuildTestDebug.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/BuildTestDebug.yml)
 
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/TestReleaseBuild.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/TestReleaseBuild.yml)
