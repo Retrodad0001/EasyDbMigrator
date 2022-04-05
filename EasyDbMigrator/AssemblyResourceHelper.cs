@@ -33,7 +33,7 @@ namespace EasyDbMigrator
                 using StreamReader reader = new(stream);
                 string filenameWithNoNamespaces = RemoveTheNamespaceFromName(filename);
 
-                string sqlScriptContent = await reader.ReadToEndAsync().ConfigureAwait(false); ;
+                string sqlScriptContent = await reader.ReadToEndAsync().ConfigureAwait(false);
                 Script newScript = new(filenameWithNoNamespaces, sqlScriptContent);
                 scripts.Add(newScript);
             }

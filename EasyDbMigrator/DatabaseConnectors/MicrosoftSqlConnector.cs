@@ -50,7 +50,7 @@ namespace EasyDbMigrator.DatabaseConnectors
                     )
                 END";
 
-            Result<bool> result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
+            var result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
                 , "EasyDbMigrator.SetupDbMigrationsRunTable"
                 , sqlScriptCreateMigrationTable
                 , cancellationToken).ConfigureAwait(false);
@@ -67,10 +67,10 @@ namespace EasyDbMigrator.DatabaseConnectors
                     CREATE DATABASE {migrationConfiguration.DatabaseName}
                 END";
 
-            Result<bool> result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
+            var result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
                 , "SetupEmptyDb"
                 , sqlScriptCreateDatabase
-                , cancellationToken).ConfigureAwait(false); ;
+                , cancellationToken).ConfigureAwait(false);
 
             return result;
         }
@@ -88,7 +88,7 @@ namespace EasyDbMigrator.DatabaseConnectors
             SqlTransaction? transaction = null;
             try
             {
-                Result<RunMigrationResult> result = await _sqlDatabasePolicy.ExecuteAsync(async () =>
+                var result = await _sqlDatabasePolicy.ExecuteAsync(async () =>
                 {
                     using SqlConnection connection = new(migrationConfiguration.ConnectionString);
                     await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
@@ -100,7 +100,7 @@ namespace EasyDbMigrator.DatabaseConnectors
                         ";
 
                     await using SqlCommand cmdCheckNotExecuted = new(checkIfScriptHasExecuted, connection);
-                    var result = _ = await cmdCheckNotExecuted.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+                    object? result = _ = await cmdCheckNotExecuted.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
 
                     if (result != null)
                     {

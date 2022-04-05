@@ -25,7 +25,7 @@ namespace EasyDbMigratorTests.TestHelpers
             }
 
 #pragma warning disable CA1310 // Specify StringComparison for correctness
-            Func<object, Type, bool> state = (v, t) => v.ToString().CompareTo(expectedMessage) == 0;
+            Func<object, Type, bool> state = (v, t) => string.Compare(v.ToString(), expectedMessage, StringComparison.Ordinal) == 0;
 #pragma warning restore CA1310 // Specify StringComparison for correctness
 
             if (checkExceptionNotNull)

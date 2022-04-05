@@ -14,15 +14,16 @@ namespace EasyDbMigrator
             List<Script> scripts = new();
 
             DirectoryInfo directoryIno = new(directory);
-            FileInfo[] files = directoryIno.GetFiles();
+            var files = directoryIno.GetFiles();
 
-            foreach (FileInfo file in files)
+            foreach (var file in files)
             {
-                using FileStream fileStream = new(file.FullName, FileMode.Open);
+                await using FileStream fileStream = new(file.FullName, FileMode.Open);
                 using StreamReader reader = new(fileStream);
 
                 string content = await reader.ReadToEndAsync().ConfigureAwait(false);
                 Script script = new(file.FullName, content);
+                scripts.Add(script);
             }
 
             return scripts;

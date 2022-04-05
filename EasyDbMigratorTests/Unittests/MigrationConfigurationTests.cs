@@ -10,8 +10,8 @@ namespace EasyDbMigratorTests.Unittests
     public class MigrationConfigurationTests
     {
         [Theory]
-        [InlineData("xxxxxx", false)]
-        [InlineData("xxxxxx xxxxxx", true)]
+        [InlineData("word", false)]
+        [InlineData("word1 word2", true)]
         [InlineData("", true)]
         [InlineData(" ", true)]
         public void The_parameter_databasename_should_have_only_one_word(string databasename, bool shouldThrowException)

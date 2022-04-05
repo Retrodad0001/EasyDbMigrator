@@ -70,7 +70,7 @@ namespace EasyDbMigrator.DatabaseConnectors
                     WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{migrationConfiguration.DatabaseName}')
                     ";
 
-            Result<bool> result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
+            var result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
                 , "SetupEmptyDb"
                 , sqlScriptCreateDatabase
                 , cancellationToken).ConfigureAwait(false);
@@ -91,7 +91,7 @@ namespace EasyDbMigrator.DatabaseConnectors
             NpgsqlTransaction? transaction = null;
             try
             {
-                Result<RunMigrationResult> result = await _postgreSqlDatabasePolicy.ExecuteAsync(async () =>
+                var result = await _postgreSqlDatabasePolicy.ExecuteAsync(async () =>
                 {
 
                     await using NpgsqlConnection connection = new(migrationConfiguration.ConnectionString);

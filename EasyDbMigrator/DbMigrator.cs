@@ -150,7 +150,7 @@ namespace EasyDbMigrator
             , CancellationToken cancellationToken = default)
         {
 
-            Result<bool> succeeded = await _databaseConnector.TryDeleteDatabaseIfExistAsync(migrationConfiguration
+            var succeeded = await _databaseConnector.TryDeleteDatabaseIfExistAsync(migrationConfiguration
                 , cancellationToken).ConfigureAwait(false);
 
             if (succeeded.HasFailure)
@@ -183,7 +183,7 @@ namespace EasyDbMigrator
 
             LogBasicInformation(migrationConfiguration);
 
-            Result<bool> setupDatabaseAction = await TrySetupEmptyDataBaseWhenThereIsNoDatabaseAsync(migrationConfiguration
+            var setupDatabaseAction = await TrySetupEmptyDataBaseWhenThereIsNoDatabaseAsync(migrationConfiguration
                 , cancellationToken).ConfigureAwait(false);
 
             if (setupDatabaseAction.HasFailure)
@@ -194,7 +194,7 @@ namespace EasyDbMigrator
             }
 
             _logger.Log(LogLevel.Information, @"setup database executed successfully");
-            Result<bool> createVersioningTableAction = await TrySetupDbMigrationsTableWhenNotExistAsync(migrationConfiguration
+            var createVersioningTableAction = await TrySetupDbMigrationsTableWhenNotExistAsync(migrationConfiguration
                , cancellationToken).ConfigureAwait(false);
 
             if (createVersioningTableAction.HasFailure)
@@ -206,7 +206,7 @@ namespace EasyDbMigrator
 
             _logger.Log(LogLevel.Information, @"setup versioning table executed successfully");
 
-            Result<List<Script>> loadScriptsAction = await TryLoadingScripts(typeOfClassWhereScriptsAreLocated, migrationConfiguration).ConfigureAwait(false);
+            var loadScriptsAction = await TryLoadingScripts(typeOfClassWhereScriptsAreLocated, migrationConfiguration).ConfigureAwait(false);
 
             if (loadScriptsAction.HasFailure)
             {
@@ -215,7 +215,7 @@ namespace EasyDbMigrator
                 return false;
             }
 
-            Result<bool> runMigrationsScriptsAction = await TryRunMigrationScriptsAsync(migrationConfiguration
+            var runMigrationsScriptsAction = await TryRunMigrationScriptsAsync(migrationConfiguration
 #pragma warning disable CS8604 // Possible null reference argument.
                 , loadScriptsAction.Value
 #pragma warning restore CS8604 // Possible null reference argument.
@@ -254,7 +254,7 @@ namespace EasyDbMigrator
         private async Task<Result<bool>> TrySetupEmptyDataBaseWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken)
         {
-            Result<bool> result = await _databaseConnector.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration
+            var result = await _databaseConnector.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration
                 , cancellationToken).ConfigureAwait(false);
 
             return result;
@@ -263,7 +263,7 @@ namespace EasyDbMigrator
         private async Task<Result<bool>> TrySetupDbMigrationsTableWhenNotExistAsync(MigrationConfiguration migrationConfiguration
             , CancellationToken cancellationToken)
         {
-            Result<bool> result = await _databaseConnector.TrySetupDbMigrationsRunTableWhenNotExistAsync(migrationConfiguration
+            var result = await _databaseConnector.TrySetupDbMigrationsRunTableWhenNotExistAsync(migrationConfiguration
                 , cancellationToken).ConfigureAwait(false);
 
             return result;
@@ -285,8 +285,8 @@ namespace EasyDbMigrator
                 }
 
                 _logger.Log(LogLevel.Information, $"Total scripts found: {unOrderedScripts.Count}");
-                List<Script> unOrderedScriptsWithoutExcludedScripts = RemoveExcludedScripts(unOrderedScripts, _excludedScriptsList);
-                List<Script> orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(unOrderedScriptsWithoutExcludedScripts);
+                var unOrderedScriptsWithoutExcludedScripts = RemoveExcludedScripts(unOrderedScripts, _excludedScriptsList);
+                var orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(unOrderedScriptsWithoutExcludedScripts);
                 return new Result<List<Script>>(true, orderedScriptsWithoutExcludedScripts);
             }
             catch (Exception ex)
@@ -300,7 +300,7 @@ namespace EasyDbMigrator
             , CancellationToken cancellationToken)
         {
             bool skipBecauseOfErrorWithPreviousScript = false;
-            foreach (Script script in orderedScripts)
+            foreach (var script in orderedScripts)
             {
                 if (skipBecauseOfErrorWithPreviousScript)
                 {
@@ -308,9 +308,9 @@ namespace EasyDbMigrator
                     continue;
                 }
 
-                DateTimeOffset executedDateTime = _dataTimeHelper.GetCurrentUtcTime();
+                var executedDateTime = _dataTimeHelper.GetCurrentUtcTime();
 
-                Result<RunMigrationResult> result = await _databaseConnector.RunDbMigrationScriptAsync(migrationConfiguration
+                var result = await _databaseConnector.RunDbMigrationScriptAsync(migrationConfiguration
                     , script
                     , executedDateTime
                     , cancellationToken).ConfigureAwait(false);
@@ -340,7 +340,7 @@ namespace EasyDbMigrator
 
         private static List<Script> RemoveExcludedScripts(List<Script> scripts, List<string> excludedScripts)
         {
-            List<Script> result = scripts.Where(p => excludedScripts.All(x => x != p.FileName)).ToList();
+            var result = scripts.Where(p => excludedScripts.All(x => x != p.FileName)).ToList();
             return result;
         }
 

@@ -38,6 +38,7 @@ namespace EasyDbMigratorTests.Unittests
             // ReSharper disable once SuggestVarOrType_SimpleTypes
             Action act = () =>
             {
+                // ReSharper disable once UnusedVariable
                 Script sut = new("xx", content);
             };
 
