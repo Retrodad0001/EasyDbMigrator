@@ -90,7 +90,7 @@ namespace EasyDbMigrator.DatabaseConnectors
             {
                 var result = await _sqlDatabasePolicy.ExecuteAsync(async () =>
                 {
-                    using SqlConnection connection = new(migrationConfiguration.ConnectionString);
+                    await using SqlConnection connection = new(migrationConfiguration.ConnectionString);
                     await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
                     string checkIfScriptHasExecuted = $@"USE {migrationConfiguration.DatabaseName} 
@@ -117,8 +117,8 @@ namespace EasyDbMigrator.DatabaseConnectors
                     transaction = await connection.BeginTransactionAsync(IsolationLevel.Serializable
                         , cancellationToken).ConfigureAwait(false) as SqlTransaction;
 
-                    using SqlCommand cmdScript = new(script.Content, connection, transaction);
-                    using SqlCommand cmdUpdateVersioningTable = new(updateVersioningTableScript, connection, transaction);
+                    await using SqlCommand cmdScript = new(script.Content, connection, transaction);
+                    await using SqlCommand cmdUpdateVersioningTable = new(updateVersioningTableScript, connection, transaction);
 
                     _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                     _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
@@ -177,8 +177,8 @@ namespace EasyDbMigrator.DatabaseConnectors
 
                 await _sqlDatabasePolicy.ExecuteAsync(async () =>
                 {
-                    using SqlConnection connection = new(connectionString);
-                    using SqlCommand command = new(sqlScriptContent, connection);
+                    await using SqlConnection connection = new(connectionString);
+                    await using SqlCommand command = new(sqlScriptContent, connection);
 
                     await command.Connection.OpenAsync(cancellationToken).ConfigureAwait(false);
                     _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
