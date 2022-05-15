@@ -1,8 +1,8 @@
 # The Latest news and Roadmap
 
 ## Next Release (2.0.0)
-- Create fancy cross-platform UI so migrations can be run manual (in .Net MAUI, so i must wait for stable release MAUI first)
-- Run production scripts against multiple databases parallel, so it can be used for multitenant platforms
+- Create fancy cross-platform UI so migrations can be run manual (in .Net MAUI when MAUI released stable version)
+- Run production scripts against multiple databases (parallel)
 
 ## 1.4.0 (the latest release)
 - updated all internal packages for stability and security (i do this at least every month and when an new package is published)
