@@ -5,7 +5,7 @@
 - Run production scripts against multiple databases (parallel)
 
 ## 1.4.0 (the latest release)
-- updated all internal packages for stability and security (i do this at least every month and when an new package is published)
+- updated all internal packages for stability and security (i do this at least every month)
 - only support for .net 6.0 LTS what is needed for future development (remove .net 5 and .net core 3.1 LTS support)
 
 ## 1.3.0 
