@@ -46,9 +46,12 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
+        
+    - name: Setup MAUI workload
+      run: dotnet workload install maui
    
     - name: Restore dependencies
       run: dotnet restore
     
     - name: Build debug version
-      run: dotnet build --configuration Debug --no-restore
+      run: dotnet build EasyDBMigrator.Runner/EasyDBMigrator.Runner.csproj --configuration Debug --no-restore
