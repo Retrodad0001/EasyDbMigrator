@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleTestLibWithPostgreSQ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleTestLibWithSqlServerScripts", "ExampleTestLibWithSqlServerScripts\ExampleTestLibWithSqlServerScripts.csproj", "{2FAB5855-E5D1-4987-A6D5-835456A6DF95}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDBMigrator.Runner", "EasyDBMigrator.Runner\EasyDBMigrator.Runner.csproj", "{D42DF0E0-470D-454B-B764-0AC4E03E6B58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,12 @@ Global
 		{2FAB5855-E5D1-4987-A6D5-835456A6DF95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FAB5855-E5D1-4987-A6D5-835456A6DF95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FAB5855-E5D1-4987-A6D5-835456A6DF95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D42DF0E0-470D-454B-B764-0AC4E03E6B58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D42DF0E0-470D-454B-B764-0AC4E03E6B58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D42DF0E0-470D-454B-B764-0AC4E03E6B58}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{D42DF0E0-470D-454B-B764-0AC4E03E6B58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D42DF0E0-470D-454B-B764-0AC4E03E6B58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D42DF0E0-470D-454B-B764-0AC4E03E6B58}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
