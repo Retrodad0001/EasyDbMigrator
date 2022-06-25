@@ -1,4 +1,4 @@
-name: Build, Test, CodeCoverage NuGetPackage (Debug version)
+name: Build, Test, CodeCoverage (Debug version)
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
     
 jobs:
   BuildAndTestCodeCoverageNuGetPAckage:
-    name: debug build, test and code coverage
-    runs-on: ubuntu-latest
+    name: debug build, test and code coverage EasyDBMigrator NuGet package
+    runs-on: windows-latest
     timeout-minutes: 15
   
     steps:
@@ -32,3 +32,23 @@ jobs:
     
     - name: Upload code coverage to Codecov
       uses: codecov/codecov-action@v1
+
+  BuildAndTestCodeCoverageUI:
+    name: debug build, test and code coverage EasyDBMigrator UI
+    runs-on: windows-latest
+    timeout-minutes: 15
+  
+    steps:
+    - name: Check out Repo
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core 6.0.x LTS
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+   
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build debug version
+      run: dotnet build --configuration Debug --no-restore
