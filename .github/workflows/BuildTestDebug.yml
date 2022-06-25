@@ -7,13 +7,13 @@ on:
     branches: [ '**'  ]
     
 jobs:
-  BuildAndTestCodeCoverageNuGetPAckage:
+  BuildAndTest:
     name: EasyDBMigrator NuGet package
     runs-on: windows-latest
     timeout-minutes: 15
   
     steps:
-    - name: Check out Repo
+    - name: Check out the Repository
       uses: actions/checkout@v2
 
     - name: Setup .NET Core 6.0.x LTS
@@ -27,12 +27,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     
-    - name: Build debug version
+    - name: Build debug version all
       run: dotnet build --configuration Debug --no-restore
-      
-    - name: Build debug version UI
-      run: dotnet build EasyDBMigrator.Runner/EasyDBMigrator.Runner.csproj --configuration Debug --no-restore   
-    
+ 
     - name: Run unittest with code-coverage
       run: dotnet test --no-build --verbosity normal --filter Category!=Integrationtest /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
     
