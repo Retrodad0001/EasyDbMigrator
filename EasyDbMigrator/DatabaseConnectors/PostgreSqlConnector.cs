@@ -139,9 +139,7 @@ namespace EasyDbMigrator.DatabaseConnectors
             }
             catch (Exception ex)
             {
-#pragma warning disable CA1508 // Avoid dead conditional code
                 if (transaction != null)
-#pragma warning restore CA1508 // Avoid dead conditional code
                 {
                     try
                     {

@@ -7,10 +7,10 @@ namespace EasyDbMigratorTests.TestHelpers
     [ExcludeFromCodeCoverage]
     public record DbMigrationsRunRowPostgresServer
     {
-        private int _id;
-        private DateTime _executed;
-        private string _filename;
-        private string _version;
+        private readonly int _id;
+        private readonly DateTime _executed;
+        private readonly string _filename;
+        private readonly string _version;
 
         public DbMigrationsRunRowPostgresServer(int id, DateTime executed, string filename, string version)
         {

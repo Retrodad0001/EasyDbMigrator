@@ -24,9 +24,7 @@ namespace EasyDbMigratorTests.TestHelpers
                 throw new ArgumentException($"'{nameof(expectedMessage)}' cannot be null or empty, there is something wrong with your test!", nameof(expectedMessage));
             }
 
-#pragma warning disable CA1310 // Specify StringComparison for correctness
             Func<object, Type, bool> state = (v, t) => string.Compare(v.ToString(), expectedMessage, StringComparison.Ordinal) == 0;
-#pragma warning restore CA1310 // Specify StringComparison for correctness
 
             if (checkExceptionNotNull)
             {
