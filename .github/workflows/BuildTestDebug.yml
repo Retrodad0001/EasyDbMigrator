@@ -29,32 +29,12 @@ jobs:
     
     - name: Build debug version
       run: dotnet build --configuration Debug --no-restore
+      
+    - name: Build debug version UI
+      run: dotnet build EasyDBMigrator.Runner/EasyDBMigrator.Runner.csproj --configuration Debug --no-restore   
     
     - name: Run unittest with code-coverage
       run: dotnet test --no-build --verbosity normal --filter Category!=Integrationtest /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
     
     - name: Upload code coverage to Codecov
       uses: codecov/codecov-action@v1
-
-  BuildAndTestCodeCoverageUI:
-    name: EasyDBMigrator UI
-    runs-on: windows-latest
-    timeout-minutes: 15
-  
-    steps:
-    - name: Check out Repo
-      uses: actions/checkout@v2
-
-    - name: Setup .NET Core 6.0.x LTS
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 6.0.x
-        
-    - name: Setup MAUI workload
-      run: dotnet workload install maui
-   
-    - name: Restore dependencies
-      run: dotnet restore
-    
-    - name: Build debug version
-      run: dotnet build EasyDBMigrator.Runner/EasyDBMigrator.Runner.csproj --configuration Debug --no-restore
