@@ -1,4 +1,4 @@
-name: Build, Test, CodeCoverage (Debug version)
+name: Build, Test, CodeCoverage NuGetPackage (Debug version)
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ '**'  ]
     
 jobs:
-  BuildAndTestCodeCoverage:
+  BuildAndTestCodeCoverageNuGetPAckage:
     name: debug build, test and code coverage
     runs-on: ubuntu-latest
     timeout-minutes: 15
