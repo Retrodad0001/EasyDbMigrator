@@ -1,6 +1,6 @@
 # The Latest news and Roadmap
 
-## Next Release (2.0.0)
+## (BUSY) Next Release (2.0.0)
 - Create fancy cross-platform UI so migrations can be run manual (in .Net MAUI when MAUI released stable version)
 - Run production scripts against multiple databases (parallel)
 
