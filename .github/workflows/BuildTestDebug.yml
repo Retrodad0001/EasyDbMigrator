@@ -8,7 +8,7 @@ on:
     
 jobs:
   BuildAndTest:
-    name: EasyDBMigrator NuGet package
+    name: EasyDBMigrator Package & UI
     runs-on: windows-latest
     timeout-minutes: 15
   
