@@ -13,7 +13,7 @@ namespace EasyDbMigrator
         public Result(bool wasSuccessful, Exception? exception = null)
         {
             WasSuccessful = wasSuccessful;
-            Value = default(T);
+            Value = default;
             Exception = exception;
         }
 

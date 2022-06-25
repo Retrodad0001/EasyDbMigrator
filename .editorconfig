@@ -257,6 +257,10 @@ csharp_style_prefer_tuple_swap = true:suggestion
 
 # IDE0052: Remove unread private members
 dotnet_diagnostic.IDE0052.severity = warning
+csharp_style_prefer_top_level_statements = true:silent
+
+# CA2254: Template should be a static expression
+dotnet_diagnostic.CA2254.severity = warning
 
 [*.{cs,vb}]
 dotnet_style_coalesce_expression = true:suggestion

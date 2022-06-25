@@ -119,8 +119,10 @@ namespace EasyDbMigratorTests.IntegrationTests
                     , datetimeHelperMock1.Object
                     , new MicrosoftSqlConnector());
 
-                List<string> scriptsToExclude = new();
-                scriptsToExclude.Add("20211230_001_CreateDB.sql");
+                List<string> scriptsToExclude = new()
+                {
+                    "20211230_001_CreateDB.sql"
+                };
 
                 migrator1.ExcludeTheseScriptsInRun(scriptsToExclude);
 
@@ -163,9 +165,11 @@ namespace EasyDbMigratorTests.IntegrationTests
 
                 //version - table should not be updated for the second time
 
-                List<DbMigrationsRunRowSqlServer> expectedRows = new();
-                expectedRows.Add(new DbMigrationsRunRowSqlServer(1, executedFirstTimeDataTime, "20211230_002_Script2.sql", "1.0.0"));
-                expectedRows.Add(new DbMigrationsRunRowSqlServer(2, executedFirstTimeDataTime, "20211231_001_Script1.sql", "1.0.0"));
+                List<DbMigrationsRunRowSqlServer> expectedRows = new()
+                {
+                    new DbMigrationsRunRowSqlServer(1, executedFirstTimeDataTime, "20211230_002_Script2.sql", "1.0.0"),
+                    new DbMigrationsRunRowSqlServer(2, executedFirstTimeDataTime, "20211231_001_Script1.sql", "1.0.0")
+                };
 
                 _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString
                 , expectedRows
@@ -247,8 +251,10 @@ namespace EasyDbMigratorTests.IntegrationTests
             var environmentBuilder = new DockerEnvironmentBuilder();
             const string PASSWORD = "stuffy6!";
 
-            IDictionary<ushort, ushort> ports = new Dictionary<ushort, ushort>();
-            ports.Add(1433, 1433);
+            IDictionary<ushort, ushort> ports = new Dictionary<ushort, ushort>
+            {
+                { 1433, 1433 }
+            };
             return (DockerEnvironment)environmentBuilder
                  .SetName(DATABASE_NAME)
                  .AddMssqlContainer(p => p with

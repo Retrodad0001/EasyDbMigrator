@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace EasyDbMigratorTests.TestHelpers
 {
     [ExcludeFromCodeCoverage] //this class is used for testing only
-    public record DbMigrationsRunRowSqlServer
+    public sealed record DbMigrationsRunRowSqlServer
     {
         public int Id { get; }
         public DateTimeOffset Executed { get; }
