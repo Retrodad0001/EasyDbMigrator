@@ -1,25 +1,31 @@
-name: .NET
+name: Build (Release version)
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ '**'  ]
   pull_request:
-    branches: [ "master" ]
-
+    branches: [ '**'  ]
+    
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  BuildAndTest:
+    name: EasyDBMigrator Package & UI
+    runs-on: windows-latest
+    timeout-minutes: 15
+  
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+    - name: Check out the Repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core 6.0.x LTS
+      uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
+   
+    - name: Setup MAUI workload
+      run: dotnet workload install maui
+   
     - name: Restore dependencies
       run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    
+    - name: Build Release version
+      run: dotnet build --configuration Release --no-restore
