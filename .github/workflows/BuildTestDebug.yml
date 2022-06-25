@@ -25,7 +25,7 @@ jobs:
       run: dotnet restore
     
     - name: Build debug version
-      run: dotnet build EasyDBMigrator/EasyDBMigrator.csproj --configuration Debug --no-restore
+      run: dotnet build --configuration Debug --no-restore
     
     - name: Run unittest with code-coverage
       run: dotnet test --no-build --verbosity normal --filter Category!=Integrationtest /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
