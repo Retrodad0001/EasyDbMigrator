@@ -7,8 +7,8 @@ on:
     branches: [ '**'  ]
     
 jobs:
-  BuildAndTest:
-    name: EasyDBMigrator Package & UI
+  BuildRelease:
+    name: Release build EasyDBMigrator Package & UI 
     runs-on: windows-latest
     timeout-minutes: 15
   
