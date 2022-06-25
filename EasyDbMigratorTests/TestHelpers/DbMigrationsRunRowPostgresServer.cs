@@ -5,19 +5,18 @@ using System.Diagnostics.CodeAnalysis;
 namespace EasyDbMigratorTests.TestHelpers
 {
     [ExcludeFromCodeCoverage]
-    public record DbMigrationsRunRowPostgresServer
+    public sealed record DbMigrationsRunRowPostgresServer
     {
-        private readonly int _id;
-        private readonly DateTime _executed;
-        private readonly string _filename;
-        private readonly string _version;
-
+        public int Id { get; }
+        public DateTime Executed { get; }
+        public string Filename { get; }
+        public string Version { get; }
         public DbMigrationsRunRowPostgresServer(int id, DateTime executed, string filename, string version)
         {
-            _id = id;
-            _executed = executed;
-            _filename = filename;
-            _version = version;
+            Id = id;
+            Executed = executed;
+            Filename = filename;
+            Version = version;
         }
     }
 }

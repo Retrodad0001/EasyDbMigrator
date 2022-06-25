@@ -1,6 +1,6 @@
 ﻿namespace EasyDbMigrator
 {
-    public record MigrationConfiguration
+    public sealed record MigrationConfiguration
     {
         public string ConnectionString { get; }
         public string DatabaseName { get; }

@@ -28,7 +28,7 @@ namespace EasyDbMigrator
         }
         private void SplitUpNameofScript(string filename)
         {
-            int yearPart = int.Parse(filename.Substring(0, 4));
+            int yearPart = int.Parse(filename[..4]);
             int monthPart = int.Parse(filename.Substring(4, 2));
             int dayPart = int.Parse(filename.Substring(6, 2));
             DatePartOfName = new DateTime(yearPart, monthPart, dayPart);

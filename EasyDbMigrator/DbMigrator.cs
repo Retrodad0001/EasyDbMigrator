@@ -247,8 +247,8 @@ namespace EasyDbMigrator
 
         private void LogBasicInformation(MigrationConfiguration migrationConfiguration)
         {
-            _logger.Log(LogLevel.Information, $"start running migrations for database: {migrationConfiguration.DatabaseName}");
-            _logger.Log(LogLevel.Information, $"connection-string used: {migrationConfiguration.ConnectionString}");
+            _logger.Log(LogLevel.Information, "start running migrations for database: {migrationConfiguration.DatabaseName}", migrationConfiguration.DatabaseName);
+            _logger.Log(LogLevel.Information, "connection-string used: {migrationConfiguration.ConnectionString}", migrationConfiguration.ConnectionString);
         }
 
         private async Task<Result<bool>> TrySetupEmptyDataBaseWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration
@@ -284,7 +284,7 @@ namespace EasyDbMigrator
                     unOrderedScripts = await _directoryHelper.TryGetScriptsFromDirectoryAsync(migrationConfiguration.ScriptsDirectory).ConfigureAwait(false);
                 }
 
-                _logger.Log(LogLevel.Information, $"Total scripts found: {unOrderedScripts.Count}");
+                _logger.Log(LogLevel.Information, "Total scripts found: {unOrderedScripts.Count}", unOrderedScripts.Count);
                 var unOrderedScriptsWithoutExcludedScripts = RemoveExcludedScripts(unOrderedScripts, _excludedScriptsList);
                 var orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(unOrderedScriptsWithoutExcludedScripts);
                 return new Result<List<Script>>(true, orderedScriptsWithoutExcludedScripts);
@@ -304,7 +304,7 @@ namespace EasyDbMigrator
             {
                 if (skipBecauseOfErrorWithPreviousScript)
                 {
-                    _logger.Log(LogLevel.Warning, $"script: {script.FileName} was skipped due to exception in previous script");
+                    _logger.Log(LogLevel.Warning, "script: {script.FileName} was skipped due to exception in previous script", script.FileName);
                     continue;
                 }
 
@@ -322,15 +322,15 @@ namespace EasyDbMigrator
                 }
                 else if (result.Value == RunMigrationResult.MigrationScriptExecuted)
                 {
-                    _logger.Log(LogLevel.Information, $"script: {script.FileName} was run");
+                    _logger.Log(LogLevel.Information, "script: {script.FileName} was run", script.FileName);
                 }
                 else if (result.Value == RunMigrationResult.ScriptSkippedBecauseAlreadyRun)
                 {
-                    _logger.Log(LogLevel.Information, $"script: {script.FileName} was not run because script was already executed");
+                    _logger.Log(LogLevel.Information, "script: {script.FileName} was not run because script was already executed", script.FileName);
                 }
                 else if (result.Value == RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted)
                 {
-                    _logger.Log(LogLevel.Error, result.Exception, $"script: {script.FileName} was not completed due to exception");
+                    _logger.Log(LogLevel.Error, result.Exception, "script: {script.FileName} was not completed due to exception", script.FileName);
                     skipBecauseOfErrorWithPreviousScript = true;
                 }
             }
