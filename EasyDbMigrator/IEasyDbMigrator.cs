@@ -8,11 +8,11 @@ namespace EasyDbMigrator
     public interface IDbMigrator
     {
         Task<bool> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
-           , CancellationToken cancellationToken = default(CancellationToken));
+           , CancellationToken cancellationToken = default);
 
         Task<bool> TryApplyMigrationsAsync(Type typeOfClassWhereScriptsAreLocated
             , MigrationConfiguration migrationConfiguration
-            , CancellationToken cancellationToken = default(CancellationToken));
+            , CancellationToken cancellationToken = default);
 
         void ExcludeTheseScriptsInRun(List<string> scriptsToExcludeByName);
     }
