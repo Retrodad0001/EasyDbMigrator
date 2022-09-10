@@ -1,36 +1,13 @@
 # The Latest news and Roadmap
 
 ## (BUSY) Next Release (2.0.0)
-- Create fancy cross-platform UI so migrations can be run manual (in .Net MAUI when MAUI released stable version)
+- add support for .net 7 LTS (and.Net 6.0)
 - Run production scripts against multiple databases (parallel)
 
 ## 1.4.0 (the latest release)
 - updated all internal packages for stability and security (i do this at least every month)
-- only support for .net 6.0 LTS what is needed for future development (remove .net 5 and .net core 3.1 LTS support)
-
-## 1.3.0 
-- support for .net 6 LTS
-- updated all internal packages for stability and security
-
-## 1.2.0:
-- can point to a directory for scripts
-- speedup the inner development loop by getting the docker-image and running it in the integration tests (with examples)
-- can mock EasyDbMigrator when used in tests
-- can use DbMigrator with .net Dependency injection (IServiceCollection)
-- can cancel the process from outside (CancellationToken)
-- make executions more resilient (retries)
-- support PostgreSQL migrations in your integration test
-- bugfixes and better logging
-- updated all internal packages
- 
-## 1.1.0
- - support for .net core 3.1 LTS and .net 5
- - updated .net packages
- - updated all internal packages
- - updated to latest .net 3.1.x and 5.0.x with security updates
-
-The software can only be used for integration-testing. Running manual migrations and using it in CI/CD pipelines is under-construction. 
-It is possible to use EasyDbMigrator in your own application.
+- add support for .net 6.0 LTS (exclusive)
+- removed support for .Net 5.0
 
 # INFO:
 
