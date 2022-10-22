@@ -19,7 +19,7 @@ namespace EasyDbMigratorTests.Unittests
     public class DbMigratorTests
     {
         [Fact]
-        public void when_constructing_the_parameter_DirectoryHelper_Should_be_provided()
+        public void When_constructing_the_parameter_DirectoryHelper_Should_be_provided()
         {
             var act = () =>
             {
@@ -40,7 +40,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_constructing_the_parameter_connector_Should_be_provided()
+        public void When_constructing_the_parameter_connector_Should_be_provided()
         {
             var act = () =>
             {
@@ -61,7 +61,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_constructing_the_parameter_assemblyResourceHelper_should_be_provided()
+        public void When_constructing_the_parameter_assemblyResourceHelper_should_be_provided()
         {
             var act = () =>
             {
@@ -82,7 +82,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_constructing_the_parameter_logger_should_be_provided()
+        public void When_constructing_the_parameter_logger_should_be_provided()
         {
             var act = () =>
             {
@@ -101,7 +101,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_constructing_the_parameter_dataTimeHelper_should_be_provided()
+        public void When_constructing_the_parameter_dataTimeHelper_should_be_provided()
         {
             var act = () =>
             {
@@ -120,7 +120,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_using_the_create_method_happy_flow()
+        public void When_using_the_create_method_happy_flow()
         {
             var act = () =>
             {
@@ -139,7 +139,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_using_the_create_method_the_ILogger_Should_be_provided()
+        public void When_using_the_create_method_the_ILogger_Should_be_provided()
         {
             var act = () =>
             {
@@ -154,7 +154,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_using_the_create_method_the_MigrationConfiguration_should_be_provided()
+        public void When_using_the_create_method_the_MigrationConfiguration_should_be_provided()
         {
             var act = () =>
             {
@@ -169,7 +169,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_using_the_create_method_the_IDatabaseConnector_should_be_provided()
+        public void When_using_the_create_method_the_IDatabaseConnector_should_be_provided()
         {
             var act = () =>
             {
@@ -186,7 +186,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_using_the_CreateForLocalIntegrationTesting_method_happy_flow()
+        public void When_using_the_CreateForLocalIntegrationTesting_method_happy_flow()
         {
             var act = () =>
             {
@@ -206,7 +206,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_using_the_CreateForLocalIntegrationTesting_method_the_ILogger_should_be_provided()
+        public void When_using_the_CreateForLocalIntegrationTesting_method_the_ILogger_should_be_provided()
         {
             var act = () =>
             {
@@ -225,7 +225,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_using_the_CreateForLocalIntegrationTesting_method_the_MigrationConfiguration_Should_be_provided()
+        public void When_using_the_CreateForLocalIntegrationTesting_method_the_MigrationConfiguration_Should_be_provided()
         {
             var act = () =>
             {
@@ -241,7 +241,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_using_the_CreateForLocalIntegrationTesting_method_the_dataTimeHelper_Should_be_provided()
+        public void When_using_the_CreateForLocalIntegrationTesting_method_the_dataTimeHelper_Should_be_provided()
         {
             var act = () =>
             {
@@ -259,7 +259,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void when_using_the_CreateForLocalIntegrationTesting_method_the_IDateBaseConnector_should_be_provided()
+        public void When_using_the_CreateForLocalIntegrationTesting_method_the_IDateBaseConnector_should_be_provided()
         {
             var act = () =>
             {
@@ -278,7 +278,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public async Task when_migration_process_goes_ok()
+        public async Task When_migration_process_goes_ok()
         {
             const string databaseName = "EasyDbMigrator";
             const string connectionString = "connectionString";
@@ -293,9 +293,11 @@ namespace EasyDbMigratorTests.Unittests
 
             Script script1 = new("20211230_001_Script1.sql", "some content");
             Script script2 = new("20211230_002_Script2.sql", "some content");
-            List<Script> scripts = new();
-            scripts.Add(script1);
-            scripts.Add(script2);
+            List<Script> scripts = new()
+            {
+                script1,
+                script2
+            };
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
             _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
@@ -348,7 +350,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public async Task can_use_fileDirectory_for_scripts()
+        public async Task Can_use_fileDirectory_for_scripts()
         {
             const string DATABASE_NAME = "EasyDbMigrator";
             const string connectionString = "connectionString";
@@ -364,9 +366,11 @@ namespace EasyDbMigratorTests.Unittests
 
             Script script1 = new(@"20211230_001_Scripta.sql", "some content");
             Script script2 = new(@"20211230_002_Scriptb.sql", "some content");
-            List<Script> scripts = new();
-            scripts.Add(script1);
-            scripts.Add(script2);
+            List<Script> scripts = new()
+            {
+                script1,
+                script2
+            };
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
 
@@ -419,7 +423,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public async Task when_creating_new_database_fails_during_the_migration_process()
+        public async Task When_creating_new_database_fails_during_the_migration_process()
         {
             const string databaseName = "EasyDbMigrator";
 
@@ -433,9 +437,11 @@ namespace EasyDbMigratorTests.Unittests
 
             Script script1 = new("20211230_001_Script1.sql", "some content");
             Script script2 = new("20211230_002_Script2.sql", "some content");
-            List<Script> scripts = new();
-            scripts.Add(script1);
-            scripts.Add(script2);
+            List<Script> scripts = new()
+            {
+                script1,
+                script2
+            };
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
             _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
@@ -487,7 +493,7 @@ namespace EasyDbMigratorTests.Unittests
 
 
         [Fact]
-        public async Task when_one_of_the_scripts_cannot_be_parsed_during_the_migration_process()
+        public async Task When_one_of_the_scripts_cannot_be_parsed_during_the_migration_process()
         {
             const string databaseName = "EasyDbMigrator";
 
@@ -547,7 +553,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public async Task when_creating_new_versioningTable_fails_during_the_migration_process()
+        public async Task When_creating_new_versioningTable_fails_during_the_migration_process()
         {
             const string databaseName = "EasyDbMigrator";
 
@@ -561,9 +567,11 @@ namespace EasyDbMigratorTests.Unittests
 
             Script script1 = new("20211230_001_Script1.sql", "some content");
             Script script2 = new("20211230_002_Script2.sql", "some content");
-            List<Script> scripts = new();
-            scripts.Add(script1);
-            scripts.Add(script2);
+            List<Script> scripts = new()
+            {
+                script1,
+                script2
+            };
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
             _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
@@ -614,7 +622,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public async Task when_some_script_fails_to_run_skip_the_rest_of_the_scripts()
+        public async Task When_some_script_fails_to_run_skip_the_rest_of_the_scripts()
         {
             const string databaseName = "EasyDbMigrator";
 
@@ -695,7 +703,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public async Task can_cancel_the_migration_process_before_the_first_script_has_run()
+        public async Task Can_cancel_the_migration_process_before_the_first_script_has_run()
         {
             const string databaseName = "EasyDbMigrator";
             using CancellationTokenSource source = new();
@@ -711,10 +719,12 @@ namespace EasyDbMigratorTests.Unittests
             Script script1 = new("20211230_001_Script1.sql", "some content");
             Script script2 = new("20211230_002_Script2.sql", "some content");
             Script script3 = new("20211230_003_Script3.sql", "some content");
-            List<Script> scripts = new();
-            scripts.Add(script1);
-            scripts.Add(script2);
-            scripts.Add(script3);
+            List<Script> scripts = new()
+            {
+                script1,
+                script2,
+                script3
+            };
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
             _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
@@ -773,7 +783,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public async Task can_cancel_the_migration_process_after_the_first_script_has_run()
+        public async Task Can_cancel_the_migration_process_after_the_first_script_has_run()
         {
             const string databaseName = "EasyDbMigrator";
             using CancellationTokenSource source = new();
@@ -789,10 +799,12 @@ namespace EasyDbMigratorTests.Unittests
             Script script1 = new("20211230_001_Script1.sql", "some content");
             Script script2 = new("20211230_002_Script2.sql", "some content");
             Script script3 = new("20211230_003_Script3.sql", "some content");
-            List<Script> scripts = new();
-            scripts.Add(script1);
-            scripts.Add(script2);
-            scripts.Add(script3);
+            List<Script> scripts = new()
+            {
+                script1,
+                script2,
+                script3
+            };
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
             _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
@@ -855,7 +867,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public async Task can_skip_scripts_if_executed_before()
+        public async Task Can_skip_scripts_if_executed_before()
         {
             const string databaseName = "EasyDbMigrator";
 
@@ -869,10 +881,12 @@ namespace EasyDbMigratorTests.Unittests
             Script script1 = new("20211230_001_Script1.sql", "some content");
             Script script2 = new("20211230_002_Script2.sql", "some content");
             Script script3 = new("20211230_003_Script3.sql", "some content");
-            List<Script> scripts = new();
-            scripts.Add(script1);
-            scripts.Add(script2);
-            scripts.Add(script3);
+            List<Script> scripts = new()
+            {
+                script1,
+                script2,
+                script3
+            };
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
             _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
@@ -897,7 +911,7 @@ namespace EasyDbMigratorTests.Unittests
                      , It.IsAny<DateTimeOffset>()
                      , It.IsAny<CancellationToken>()))
                      .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted))
-                     .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun))
+                     .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.ScriptSkippedBecauseAllreadyRun))
                      .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted));
 
             DateTimeOffset executedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
@@ -943,9 +957,11 @@ namespace EasyDbMigratorTests.Unittests
 
             Script script1 = new("20211230_001_Script1.sql", "some content");
             Script script2 = new("20211230_002_Script2.sql", "some content");
-            List<Script> scripts = new();
-            scripts.Add(script1);
-            scripts.Add(script2);
+            List<Script> scripts = new()
+            {
+                script1,
+                script2
+            };
 
             var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
             _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));

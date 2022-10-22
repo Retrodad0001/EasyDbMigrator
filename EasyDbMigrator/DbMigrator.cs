@@ -324,7 +324,7 @@ namespace EasyDbMigrator
                 {
                     _logger.Log(LogLevel.Information, "script: {script.FileName} was run", script.FileName);
                 }
-                else if (result.Value == RunMigrationResult.ScriptSkippedBecauseAlreadyRun)
+                else if (result.Value == RunMigrationResult.ScriptSkippedBecauseAllreadyRun)
                 {
                     _logger.Log(LogLevel.Information, "script: {script.FileName} was not run because script was already executed", script.FileName);
                 }

@@ -109,7 +109,7 @@ namespace EasyDbMigrator.DatabaseConnectors
 
                     if (result != null)
                     {
-                        return new Result<RunMigrationResult>(true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun);
+                        return new Result<RunMigrationResult>(true, RunMigrationResult.ScriptSkippedBecauseAllreadyRun);
                     }
 
                     string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
