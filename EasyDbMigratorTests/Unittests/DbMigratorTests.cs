@@ -911,7 +911,7 @@ namespace EasyDbMigratorTests.Unittests
                      , It.IsAny<DateTimeOffset>()
                      , It.IsAny<CancellationToken>()))
                      .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted))
-                     .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.ScriptSkippedBecauseAllreadyRun))
+                     .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun))
                      .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted));
 
             DateTimeOffset executedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);

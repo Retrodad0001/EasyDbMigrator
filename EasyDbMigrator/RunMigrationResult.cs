@@ -3,7 +3,7 @@
     public enum RunMigrationResult
     {
         MigrationScriptExecuted,
-        ScriptSkippedBecauseAllreadyRun,
+        ScriptSkippedBecauseAlreadyRun,
         ExceptionWasThrownWhenScriptWasExecuted,
         MigrationWasCancelled,
     }
