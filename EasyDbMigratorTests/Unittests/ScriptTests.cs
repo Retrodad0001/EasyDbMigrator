@@ -12,7 +12,7 @@ namespace EasyDbMigratorTests.Unittests
         [Theory]
         [InlineData("", true)]
         [InlineData(" ", true)]
-        public void when_creating_the_parameter_scriptName_should_be_correct(string filename, bool shouldThrowException)
+        public void When_creating_the_parameter_scriptName_should_be_correct(string filename, bool shouldThrowException)
         {
             var act = () =>
             {
@@ -33,7 +33,7 @@ namespace EasyDbMigratorTests.Unittests
         [Theory]
         [InlineData("", true)]
         [InlineData(" ", true)]
-        public void when_creating_the_parameter_connectionString_should_be_correct(string content, bool shouldThrowException)
+        public void When_creating_the_parameter_connectionString_should_be_correct(string content, bool shouldThrowException)
         {
             // ReSharper disable once SuggestVarOrType_SimpleTypes
             Action act = () =>

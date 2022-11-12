@@ -215,11 +215,11 @@ namespace EasyDbMigrator
                 return false;
             }
 
-            var runMigrationsScriptsAction = await TryRunMigrationScriptsAsync(migrationConfiguration
 #pragma warning disable CS8604 // Possible null reference argument.
+            var runMigrationsScriptsAction = await TryRunMigrationScriptsAsync(migrationConfiguration
                 , loadScriptsAction.Value
-#pragma warning restore CS8604 // Possible null reference argument.
                 , cancellationToken).ConfigureAwait(false);
+#pragma warning restore CS8604 // Possible null reference argument.
 
             if (runMigrationsScriptsAction.HasFailure)
             {

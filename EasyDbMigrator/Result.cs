@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigrator
 {
-    public struct Result<T>
+    public readonly struct Result<T>
     {
         public bool HasFailure => !WasSuccessful;
         public bool WasSuccessful { get; }

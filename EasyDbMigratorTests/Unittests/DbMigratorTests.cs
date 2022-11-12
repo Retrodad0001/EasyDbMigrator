@@ -943,7 +943,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public async Task can_exclude_scripts_so_they_will_not_be_executed()
+        public async Task Can_exclude_scripts_so_they_will_not_be_executed()
         {
             const string databaseName = "EasyDbMigrator";
 
@@ -1017,7 +1017,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public async Task log_when_something_goes_wrong_deleting_the_database()
+        public async Task Log_when_something_goes_wrong_deleting_the_database()
         {
             const string databaseName = "EasyDbMigrator";
             const string connectionString = "connection";
@@ -1054,7 +1054,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public async Task can_delete_old_testDatabase_to_setup_clean_test()
+        public async Task Can_delete_old_testDatabase_to_setup_clean_test()
         {
             const string databaseName = "EasyDbMigrator";
             const string connectionString = "connection";
@@ -1092,7 +1092,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void is_possible_to_mock_EasyDbCreator_in_your_own_tests_using_the_interface()
+        public void Is_possible_to_mock_EasyDbCreator_in_your_own_tests_using_the_interface()
         {
             var sut = new Mock<IDbMigrator>();
 
@@ -1112,7 +1112,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void is_possible_to_mock_EasyDbCreator_in_your_own_tests_using_concrete_class()
+        public void Is_possible_to_mock_EasyDbCreator_in_your_own_tests_using_concrete_class()
         {
             var sut = new Mock<DbMigrator>();
 
@@ -1150,7 +1150,7 @@ namespace EasyDbMigratorTests.Unittests
         }
 
         [Fact]
-        public void is_possible_to_inject_EasyDbCreator_in_ServiceCollection()
+        public void Is_possible_to_inject_EasyDbCreator_in_ServiceCollection()
         {
             var collection = new ServiceCollection();
             _ = collection.AddTransient<ILogger, TestLoggerImplementation>();
