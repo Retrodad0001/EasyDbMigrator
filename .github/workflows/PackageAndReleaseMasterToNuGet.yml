@@ -27,6 +27,6 @@ jobs:
     - name: Pack
       run: dotnet pack EasyDbMigrator\\EasyDbMigrator.csproj -c Release
   
-    - name: Publish to GitHub packages 
+    - name: Publish to Nuget 
       run: dotnet nuget push /home/runner/work/EasyDbMigrator/EasyDbMigrator/EasyDbMigrator/bin/Release/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
 
