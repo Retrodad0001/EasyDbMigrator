@@ -1,10 +1,9 @@
 # The Latest news and Roadmap
 
-## (BUSY) Next Release (2.0.0)
+## 2.0.0 (the latest release)
 - add support for .net 7 LTS (and.Net 6.0)
-- Run production scripts against multiple databases (parallel)
 
-## 1.4.0 (the latest release)
+## 1.4.0 
 - updated all internal packages for stability and security (i do this at least once every month)
 - add support for .net 6.0 LTS (exclusive)
 - removed support for .Net 5.0
@@ -19,8 +18,6 @@
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/PackageAndReleaseMasterToNuGet.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/PackageAndReleaseMasterToNuGet.yml)
 
 [![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis.yml)
-
-[![Build](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis-weekly.yml/badge.svg)](https://github.com/Retrodad0001/EasyDbMigrator/actions/workflows/codeql-analysis-weekly.yml)
 
 ### Code statistics:
 [![codecov](https://codecov.io/gh/Retrodad0001/easydbmigrator/branch/master/graph/badge.svg?token=JWYWLP98IW)](https://codecov.io/gh/Retrodad0001/easydbmigrator)
