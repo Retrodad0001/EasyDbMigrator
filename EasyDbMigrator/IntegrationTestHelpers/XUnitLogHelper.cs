@@ -72,10 +72,10 @@ namespace EasyDbMigrator.IntegrationTestHelpers
                 _ = sb.Append('\n').Append($"message : {exception.Message} , trace : {exception.StackTrace} ");
             }
 
-            _scopeProvider.ForEachScope((scope, state) =>
+            _scopeProvider.ForEachScope((scope, builder) =>
             {
-                _ = state.Append("\n => ");
-                _ = state.Append(scope);
+                _ = builder.Append("\n => ");
+                _ = builder.Append(scope);
             }, sb);
 
             _testOutputHelper.WriteLine(sb.ToString());

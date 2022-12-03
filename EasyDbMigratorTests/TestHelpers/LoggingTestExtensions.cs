@@ -24,7 +24,7 @@ namespace EasyDbMigratorTests.TestHelpers
                 throw new ArgumentException($"'{nameof(expectedMessage)}' cannot be null or empty, there is something wrong with your test!", nameof(expectedMessage));
             }
 
-            Func<object, Type, bool> state = (v, t) => string.Compare(v.ToString(), expectedMessage, StringComparison.Ordinal) == 0;
+            Func<object, Type, bool> state = (v, _) => string.Compare(v.ToString(), expectedMessage, StringComparison.Ordinal) == 0;
 
             if (checkExceptionNotNull)
             {
