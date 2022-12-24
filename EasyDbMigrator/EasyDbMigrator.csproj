@@ -22,7 +22,7 @@ For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</P
     <PackageProjectUrl>https://github.com/Retrodad0001/EasyDbMigrator</PackageProjectUrl>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <AnalysisLevel>latest</AnalysisLevel>
-    <PackageVersion>2.0.0</PackageVersion>
+    <PackageVersion>2.0.1</PackageVersion>
     <Title>Retrodad.EasyDbMigrator</Title>
   </PropertyGroup>
 
