@@ -21,21 +21,20 @@ namespace EasyDbMigratorTests.IntegrationTests
     [Collection(nameof(NotRunParallel))]
     public class PostgresServerIntegrationTests
     {
-        private const string DATABASE_NAME = "EasyDbMigratorPostgresServer";
-
         [Fact]
         [Trait("Category", "IntegrationTest")]
         public async Task When_nothing_goes_wrong_with_running_all_migrations_on_an_empty_database()
         {
-            var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment();
+            string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
+            var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName);
 
             try
             {
                 await dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(true);
-                string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(DATABASE_NAME)?.GetConnectionString();
+                string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(databaseName)?.GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
-                    , DATABASE_NAME);
+                    , databaseName);
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
@@ -97,15 +96,16 @@ namespace EasyDbMigratorTests.IntegrationTests
         [Trait("Category", "IntegrationTest")]
         public async Task Can_skip_scripts_if_they_already_run_before()
         {
-            var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment();
+            string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
+            var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName);
 
             try
             {
                 await dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(true);
-                string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(DATABASE_NAME)?.GetConnectionString();
+                string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(databaseName)?.GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
-                    , DATABASE_NAME);
+                    , databaseName);
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
@@ -188,18 +188,18 @@ namespace EasyDbMigratorTests.IntegrationTests
         [Trait("Category", "IntegrationTest")]
         public async Task Can_cancel_the_migration_process()
         {
-
-            var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment();
+            string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
+            var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName);
             CancellationTokenSource source = new();
             var token = source.Token;
 
             try
             {
                 await dockerPostgresServerEnvironment.UpAsync(token).ConfigureAwait(true);
-                string? connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(DATABASE_NAME)?.GetConnectionString();
+                string? connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(databaseName)?.GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
-                    , DATABASE_NAME);
+                    , databaseName);
 
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
@@ -246,20 +246,20 @@ namespace EasyDbMigratorTests.IntegrationTests
             }
         }
 
-        private static DockerEnvironment SetupPostgresServerTestEnvironment()
+        private static DockerEnvironment SetupPostgresServerTestEnvironment(string databaseName)
         {
             var environmentBuilder = new DockerEnvironmentBuilder();
 
-            const string USER_NAME = "retrodad";
-            const string PASSWORD = "stuffy6!";
+            const string userName = "retrodad";
+            const string password = "stuffy6!";
 
             return (DockerEnvironment)environmentBuilder
-                 .SetName(DATABASE_NAME)
+                 .SetName(databaseName)
                  .AddPostgresContainer(p => p with
                  {
-                     Name = DATABASE_NAME,
-                     UserName = USER_NAME,
-                     Password = PASSWORD
+                     Name = databaseName,
+                     UserName = userName,
+                     Password = password
                  }).Build();
         }
     }

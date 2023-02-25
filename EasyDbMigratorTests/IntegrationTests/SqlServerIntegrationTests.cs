@@ -21,21 +21,20 @@ namespace EasyDbMigratorTests.IntegrationTests
     [Collection(nameof(NotRunParallel))]
     public class SqlServerIntegrationTests
     {
-        private const string DATABASE_NAME = "EasyDbMigratorSqlServer";
-
         [Fact]
         [Trait("Category", "IntegrationTest")]
         public async Task When_nothing_goes_wrong_with_running_the_migrations_on_an_empty_database()
         {
-            var dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
+            string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
+            var dockerEnvironmentSql = SetupSqlDockerTestEnvironment(databaseName);
 
             try
             {
                 await dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
-                string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DATABASE_NAME)?.GetConnectionString();
+                string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(databaseName)?.GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
-                    , DATABASE_NAME);
+                    , databaseName);
 
                 Mock<ILogger<DbMigrator>> loggerMock = new();
 
@@ -80,7 +79,7 @@ namespace EasyDbMigratorTests.IntegrationTests
 
                 _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString
                   , expectedRows
-                  , DATABASE_NAME);
+                  , databaseName);
 
             }
             catch (Exception ex)
@@ -97,15 +96,16 @@ namespace EasyDbMigratorTests.IntegrationTests
         [Trait("Category", "IntegrationTest")]
         public async Task Can_skip_scripts_if_they_already_run_before()
         {
-            var dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
+            string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
+            var dockerEnvironmentSql = SetupSqlDockerTestEnvironment(databaseName);
 
             try
             {
                 await dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
-                string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DATABASE_NAME)?.GetConnectionString();
+                string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(databaseName)?.GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
-                    , DATABASE_NAME);
+                    , databaseName);
 
                 Mock<ILogger<DbMigrator>> loggerMock = new();
 
@@ -119,8 +119,8 @@ namespace EasyDbMigratorTests.IntegrationTests
                     , datetimeHelperMock1.Object
                     , new MicrosoftSqlConnector());
 
-                List<string> scriptsToExclude = new();
-                scriptsToExclude.Add("20211230_001_CreateDB.sql");
+                List<string> scriptsToExclude = new()
+                    { "20211230_001_CreateDB.sql" };
 
                 migrator1.ExcludeTheseScriptsInRun(scriptsToExclude);
 
@@ -163,13 +163,15 @@ namespace EasyDbMigratorTests.IntegrationTests
 
                 //version - table should not be updated for the second time
 
-                List<DbMigrationsRunRowSqlServer> expectedRows = new();
-                expectedRows.Add(new DbMigrationsRunRowSqlServer(1, executedFirstTimeDataTime, "20211230_002_Script2.sql", "1.0.0"));
-                expectedRows.Add(new DbMigrationsRunRowSqlServer(2, executedFirstTimeDataTime, "20211231_001_Script1.sql", "1.0.0"));
+                List<DbMigrationsRunRowSqlServer> expectedRows = new()
+                {
+                    new DbMigrationsRunRowSqlServer(1, executedFirstTimeDataTime, "20211230_002_Script2.sql", "1.0.0"),
+                    new DbMigrationsRunRowSqlServer(2, executedFirstTimeDataTime, "20211231_001_Script1.sql", "1.0.0")
+                };
 
                 _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString
                 , expectedRows
-                , DATABASE_NAME);
+                , databaseName);
             }
             catch (Exception ex)
             {
@@ -185,7 +187,8 @@ namespace EasyDbMigratorTests.IntegrationTests
         [Trait("Category", "IntegrationTest")]
         public async Task Can_cancel_the_migration_process()
         {
-            var dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
+            string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
+            var dockerEnvironmentSql = SetupSqlDockerTestEnvironment(databaseName);
 
             CancellationTokenSource source = new();
             var token = source.Token;
@@ -193,10 +196,10 @@ namespace EasyDbMigratorTests.IntegrationTests
             try
             {
                 await dockerEnvironmentSql.UpAsync(token).ConfigureAwait(true);
-                string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DATABASE_NAME)?.GetConnectionString();
+                string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(databaseName)?.GetConnectionString();
 
                 MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
-                    , DATABASE_NAME);
+                    , databaseName);
 
                 Mock<ILogger<DbMigrator>> loggerMock = new();
 
@@ -242,19 +245,21 @@ namespace EasyDbMigratorTests.IntegrationTests
             }
         }
 
-        private static DockerEnvironment SetupSqlDockerTestEnvironment()
+        private static DockerEnvironment SetupSqlDockerTestEnvironment(string databaseName)
         {
             var environmentBuilder = new DockerEnvironmentBuilder();
-            const string PASSWORD = "stuffy6!";
+            const string password = "stuffy6!";
 
-            IDictionary<ushort, ushort> ports = new Dictionary<ushort, ushort>();
-            ports.Add(1433, 1433);
+            IDictionary<ushort, ushort> ports = new Dictionary<ushort, ushort>
+            {
+                { 1433, 1433 }
+            };
             return (DockerEnvironment)environmentBuilder
-                 .SetName(DATABASE_NAME)
+                 .SetName(databaseName)
                  .AddMssqlContainer(p => p with
                  {
-                     Name = DATABASE_NAME,
-                     SAPassword = PASSWORD,
+                     Name = databaseName,
+                     SAPassword = password,
                      Ports = ports
                  }).Build();
         }

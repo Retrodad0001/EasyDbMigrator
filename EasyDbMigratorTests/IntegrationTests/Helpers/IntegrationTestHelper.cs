@@ -2,9 +2,11 @@
 using EasyDbMigratorTests.TestHelpers;
 using FluentAssertions;
 using Npgsql;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace EasyDbMigratorTests.IntegrationTests.Helpers
 {
@@ -43,6 +45,13 @@ namespace EasyDbMigratorTests.IntegrationTests.Helpers
             _ = actual.Should().Contain(expectedRows);
 
             return true;
+        }
+        
+        public static string GenerateRandomDatabaseName()
+        {
+       //     string result = Guid.NewGuid().ToString().Replace("-", "");
+            string result = "test" + new Random().Next(100000, 999999) ;
+            return result;
         }
     }
 }
