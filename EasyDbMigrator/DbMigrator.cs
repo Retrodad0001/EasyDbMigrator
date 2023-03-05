@@ -10,6 +10,7 @@ namespace EasyDbMigrator
 {
     public class DbMigrator : IDbMigrator
     {
+        private int stuff;
         private readonly ILogger _logger;
         private readonly IDatabaseConnector _databaseConnector;
         private readonly IAssemblyResourceHelper _assemblyResourceHelper;
