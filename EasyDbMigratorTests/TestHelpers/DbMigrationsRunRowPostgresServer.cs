@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-// ReSharper disable NotAccessedField.Local
 
 namespace EasyDbMigratorTests.TestHelpers
 {

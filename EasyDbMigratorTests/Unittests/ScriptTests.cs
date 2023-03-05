@@ -16,7 +16,6 @@ namespace EasyDbMigratorTests.Unittests
         {
             var act = () =>
             {
-                // ReSharper disable once UnusedVariable
                 Script sut = new(filename, "xx");
             };
 
@@ -35,10 +34,8 @@ namespace EasyDbMigratorTests.Unittests
         [InlineData(" ", true)]
         public void When_creating_the_parameter_connectionString_should_be_correct(string content, bool shouldThrowException)
         {
-            // ReSharper disable once SuggestVarOrType_SimpleTypes
             Action act = () =>
             {
-                // ReSharper disable once UnusedVariable
                 Script sut = new("xx", content);
             };
 

@@ -18,7 +18,6 @@ namespace EasyDbMigratorTests.Unittests
         {
             var act = () =>
             {
-                // ReSharper disable once UnusedVariable
                 MigrationConfiguration sut = new("connection string"
                     , databasename);
             };
@@ -40,7 +39,6 @@ namespace EasyDbMigratorTests.Unittests
         {
             var act = () =>
             {
-                // ReSharper disable once UnusedVariable
                 MigrationConfiguration sut = new(connectionString
                     , "databasename");
             };

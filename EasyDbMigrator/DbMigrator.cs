@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator
 {
-    // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
     public class DbMigrator : IDbMigrator
     {
         private readonly ILogger _logger;

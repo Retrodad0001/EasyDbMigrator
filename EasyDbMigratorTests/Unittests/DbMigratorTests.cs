@@ -11,7 +11,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-// ReSharper disable AssignNullToNotNullAttribute
 
 namespace EasyDbMigratorTests.Unittests
 {
@@ -27,11 +26,9 @@ namespace EasyDbMigratorTests.Unittests
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 Mock<IDataTimeHelper> datetimeHelperMock = new();
 
-                // ReSharper disable once UnusedVariable
                 DbMigrator migrator = new(loggerMock.Object
                     , new MicrosoftSqlConnector()
                     , new AssemblyResourceHelper()
-                    // ReSharper disable once AssignNullToNotNullAttribute
                     , null
                     , datetimeHelperMock.Object);
             };
@@ -49,7 +46,6 @@ namespace EasyDbMigratorTests.Unittests
                 Mock<IDataTimeHelper> datetimeHelperMock = new();
                 IDirectoryHelper directoryHelper = new DirectoryHelper();
 
-                // ReSharper disable once UnusedVariable
                 DbMigrator migrator = new(loggerMock.Object
                     , null
                     , new AssemblyResourceHelper()
@@ -69,10 +65,8 @@ namespace EasyDbMigratorTests.Unittests
                 Mock<IDataTimeHelper> datetimeHelperMock = new();
                 IDirectoryHelper directoryHelper = new DirectoryHelper();
 
-                // ReSharper disable once UnusedVariable
                 DbMigrator migrator = new(loggerMock.Object
                     , new MicrosoftSqlConnector()
-                    // ReSharper disable once AssignNullToNotNullAttribute
                     , null
                     , directoryHelper
                     , datetimeHelperMock.Object);
@@ -89,7 +83,6 @@ namespace EasyDbMigratorTests.Unittests
                 Mock<IDataTimeHelper> datetimeHelperMock = new();
                 IDirectoryHelper directoryHelper = new DirectoryHelper();
 
-                // ReSharper disable once UnusedVariable
                 DbMigrator migrator = new(null
                     , new MicrosoftSqlConnector()
                     , new AssemblyResourceHelper()
@@ -108,7 +101,6 @@ namespace EasyDbMigratorTests.Unittests
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
                 IDirectoryHelper directoryHelper = new DirectoryHelper();
 
-                // ReSharper disable once UnusedVariable
                 DbMigrator migrator = new (loggerMock.Object
                     , new MicrosoftSqlConnector()
                     , new AssemblyResourceHelper()
@@ -128,7 +120,6 @@ namespace EasyDbMigratorTests.Unittests
                     , "databaseName");
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-                // ReSharper disable once UnusedVariable
                 var migrator = DbMigrator.Create(config
                     , loggerMock.Object
                     , new MicrosoftSqlConnector());
@@ -159,7 +150,6 @@ namespace EasyDbMigratorTests.Unittests
             var act = () =>
             {
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
-                // ReSharper disable once UnusedVariable
                 var migrator = DbMigrator.Create(null
                     , loggerMock.Object
                     , new MicrosoftSqlConnector());
@@ -176,7 +166,6 @@ namespace EasyDbMigratorTests.Unittests
                 MigrationConfiguration config = new("connection string"
                   , "databaseName");
                 var loggerMock = new Mock<ILogger<DbMigrator>>();
-                // ReSharper disable once UnusedVariable
                 var migrator = DbMigrator.Create(config
                     , loggerMock.Object
                     , null);
@@ -214,7 +203,6 @@ namespace EasyDbMigratorTests.Unittests
                     , "databaseName");
                 Mock<IDataTimeHelper> dataTimeHelperMock = new();
 
-                // ReSharper disable once UnusedVariable
                 var migrator = DbMigrator.CreateForLocalIntegrationTesting(config
                     , null
                     , dataTimeHelperMock.Object
