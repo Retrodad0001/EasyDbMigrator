@@ -1,10 +1,9 @@
-﻿namespace EasyDbMigrator
+﻿namespace EasyDbMigrator;
+
+public enum RunMigrationResult
 {
-    public enum RunMigrationResult
-    {
-        MigrationScriptExecuted,
-        ScriptSkippedBecauseAlreadyRun,
-        ExceptionWasThrownWhenScriptWasExecuted,
-        MigrationWasCancelled,
-    }
+    MigrationScriptExecuted,
+    ScriptSkippedBecauseAlreadyRun,
+    ExceptionWasThrownWhenScriptWasExecuted,
+    MigrationWasCancelled,
 }

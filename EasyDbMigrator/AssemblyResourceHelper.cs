@@ -5,60 +5,59 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace EasyDbMigrator
+namespace EasyDbMigrator;
+
+[ExcludeFromCodeCoverage] //is tested with integrationTest
+public sealed class AssemblyResourceHelper : IAssemblyResourceHelper
 {
-    [ExcludeFromCodeCoverage] //is tested with integrationTest
-    public sealed class AssemblyResourceHelper : IAssemblyResourceHelper
+    public async Task<List<Script>> TryGetScriptsFromAssembly(Type typeOfClassWhereScriptsAreLocated)
     {
-        public async Task<List<Script>> TryGetScriptsFromAssembly(Type typeOfClassWhereScriptsAreLocated)
+        var assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
+
+        if (assembly is null)
         {
-            var assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
-
-            if (assembly is null)
-            {
-                throw new InvalidOperationException($"assembly is null for custom-class : {typeOfClassWhereScriptsAreLocated}");
-            }
-
-            var filenames = TryGetManifestResourceNamesFromAssembly(typeOfClassWhereScriptsAreLocated);
-
-            List<Script> scripts = new();
-            foreach (string filename in filenames)
-            {
-                await using var stream = assembly.GetManifestResourceStream(filename);
-                if (stream is null)
-                {
-                    throw new InvalidOperationException($"steam cannot be null for resource name: {filename}");
-                }
-
-                using StreamReader reader = new(stream);
-                string filenameWithNoNamespaces = RemoveTheNamespaceFromName(filename);
-
-                string sqlScriptContent = await reader.ReadToEndAsync().ConfigureAwait(false);
-                Script newScript = new(filenameWithNoNamespaces, sqlScriptContent);
-                scripts.Add(newScript);
-            }
-
-            return scripts;
+            throw new InvalidOperationException($"assembly is null for custom-class : {typeOfClassWhereScriptsAreLocated}");
         }
 
-        private static IEnumerable<string> TryGetManifestResourceNamesFromAssembly(Type typeOfClassWhereScriptsAreLocated)
-        {
-            var assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
+        var filenames = TryGetManifestResourceNamesFromAssembly(typeOfClassWhereScriptsAreLocated);
 
-            if (assembly == null)
+        List<Script> scripts = new();
+        foreach (string filename in filenames)
+        {
+            await using var stream = assembly.GetManifestResourceStream(filename);
+            if (stream is null)
             {
-                throw new InvalidOperationException($"assembly is null for custom-class: {typeOfClassWhereScriptsAreLocated}");
+                throw new InvalidOperationException($"steam cannot be null for resource name: {filename}");
             }
 
-            string[] resourceNames = assembly.GetManifestResourceNames();
-            return resourceNames;
+            using StreamReader reader = new(stream);
+            string filenameWithNoNamespaces = RemoveTheNamespaceFromName(filename);
+
+            string sqlScriptContent = await reader.ReadToEndAsync().ConfigureAwait(false);
+            Script newScript = new(filenameWithNoNamespaces, sqlScriptContent);
+            scripts.Add(newScript);
         }
 
-        private static string RemoveTheNamespaceFromName(string filename)
+        return scripts;
+    }
+
+    private static IEnumerable<string> TryGetManifestResourceNamesFromAssembly(Type typeOfClassWhereScriptsAreLocated)
+    {
+        var assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
+
+        if (assembly == null)
         {
-            string[] split = filename.Split(".");
-            string filenameWithNoNamespaces = split[^2] + "." + split[^1];
-            return filenameWithNoNamespaces;
+            throw new InvalidOperationException($"assembly is null for custom-class: {typeOfClassWhereScriptsAreLocated}");
         }
+
+        string[] resourceNames = assembly.GetManifestResourceNames();
+        return resourceNames;
+    }
+
+    private static string RemoveTheNamespaceFromName(string filename)
+    {
+        string[] split = filename.Split(".");
+        string filenameWithNoNamespaces = split[^2] + "." + split[^1];
+        return filenameWithNoNamespaces;
     }
 }

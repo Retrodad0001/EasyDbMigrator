@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace EasyDbMigrator
+namespace EasyDbMigrator;
+
+public interface IAssemblyResourceHelper
 {
-    public interface IAssemblyResourceHelper
-    {
-        Task<List<Script>> TryGetScriptsFromAssembly(Type typeOfClassWhereScriptsAreLocated);
-    }
+    Task<List<Script>> TryGetScriptsFromAssembly(Type typeOfClassWhereScriptsAreLocated);
 }

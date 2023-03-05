@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace EasyDbMigrator
+namespace EasyDbMigrator;
+
+public interface IDataTimeHelper
 {
-    public interface IDataTimeHelper
-    {
-        DateTimeOffset GetCurrentUtcTime();
-    }
+    DateTimeOffset GetCurrentUtcTime();
 }

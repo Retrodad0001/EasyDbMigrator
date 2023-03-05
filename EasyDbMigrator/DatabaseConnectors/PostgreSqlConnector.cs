@@ -5,40 +5,40 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EasyDbMigrator.DatabaseConnectors
-{
-    [ExcludeFromCodeCoverage] //is tested with integrationTest that will not be included in code coverage
-    public sealed class PostgreSqlConnector : IDatabaseConnector
-    {
-        private readonly AsyncPolicy _postgreSqlDatabasePolicy = Policy.Handle<Exception>()
-             .WaitAndRetryAsync(3
-            , times => TimeSpan.FromSeconds(times * 2));
+namespace EasyDbMigrator.DatabaseConnectors;
 
-        public async Task<Result<bool>> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
-            , CancellationToken cancellationToken)
-        {
-            string query = $@"
+[ExcludeFromCodeCoverage] //is tested with integrationTest that will not be included in code coverage
+public sealed class PostgreSqlConnector : IDatabaseConnector
+{
+    private readonly AsyncPolicy _postgreSqlDatabasePolicy = Policy.Handle<Exception>()
+         .WaitAndRetryAsync(3
+        , times => TimeSpan.FromSeconds(times * 2));
+
+    public async Task<Result<bool>> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
+        , CancellationToken cancellationToken)
+    {
+        string query = $@"
                DROP DATABASE IF EXISTS  {migrationConfiguration.DatabaseName}
                 ";
 
-            var result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
-                 , @"EasyDbMigrator.Integrationtest_dropDatabase"
-                 , query
-                 , cancellationToken).ConfigureAwait(false);
+        var result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
+             , @"EasyDbMigrator.Integrationtest_dropDatabase"
+             , query
+             , cancellationToken).ConfigureAwait(false);
 
-            return result;
+        return result;
+    }
+
+    public async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExistAsync(MigrationConfiguration migrationConfiguration
+        , CancellationToken cancellationToken)
+    {
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return new Result<bool>(true);
         }
 
-        public async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExistAsync(MigrationConfiguration migrationConfiguration
-            , CancellationToken cancellationToken)
-        {
-
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return new Result<bool>(true);
-            }
-
-            string sqlScriptCreateMigrationTable = @$" 
+        string sqlScriptCreateMigrationTable = @$" 
 
                 CREATE TABLE IF NOT EXISTS DbMigrationsRun (
                     Id          SERIAL PRIMARY KEY,
@@ -48,153 +48,152 @@ namespace EasyDbMigrator.DatabaseConnectors
                 );
                 ";
 
-            var result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
-                , "EasyDbMigrator.SetupDbMigrationsRunTable"
-                , sqlScriptCreateMigrationTable
-                , cancellationToken).ConfigureAwait(false);
+        var result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
+            , "EasyDbMigrator.SetupDbMigrationsRunTable"
+            , sqlScriptCreateMigrationTable
+            , cancellationToken).ConfigureAwait(false);
 
-            return result;
+        return result;
+    }
+
+    public async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration
+        , CancellationToken cancellationToken)
+    {
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return new Result<bool>(true);
         }
 
-        public async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration
-            , CancellationToken cancellationToken)
-        {
-
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return new Result<bool>(true);
-            }
-
-            string sqlScriptCreateDatabase = @$"
+        string sqlScriptCreateDatabase = @$"
                     SELECT 'CREATE DATABASE {migrationConfiguration.DatabaseName}'
                     WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{migrationConfiguration.DatabaseName}')
                     ";
 
-            var result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
-                , "SetupEmptyDb"
-                , sqlScriptCreateDatabase
-                , cancellationToken).ConfigureAwait(false);
+        var result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
+            , "SetupEmptyDb"
+            , sqlScriptCreateDatabase
+            , cancellationToken).ConfigureAwait(false);
 
-            return result;
+        return result;
+    }
+
+    public async Task<Result<RunMigrationResult>> RunDbMigrationScriptAsync(MigrationConfiguration migrationConfiguration
+        , Script script
+        , DateTimeOffset executedDateTime
+        , CancellationToken cancellationToken)
+    {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return new Result<RunMigrationResult>(true, RunMigrationResult.MigrationWasCancelled);
         }
 
-        public async Task<Result<RunMigrationResult>> RunDbMigrationScriptAsync(MigrationConfiguration migrationConfiguration
-            , Script script
-            , DateTimeOffset executedDateTime
-            , CancellationToken cancellationToken)
+        NpgsqlTransaction? transaction = null;
+        try
         {
-            if (cancellationToken.IsCancellationRequested)
+            var result = await _postgreSqlDatabasePolicy.ExecuteAsync(async () =>
             {
-                return new Result<RunMigrationResult>(true, RunMigrationResult.MigrationWasCancelled);
-            }
 
-            NpgsqlTransaction? transaction = null;
-            try
-            {
-                var result = await _postgreSqlDatabasePolicy.ExecuteAsync(async () =>
-                {
+                await using NpgsqlConnection connection = new(migrationConfiguration.ConnectionString);
+                await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
-                    await using NpgsqlConnection connection = new(migrationConfiguration.ConnectionString);
-                    await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
-
-                    string checkIfScriptHasExecuted = $@"
+                string checkIfScriptHasExecuted = $@"
                         SELECT Id
                         FROM DbMigrationsRun
                         WHERE Filename = '{script.FileName}'
 
                         ";
 
-                    await using NpgsqlCommand cmdCheckNotExecuted = new(checkIfScriptHasExecuted, connection);
-                    object? result = _ = await cmdCheckNotExecuted.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+                await using NpgsqlCommand cmdCheckNotExecuted = new(checkIfScriptHasExecuted, connection);
+                object? result = _ = await cmdCheckNotExecuted.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
 
-                    if (result != null)
-                    {
-                        return new Result<RunMigrationResult>(true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun);
-                    }
+                if (result != null)
+                {
+                    return new Result<RunMigrationResult>(true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun);
+                }
 
-                    string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
-                    string updateVersioningTableScript = $@"
+                string sqlFormattedDate = executedDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                string updateVersioningTableScript = $@"
                             
                             INSERT INTO DbMigrationsRun (Executed, Filename, version)
                             VALUES ('{sqlFormattedDate}', '{script.FileName}', '1.0.0');
                         ";
 
-                    transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+                transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
-                    await using NpgsqlCommand cmdScript = new(script.Content
-                        , connection
-                        , transaction);
-                    await using NpgsqlCommand cmdUpdateVersioningTable = new(updateVersioningTableScript, connection, transaction);
+                await using NpgsqlCommand cmdScript = new(script.Content
+                    , connection
+                    , transaction);
+                await using NpgsqlCommand cmdUpdateVersioningTable = new(updateVersioningTableScript, connection, transaction);
 
-                    _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-                    _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
 
-                    await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-                    await transaction.DisposeAsync().ConfigureAwait(false);
+                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+                await transaction.DisposeAsync().ConfigureAwait(false);
 
-                    return new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted);
-                }).ConfigureAwait(false);
+                return new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted);
+            }).ConfigureAwait(false);
 
-                return result;
-            }
-            catch (Exception ex)
+            return result;
+        }
+        catch (Exception ex)
+        {
+            if (transaction != null)
             {
-                if (transaction != null)
+                try
                 {
-                    try
-                    {
-                        await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
-                        await transaction.DisposeAsync().ConfigureAwait(false);
-                        return new Result<RunMigrationResult>(true
-                            , RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted
-                            , ex);
-                    }
-                    catch (Exception ex2)
-                    {
-                        return new Result<RunMigrationResult>(true
-                            , RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted
-                            , new ApplicationException($"{ex} + {ex2.Message}"));
-                    }
+                    await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+                    await transaction.DisposeAsync().ConfigureAwait(false);
+                    return new Result<RunMigrationResult>(true
+                        , RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted
+                        , ex);
                 }
-
-                return new Result<RunMigrationResult>(true, RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted, ex);
+                catch (Exception ex2)
+                {
+                    return new Result<RunMigrationResult>(true
+                        , RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted
+                        , new ApplicationException($"{ex} + {ex2.Message}"));
+                }
             }
+
+            return new Result<RunMigrationResult>(true, RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted, ex);
+        }
+    }
+
+    private async Task<Result<bool>> TryExecuteSingleScriptAsync(string connectionString
+     , string scriptName
+     , string sqlScriptContent
+     , CancellationToken cancellationToken)
+
+    {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return new Result<bool>(true);
         }
 
-        private async Task<Result<bool>> TryExecuteSingleScriptAsync(string connectionString
-         , string scriptName
-         , string sqlScriptContent
-         , CancellationToken cancellationToken)
-
+        try
         {
-            if (cancellationToken.IsCancellationRequested)
+            if (string.IsNullOrWhiteSpace(sqlScriptContent))
             {
-                return new Result<bool>(true);
+                throw new ArgumentException($"{scriptName} script is empty, is there something wrong?");
             }
 
-            try
+            await _postgreSqlDatabasePolicy.ExecuteAsync(async () =>
             {
-                if (string.IsNullOrWhiteSpace(sqlScriptContent))
-                {
-                    throw new ArgumentException($"{scriptName} script is empty, is there something wrong?");
-                }
+                await using NpgsqlConnection connection = new(connectionString);
+                await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
-                await _postgreSqlDatabasePolicy.ExecuteAsync(async () =>
-                {
-                    await using NpgsqlConnection connection = new(connectionString);
-                    await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+                await using NpgsqlCommand command = new(sqlScriptContent, connection);
 
-                    await using NpgsqlCommand command = new(sqlScriptContent, connection);
+                _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }).ConfigureAwait(false);
 
-                    _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-                }).ConfigureAwait(false);
-
-                return new Result<bool>(true);
-            }
-            catch (Exception ex)
-            {
-                return new Result<bool>(false, ex);
-            }
+            return new Result<bool>(true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<bool>(false, ex);
         }
     }
 }

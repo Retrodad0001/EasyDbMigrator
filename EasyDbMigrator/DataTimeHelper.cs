@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace EasyDbMigrator
+namespace EasyDbMigrator;
+
+[ExcludeFromCodeCoverage] //tested in integrationTest
+public sealed class DataTimeHelper : IDataTimeHelper
 {
-    [ExcludeFromCodeCoverage] //tested in integrationTest
-    public sealed class DataTimeHelper : IDataTimeHelper
+    public DateTimeOffset GetCurrentUtcTime()
     {
-        public DateTimeOffset GetCurrentUtcTime()
-        {
-            return DateTime.UtcNow;
-        }
+        return DateTime.UtcNow;
     }
 }
