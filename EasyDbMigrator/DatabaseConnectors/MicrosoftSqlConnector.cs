@@ -123,9 +123,7 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                 _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                 _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 await transaction.DisposeAsync().ConfigureAwait(false);
 
                 return new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted);

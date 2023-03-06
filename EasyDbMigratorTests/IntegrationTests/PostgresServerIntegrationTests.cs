@@ -23,7 +23,7 @@ public class PostgresServerIntegrationTests
 {
     [Fact]
     [Trait("Category", "IntegrationTest")]
-    public async Task When_nothing_goes_wrong_with_running_all_migrations_on_an_empty_database()
+    public async Task When_nothing_goes_wrong_with_running_all_postgres_migrations_on_an_empty_database()
     {
         string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
         var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName);
@@ -94,7 +94,7 @@ public class PostgresServerIntegrationTests
 
     [Fact]
     [Trait("Category", "IntegrationTest")]
-    public async Task Can_skip_scripts_if_they_already_run_before()
+    public async Task Can_skip_postgres_scripts_if_they_already_run_before()
     {
         string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
         var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName);
@@ -186,7 +186,7 @@ public class PostgresServerIntegrationTests
 
     [Fact]
     [Trait("Category", "IntegrationTest")]
-    public async Task Can_cancel_the_migration_process()
+    public async Task Can_cancel_the_postgres_migration_process()
     {
         string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
         var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName);

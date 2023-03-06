@@ -21,20 +21,22 @@ namespace EasyDbMigratorTests.IntegrationTests;
 [Collection(nameof(NotRunParallel))]
 public class SqlServerIntegrationTests
 {
+
+    private const string DATABASE_NAME = "EasyDbMigratorSqlServer";
+
     [Fact]
     [Trait("Category", "IntegrationTest")]
     public async Task When_nothing_goes_wrong_with_running_the_migrations_on_an_empty_database()
     {
-        string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
-        var dockerEnvironmentSql = SetupSqlDockerTestEnvironment(databaseName);
+        var dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
 
         try
         {
             await dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
-            string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(databaseName)?.GetConnectionString();
+            string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DATABASE_NAME)?.GetConnectionString();
 
             MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
-                , databaseName);
+                , DATABASE_NAME);
 
             Mock<ILogger<DbMigrator>> loggerMock = new();
 
@@ -79,7 +81,7 @@ public class SqlServerIntegrationTests
 
             _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString
               , expectedRows
-              , databaseName);
+              , DATABASE_NAME);
 
         }
         catch (Exception ex)
@@ -96,16 +98,15 @@ public class SqlServerIntegrationTests
     [Trait("Category", "IntegrationTest")]
     public async Task Can_skip_scripts_if_they_already_run_before()
     {
-        string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
-        var dockerEnvironmentSql = SetupSqlDockerTestEnvironment(databaseName);
+        var dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
 
         try
         {
             await dockerEnvironmentSql.UpAsync().ConfigureAwait(true);
-            string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(databaseName)?.GetConnectionString();
+            string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DATABASE_NAME)?.GetConnectionString();
 
             MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
-                , databaseName);
+                , DATABASE_NAME);
 
             Mock<ILogger<DbMigrator>> loggerMock = new();
 
@@ -171,7 +172,7 @@ public class SqlServerIntegrationTests
 
             _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString
             , expectedRows
-            , databaseName);
+            , DATABASE_NAME);
         }
         catch (Exception ex)
         {
@@ -187,8 +188,7 @@ public class SqlServerIntegrationTests
     [Trait("Category", "IntegrationTest")]
     public async Task Can_cancel_the_migration_process()
     {
-        string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
-        var dockerEnvironmentSql = SetupSqlDockerTestEnvironment(databaseName);
+        var dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
 
         CancellationTokenSource source = new();
         var token = source.Token;
@@ -196,10 +196,10 @@ public class SqlServerIntegrationTests
         try
         {
             await dockerEnvironmentSql.UpAsync(token).ConfigureAwait(true);
-            string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(databaseName)?.GetConnectionString();
+            string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DATABASE_NAME)?.GetConnectionString();
 
             MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
-                , databaseName);
+                , DATABASE_NAME);
 
             Mock<ILogger<DbMigrator>> loggerMock = new();
 
@@ -245,7 +245,7 @@ public class SqlServerIntegrationTests
         }
     }
 
-    private static DockerEnvironment SetupSqlDockerTestEnvironment(string databaseName)
+    private static DockerEnvironment SetupSqlDockerTestEnvironment()
     {
         var environmentBuilder = new DockerEnvironmentBuilder();
         const string password = "stuffy6!";
@@ -255,10 +255,10 @@ public class SqlServerIntegrationTests
             { 1433, 1433 }
         };
         return (DockerEnvironment)environmentBuilder
-             .SetName(databaseName)
+             .SetName(DATABASE_NAME)
              .AddMssqlContainer(p => p with
              {
-                 Name = databaseName,
+                 Name = DATABASE_NAME,
                  SAPassword = password,
                  Ports = ports
              }).Build();
