@@ -2,9 +2,10 @@
 
 ## 2.0.x (the latest release)
 - add support for .net 7 (together with .Net 6.0)
+- updated all internal packages for stability and security (I do this at least once every month)
 
 ## 1.4.0 
-- updated all internal packages for stability and security (i do this at least once every month)
+- updated all internal packages for stability and security (I do this at least once every month)
 - add support for .net 6.0 LTS (exclusive)
 - removed support for .Net 5.0
 
@@ -34,10 +35,10 @@
 
 EasyDBMigrator is an open-source database migration framework. It strongly favors simplicity and easy to use for automatic CI/CD strategies and local integration testing scenario's and easy integration in own code.
   
-## What we want to accomplish ?
+## What we want to accomplish?
 
-1. Make it easy to integrate Microsoft SQL migrations in your local integration testsuite
-2. Make it easy to integrate Postgre SQL migrations in your local integration testsuite
+1. Make it easy to integrate Microsoft SQL migrations in your local integration test suite
+2. Make it easy to integrate Postgre SQL migrations in your local integration test suite
 3. Make it easy to integrate Microsoft SQL migrations in your CI/CD flows
 4. Make it easy to integrate Postgre SQL migrations in your CI/CD flows
 5. Make it easy to perform manual Microsoft SQL migrations
@@ -53,16 +54,16 @@ EasyDBMigrator is an open-source database migration framework. It strongly favor
         {
             //int the code u find some more advanced examples including setting up docker containers automatically in code
 
-            //Make sure u use the correct naming in your scripts like:
-            // 20210926_001_AddEquipmentTable.sql --> script are ordered by date and then per sequence number. in this case '001' is the sequence number
-            //Make sure to set the BUILD-ACTION property of every migration sql script to EMBEDDED RESOURCE
-            const string databaseame = "WorkoutIntegrationTests";
+            //Make sure you use the correct naming in your scripts, like:
+            // 20210926_001_AddEquipmentTable.sql --> script are ordered by date and then per sequence number. In this case, '001' is the sequence number.
+            //Make sure to set the BUILD-ACTION property of every migration SQL script to EMBEDDED RESOURCE
+            const string databaseName = "WorkoutIntegrationTests";
             
-            //Make sure that the 'Database =  xxxx;' param is excluded in the connection-string
+            //Make sure that the 'Database =  xxxx;' parameter is excluded in the connection-string
             const string connectionstring = "some fancy connectionstring without database param";
             MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring, databaseName: databaseName);
 
-            //handy until for writing the logging output from EasyDbMigratior to the xUnit output window
+            //handy until for writing the logging output from EasyDBMigrator to the xUnit output window
             //U don't need to use this trick and just mock out the ILogger when u don't want to use this or when u use something else than xunit
             var logger = XUnitLoghelper.CreateLogger<DatabaseTests>(_testOutputHelper);
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
@@ -82,7 +83,7 @@ EasyDBMigrator is an open-source database migration framework. It strongly favor
                     , cancellationToken: token);
                 _ = succeededRunningMigrations.Should().BeTrue();
             
-            //download the code if u want to see examples of integration testing with easyDbMigrator
+            //download the code if you want to see examples of integration testing with easyDbMigrator
         }
 
 ## FAQ
