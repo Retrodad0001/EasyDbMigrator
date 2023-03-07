@@ -123,8 +123,11 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                 _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
                 _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
 
-                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-                await transaction.DisposeAsync().ConfigureAwait(false);
+                if (transaction != null)
+                {
+                    await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+                    await transaction.DisposeAsync().ConfigureAwait(false);
+                }
 
                 return new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted);
             }).ConfigureAwait(false);

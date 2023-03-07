@@ -7,7 +7,9 @@ using Xunit.Abstractions;
 namespace EasyDbMigrator.IntegrationTestHelpers;
 
 [ExcludeFromCodeCoverage]
+#pragma warning disable CS8633 // Nullability in constraints for type parameter doesn't match the constraints for type parameter in implicitly implemented interface method'.
 public sealed class XUnitLogHelper<T> : XUnitLogHelper, ILogger<T>
+#pragma warning restore CS8633 // Nullability in constraints for type parameter doesn't match the constraints for type parameter in implicitly implemented interface method'.
 {
     public XUnitLogHelper(ITestOutputHelper testOutputHelper
         , LoggerExternalScopeProvider scopeProvider)
@@ -48,7 +50,9 @@ public class XUnitLogHelper : ILogger
     {
         return logLevel != LogLevel.None;
     }
+#pragma warning disable CS8633 // Nullability in constraints for type parameter doesn't match the constraints for type parameter in implicitly implemented interface method'.
     public IDisposable BeginScope<TState>(TState state)
+#pragma warning restore CS8633 // Nullability in constraints for type parameter doesn't match the constraints for type parameter in implicitly implemented interface method'.
     {
         return _scopeProvider.Push(state);
     }

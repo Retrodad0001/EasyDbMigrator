@@ -1,6 +1,6 @@
 # The Latest news and Roadmap
 
-## 2.0.0 (the latest release)
+## 2.0.x (the latest release)
 - add support for .net 7 (together with .Net 6.0)
 
 ## 1.4.0 
