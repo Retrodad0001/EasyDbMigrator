@@ -52,8 +52,6 @@ EasyDBMigrator is an open-source database migration framework. It strongly favor
 
         private async Task RunMigrations()
         {
-            //int the code u find some more advanced examples including setting up docker containers automatically in code
-
             //Make sure you use the correct naming in your scripts, like:
             // 20210926_001_AddEquipmentTable.sql --> script are ordered by date and then per sequence number. In this case, '001' is the sequence number.
             //Make sure to set the BUILD-ACTION property of every migration SQL script to EMBEDDED RESOURCE
@@ -63,8 +61,7 @@ EasyDBMigrator is an open-source database migration framework. It strongly favor
             const string connectionstring = "some fancy connectionstring without database param";
             MigrationConfiguration config = new MigrationConfiguration(connectionString: connectionstring, databaseName: databaseName);
 
-            //handy until for writing the logging output from EasyDBMigrator to the xUnit output window
-            //U don't need to use this trick and just mock out the ILogger when u don't want to use this or when u use something else than xunit
+            //for writing the logging output from EasyDBMigrator to the test explorer output window
             var logger = XUnitLoghelper.CreateLogger<DatabaseTests>(_testOutputHelper);
             Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
 
@@ -72,7 +69,7 @@ EasyDBMigrator is an open-source database migration framework. It strongly favor
                   , logger: loggerMock.Object
                   , dataTimeHelperMock: datetimeHelperMock.Object
                   , databaseConnector: new MicrosoftSqlConnector()); 
-            //can also use the PostgreSqlConnector to connect to PostgreSql instead of Microsoft Sql Server
+            //can also use the PostgreSqlConnector to connect to PostgreSQL instead of Microsoft Sql Server
 
             bool succeededDeletingDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
                     , cancellationToken: token);
