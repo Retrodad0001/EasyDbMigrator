@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace EasyDbMigrator
+namespace EasyDbMigrator;
+
+public interface IDirectoryHelper
 {
-    public interface IDirectoryHelper
-    {
-        Task<List<Script>> TryGetScriptsFromDirectoryAsync(string directory);
-    }
+    Task<List<Script>> TryGetScriptsFromDirectoryAsync(string directory);
 }
