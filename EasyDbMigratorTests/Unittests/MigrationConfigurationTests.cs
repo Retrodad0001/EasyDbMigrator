@@ -10,16 +10,16 @@ namespace EasyDbMigratorTests.Unittests;
 public class MigrationConfigurationTests
 {
     [Theory]
-    [InlineData("word", false)]
-    [InlineData("word1 word2", true)]
-    [InlineData("", true)]
-    [InlineData(" ", true)]
+    [InlineData(data: new object[] { "word", false })]
+    [InlineData(data: new object[] { "word1 word2", true })]
+    [InlineData(data: new object[] { "", true })]
+    [InlineData(data: new object[] { " ", true })]
     public void The_parameter_databasename_should_have_only_one_word(string databasename, bool shouldThrowException)
     {
         var act = () =>
         {
-            MigrationConfiguration sut = new("connection string"
-                , databasename);
+            MigrationConfiguration unused = new(connectionString: "connection string"
+                , databaseName: databasename);
         };
 
         if (shouldThrowException)
@@ -33,14 +33,14 @@ public class MigrationConfigurationTests
     }
 
     [Theory]
-    [InlineData("", true)]
-    [InlineData(" ", true)]
+    [InlineData(data: new object[] { "", true })]
+    [InlineData(data: new object[] { " ", true })]
     public void The_parameter_connectionString_should_be_correct(string connectionString, bool shouldThrowException)
     {
         var act = () =>
         {
-            MigrationConfiguration sut = new(connectionString
-                , "databasename");
+            MigrationConfiguration unused = new(connectionString: connectionString
+                , databaseName: "databasename");
         };
 
         if (shouldThrowException)

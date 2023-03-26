@@ -26,35 +26,35 @@ public class DbMigrator : IDbMigrator
 
         if (logger is null)
         {
-            throw new ArgumentNullException(nameof(logger));
+            throw new ArgumentNullException(paramName: nameof(logger));
         }
 
         _logger = logger;
 
         if (databaseConnector is null)
         {
-            throw new ArgumentNullException(nameof(databaseConnector));
+            throw new ArgumentNullException(paramName: nameof(databaseConnector));
         }
 
         _databaseConnector = databaseConnector;
 
         if (assemblyResourceHelper is null)
         {
-            throw new ArgumentNullException(nameof(assemblyResourceHelper));
+            throw new ArgumentNullException(paramName: nameof(assemblyResourceHelper));
         }
 
         _assemblyResourceHelper = assemblyResourceHelper;
 
         if (directoryHelper is null)
         {
-            throw new ArgumentNullException(nameof(directoryHelper));
+            throw new ArgumentNullException(paramName: nameof(directoryHelper));
         }
 
         _directoryHelper = directoryHelper;
 
         if (dataTimeHelper is null)
         {
-            throw new ArgumentNullException(nameof(dataTimeHelper));
+            throw new ArgumentNullException(paramName: nameof(dataTimeHelper));
         }
 
         _dataTimeHelper = dataTimeHelper;
@@ -73,24 +73,24 @@ public class DbMigrator : IDbMigrator
     {
         if (migrationConfiguration is null)
         {
-            throw new ArgumentNullException(nameof(migrationConfiguration));
+            throw new ArgumentNullException(paramName: nameof(migrationConfiguration));
         }
 
         if (logger is null)
         {
-            throw new ArgumentNullException(nameof(logger));
+            throw new ArgumentNullException(paramName: nameof(logger));
         }
 
         if (databaseConnector is null)
         {
-            throw new ArgumentNullException(nameof(databaseConnector));
+            throw new ArgumentNullException(paramName: nameof(databaseConnector));
         }
 
-        DbMigrator result = new(logger
-            , databaseConnector
-            , new AssemblyResourceHelper()
-            , new DirectoryHelper()
-            , new DataTimeHelper());
+        DbMigrator result = new(logger: logger
+            , databaseConnector: databaseConnector
+            , assemblyResourceHelper: new AssemblyResourceHelper()
+            , directoryHelper: new DirectoryHelper()
+            , dataTimeHelper: new DataTimeHelper());
 
         return result;
     }
@@ -110,29 +110,29 @@ public class DbMigrator : IDbMigrator
     {
         if (migrationConfiguration is null)
         {
-            throw new ArgumentNullException(nameof(migrationConfiguration));
+            throw new ArgumentNullException(paramName: nameof(migrationConfiguration));
         }
 
         if (logger is null)
         {
-            throw new ArgumentNullException(nameof(logger));
+            throw new ArgumentNullException(paramName: nameof(logger));
         }
 
         if (dataTimeHelperMock is null)
         {
-            throw new ArgumentNullException(nameof(dataTimeHelperMock));
+            throw new ArgumentNullException(paramName: nameof(dataTimeHelperMock));
         }
 
         if (databaseConnector is null)
         {
-            throw new ArgumentNullException(nameof(databaseConnector));
+            throw new ArgumentNullException(paramName: nameof(databaseConnector));
         }
 
-        DbMigrator result = new(logger
-           , databaseConnector
-           , new AssemblyResourceHelper()
-           , new DirectoryHelper()
-           , dataTimeHelperMock);
+        DbMigrator result = new(logger: logger
+           , databaseConnector: databaseConnector
+           , assemblyResourceHelper: new AssemblyResourceHelper()
+           , directoryHelper: new DirectoryHelper()
+           , dataTimeHelper: dataTimeHelperMock);
 
         return result;
     }
@@ -149,16 +149,16 @@ public class DbMigrator : IDbMigrator
         , CancellationToken cancellationToken = default)
     {
 
-        var succeeded = await _databaseConnector.TryDeleteDatabaseIfExistAsync(migrationConfiguration
-            , cancellationToken).ConfigureAwait(false);
+        var succeeded = await _databaseConnector.TryDeleteDatabaseIfExistAsync(migrationConfiguration: migrationConfiguration
+            , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
         if (succeeded.HasFailure)
         {
-            _logger.Log(LogLevel.Error, succeeded.Exception, "DeleteDatabaseIfExistAsync executed with error");
+            _logger.Log(logLevel: LogLevel.Error, exception: succeeded.Exception, message: "DeleteDatabaseIfExistAsync executed with error");
             return false;
         }
 
-        _logger.Log(LogLevel.Information, "DeleteDatabaseIfExistAsync has executed");
+        _logger.Log(logLevel: LogLevel.Information, message: "DeleteDatabaseIfExistAsync has executed");
         return true;
     }
 
@@ -174,59 +174,59 @@ public class DbMigrator : IDbMigrator
         , MigrationConfiguration migrationConfiguration
         , CancellationToken cancellationToken = default)
     {
-        if (IsCancellationRequested(cancellationToken))
+        if (IsCancellationRequested(cancellationToken: cancellationToken))
         {
-            _logger.Log(LogLevel.Warning, $"migration process was canceled from the outside");
+            _logger.Log(logLevel: LogLevel.Warning, message: $"migration process was canceled from the outside");
             return true;
         }
 
-        LogBasicInformation(migrationConfiguration);
+        LogBasicInformation(migrationConfiguration: migrationConfiguration);
 
-        var setupDatabaseAction = await TrySetupEmptyDataBaseWhenThereIsNoDatabaseAsync(migrationConfiguration
-            , cancellationToken).ConfigureAwait(false);
+        var setupDatabaseAction = await TrySetupEmptyDataBaseWhenThereIsNoDatabaseAsync(migrationConfiguration: migrationConfiguration
+            , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
         if (setupDatabaseAction.HasFailure)
         {
-            _logger.Log(LogLevel.Error, setupDatabaseAction.Exception, @"setup database executed with errors");
-            _logger.Log(LogLevel.Error, null, "migration process executed with errors");
+            _logger.Log(logLevel: LogLevel.Error, exception: setupDatabaseAction.Exception, message: @"setup database executed with errors");
+            _logger.Log(logLevel: LogLevel.Error, exception: null, message: "migration process executed with errors");
             return false;
         }
 
-        _logger.Log(LogLevel.Information, @"setup database executed successfully");
-        var createVersioningTableAction = await TrySetupDbMigrationsTableWhenNotExistAsync(migrationConfiguration
-           , cancellationToken).ConfigureAwait(false);
+        _logger.Log(logLevel: LogLevel.Information, message: @"setup database executed successfully");
+        var createVersioningTableAction = await TrySetupDbMigrationsTableWhenNotExistAsync(migrationConfiguration: migrationConfiguration
+           , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
         if (createVersioningTableAction.HasFailure)
         {
-            _logger.Log(LogLevel.Error, createVersioningTableAction.Exception, @"setup versioning table executed with errors");
-            _logger.Log(LogLevel.Error, null, "migration process executed with errors");
+            _logger.Log(logLevel: LogLevel.Error, exception: createVersioningTableAction.Exception, message: @"setup versioning table executed with errors");
+            _logger.Log(logLevel: LogLevel.Error, exception: null, message: "migration process executed with errors");
             return false;
         }
 
-        _logger.Log(LogLevel.Information, @"setup versioning table executed successfully");
+        _logger.Log(logLevel: LogLevel.Information, message: @"setup versioning table executed successfully");
 
-        var loadScriptsAction = await TryLoadingScripts(typeOfClassWhereScriptsAreLocated, migrationConfiguration).ConfigureAwait(false);
+        var loadScriptsAction = await TryLoadingScripts(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated, migrationConfiguration: migrationConfiguration).ConfigureAwait(continueOnCapturedContext: false);
 
         if (loadScriptsAction.HasFailure)
         {
-            _logger.Log(LogLevel.Error, loadScriptsAction.Exception, "One or more scripts could not be loaded, is the sequence patterns correct?");
-            _logger.Log(LogLevel.Error, null, "migration process executed with errors");
+            _logger.Log(logLevel: LogLevel.Error, exception: loadScriptsAction.Exception, message: "One or more scripts could not be loaded, is the sequence patterns correct?");
+            _logger.Log(logLevel: LogLevel.Error, exception: null, message: "migration process executed with errors");
             return false;
         }
 
 #pragma warning disable CS8604 // Possible null reference argument.
-        var runMigrationsScriptsAction = await TryRunMigrationScriptsAsync(migrationConfiguration
-            , loadScriptsAction.Value
-            , cancellationToken).ConfigureAwait(false);
+        var runMigrationsScriptsAction = await TryRunMigrationScriptsAsync(migrationConfiguration: migrationConfiguration
+            , orderedScripts: loadScriptsAction.Value
+            , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 #pragma warning restore CS8604 // Possible null reference argument.
 
         if (runMigrationsScriptsAction.HasFailure)
         {
-            _logger.Log(LogLevel.Error, null, "migration process executed with errors");
+            _logger.Log(logLevel: LogLevel.Error, exception: null, message: "migration process executed with errors");
             return false;
         }
 
-        _logger.Log(LogLevel.Information, "migration process executed successfully");
+        _logger.Log(logLevel: LogLevel.Information, message: "migration process executed successfully");
         return true;
     }
 
@@ -236,7 +236,7 @@ public class DbMigrator : IDbMigrator
     /// <param name="scriptsToExcludeByName"></param>
     public virtual void ExcludeTheseScriptsInRun(List<string> scriptsToExcludeByName)
     {
-        _excludedScriptsList.AddRange(scriptsToExcludeByName);
+        _excludedScriptsList.AddRange(collection: scriptsToExcludeByName);
     }
 
     private static bool IsCancellationRequested(CancellationToken cancellationToken)
@@ -246,15 +246,15 @@ public class DbMigrator : IDbMigrator
 
     private void LogBasicInformation(MigrationConfiguration migrationConfiguration)
     {
-        _logger.Log(LogLevel.Information, "start running migrations for database: {migrationConfiguration.DatabaseName}", migrationConfiguration.DatabaseName);
-        _logger.Log(LogLevel.Information, "connection-string used: {migrationConfiguration.ConnectionString}", migrationConfiguration.ConnectionString);
+        _logger.Log(logLevel: LogLevel.Information, message: "start running migrations for database: {migrationConfiguration.DatabaseName}", args: migrationConfiguration.DatabaseName);
+        _logger.Log(logLevel: LogLevel.Information, message: "connection-string used: {migrationConfiguration.ConnectionString}", args: migrationConfiguration.ConnectionString);
     }
 
     private async Task<Result<bool>> TrySetupEmptyDataBaseWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration
         , CancellationToken cancellationToken)
     {
-        var result = await _databaseConnector.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration
-            , cancellationToken).ConfigureAwait(false);
+        var result = await _databaseConnector.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(migrationConfiguration: migrationConfiguration
+            , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
         return result;
     }
@@ -262,8 +262,8 @@ public class DbMigrator : IDbMigrator
     private async Task<Result<bool>> TrySetupDbMigrationsTableWhenNotExistAsync(MigrationConfiguration migrationConfiguration
         , CancellationToken cancellationToken)
     {
-        var result = await _databaseConnector.TrySetupDbMigrationsRunTableWhenNotExistAsync(migrationConfiguration
-            , cancellationToken).ConfigureAwait(false);
+        var result = await _databaseConnector.TrySetupDbMigrationsRunTableWhenNotExistAsync(migrationConfiguration: migrationConfiguration
+            , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
         return result;
     }
@@ -274,23 +274,23 @@ public class DbMigrator : IDbMigrator
         {
             List<Script> unOrderedScripts;
           
-            if (string.IsNullOrEmpty(migrationConfiguration.ScriptsDirectory))
+            if (string.IsNullOrEmpty(value: migrationConfiguration.ScriptsDirectory))
             {
-                unOrderedScripts = await _assemblyResourceHelper.TryGetScriptsFromAssembly(typeOfClassWhereScriptsAreLocated).ConfigureAwait(false);
+                unOrderedScripts = await _assemblyResourceHelper.TryGetScriptsFromAssembly(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated).ConfigureAwait(continueOnCapturedContext: false);
             }
             else
             {
-                unOrderedScripts = await _directoryHelper.TryGetScriptsFromDirectoryAsync(migrationConfiguration.ScriptsDirectory).ConfigureAwait(false);
+                unOrderedScripts = await _directoryHelper.TryGetScriptsFromDirectoryAsync(directory: migrationConfiguration.ScriptsDirectory).ConfigureAwait(continueOnCapturedContext: false);
             }
 
-            _logger.Log(LogLevel.Information, "Total scripts found: {unOrderedScripts.Count}", unOrderedScripts.Count);
-            var unOrderedScriptsWithoutExcludedScripts = RemoveExcludedScripts(unOrderedScripts, _excludedScriptsList);
-            var orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(unOrderedScriptsWithoutExcludedScripts);
-            return new Result<List<Script>>(true, orderedScriptsWithoutExcludedScripts);
+            _logger.Log(logLevel: LogLevel.Information, message: "Total scripts found: {unOrderedScripts.Count}", args: unOrderedScripts.Count);
+            var unOrderedScriptsWithoutExcludedScripts = RemoveExcludedScripts(scripts: unOrderedScripts, excludedScripts: _excludedScriptsList);
+            var orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(scripts: unOrderedScriptsWithoutExcludedScripts);
+            return new Result<List<Script>>(wasSuccessful: true, value: orderedScriptsWithoutExcludedScripts);
         }
         catch (Exception ex)
         {
-            return new Result<List<Script>>(false, ex);
+            return new Result<List<Script>>(wasSuccessful: false, exception: ex);
         }
     }
 
@@ -303,49 +303,49 @@ public class DbMigrator : IDbMigrator
         {
             if (skipBecauseOfErrorWithPreviousScript)
             {
-                _logger.Log(LogLevel.Warning, "script: {script.FileName} was skipped due to exception in previous script", script.FileName);
+                _logger.Log(logLevel: LogLevel.Warning, message: "script: {script.FileName} was skipped due to exception in previous script", args: script.FileName);
                 continue;
             }
 
             var executedDateTime = _dataTimeHelper.GetCurrentUtcTime();
 
-            var result = await _databaseConnector.RunDbMigrationScriptAsync(migrationConfiguration
-                , script
-                , executedDateTime
-                , cancellationToken).ConfigureAwait(false);
+            var result = await _databaseConnector.RunDbMigrationScriptAsync(migrationConfiguration: migrationConfiguration
+                , script: script
+                , executedDateTime: executedDateTime
+                , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
             if (result.Value == RunMigrationResult.MigrationWasCancelled)
             {
-                _logger.Log(LogLevel.Warning, $"migration process was canceled");
-                return new Result<bool>(false);
+                _logger.Log(logLevel: LogLevel.Warning, message: $"migration process was canceled");
+                return new Result<bool>(wasSuccessful: false);
             }
             else if (result.Value == RunMigrationResult.MigrationScriptExecuted)
             {
-                _logger.Log(LogLevel.Information, "script: {script.FileName} was run", script.FileName);
+                _logger.Log(logLevel: LogLevel.Information, message: "script: {script.FileName} was run", args: script.FileName);
             }
             else if (result.Value == RunMigrationResult.ScriptSkippedBecauseAlreadyRun)
             {
-                _logger.Log(LogLevel.Information, "script: {script.FileName} was not run because script was already executed", script.FileName);
+                _logger.Log(logLevel: LogLevel.Information, message: "script: {script.FileName} was not run because script was already executed", args: script.FileName);
             }
             else if (result.Value == RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted)
             {
-                _logger.Log(LogLevel.Error, result.Exception, "script: {script.FileName} was not completed due to exception", script.FileName);
+                _logger.Log(logLevel: LogLevel.Error, exception: result.Exception, message: "script: {script.FileName} was not completed due to exception", args: script.FileName);
                 skipBecauseOfErrorWithPreviousScript = true;
             }
         }
 
-        return skipBecauseOfErrorWithPreviousScript ? new Result<bool>(false) : new Result<bool>(true);
+        return skipBecauseOfErrorWithPreviousScript ? new Result<bool>(wasSuccessful: false) : new Result<bool>(wasSuccessful: true);
     }
 
     private static List<Script> RemoveExcludedScripts(List<Script> scripts, List<string> excludedScripts)
     {
-        var result = scripts.Where(p => excludedScripts.All(x => x != p.FileName)).ToList();
+        var result = scripts.Where(predicate: p => excludedScripts.All(predicate: x => x != p.FileName)).ToList();
         return result;
     }
 
     private static List<Script> SetScriptsInCorrectSequence(List<Script> scripts)
     {
-        return scripts.OrderBy(s => s.DatePartOfName)
-            .ThenBy(s => s.SequenceNumberPart).ToList();
+        return scripts.OrderBy(keySelector: s => s.DatePartOfName)
+            .ThenBy(keySelector: s => s.SequenceNumberPart).ToList();
     }
 }

@@ -11,6 +11,7 @@ public record DbMigrationsRunRowSqlServer
     public string Filename { get; }
     public string Version { get; }
 
+    // ReSharper disable once NotNullOrRequiredMemberIsNotInitialized
     public DbMigrationsRunRowSqlServer()
     {
     }

@@ -12,8 +12,8 @@ namespace EasyDbMigrator.DatabaseConnectors;
 public sealed class MicrosoftSqlConnector : IDatabaseConnector
 {
     private readonly AsyncPolicy _sqlDatabasePolicy = Policy.Handle<Exception>()
-        .WaitAndRetryAsync(3
-        , times => TimeSpan.FromSeconds(times * 2));
+        .WaitAndRetryAsync(retryCount: 3
+        , sleepDurationProvider: times => TimeSpan.FromSeconds(value: times * 2));
 
     public async Task<Result<bool>> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
         , CancellationToken cancellationToken)
@@ -28,10 +28,10 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                 END
                 ";
 
-        var result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
-               , @"EasyDbMigrator.Integrationtest_dropDatabase"
-               , query
-               , cancellationToken).ConfigureAwait(false);
+        var result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
+               , scriptName: @"EasyDbMigrator.Integrationtest_dropDatabase"
+               , sqlScriptContent: query
+               , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
         return result;
     }
 
@@ -50,10 +50,10 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                     )
                 END";
 
-        var result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
-            , "EasyDbMigrator.SetupDbMigrationsRunTable"
-            , sqlScriptCreateMigrationTable
-            , cancellationToken).ConfigureAwait(false);
+        var result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
+            , scriptName: "EasyDbMigrator.SetupDbMigrationsRunTable"
+            , sqlScriptContent: sqlScriptCreateMigrationTable
+            , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
         return result;
     }
@@ -67,10 +67,10 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                     CREATE DATABASE {migrationConfiguration.DatabaseName}
                 END";
 
-        var result = await TryExecuteSingleScriptAsync(migrationConfiguration.ConnectionString
-            , "SetupEmptyDb"
-            , sqlScriptCreateDatabase
-            , cancellationToken).ConfigureAwait(false);
+        var result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
+            , scriptName: "SetupEmptyDb"
+            , sqlScriptContent: sqlScriptCreateDatabase
+            , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
         return result;
     }
@@ -82,16 +82,16 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
     {
         if (cancellationToken.IsCancellationRequested)
         {
-            return new Result<RunMigrationResult>(true, RunMigrationResult.MigrationWasCancelled);
+            return new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.MigrationWasCancelled);
         }
 
         SqlTransaction? transaction = null;
         try
         {
-            var result = await _sqlDatabasePolicy.ExecuteAsync(async () =>
+            var result = await _sqlDatabasePolicy.ExecuteAsync(action: async () =>
             {
-                await using SqlConnection connection = new(migrationConfiguration.ConnectionString);
-                await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+                await using SqlConnection connection = new(connectionString: migrationConfiguration.ConnectionString);
+                await connection.OpenAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
                 string checkIfScriptHasExecuted = $@"USE {migrationConfiguration.DatabaseName} 
                         SELECT Id
@@ -99,38 +99,38 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                          WHERE Filename = '{script.FileName}'
                         ";
 
-                await using SqlCommand cmdCheckNotExecuted = new(checkIfScriptHasExecuted, connection);
-                object? result = _ = await cmdCheckNotExecuted.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+                await using SqlCommand cmdCheckNotExecuted = new(cmdText: checkIfScriptHasExecuted, connection: connection);
+                object? result = _ = await cmdCheckNotExecuted.ExecuteScalarAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
                 if (result != null)
                 {
-                    return new Result<RunMigrationResult>(true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun);
+                    return new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.ScriptSkippedBecauseAlreadyRun);
                 }
 
-                string sqlFormattedDate = executedDateTime.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff zzz");
+                string sqlFormattedDate = executedDateTime.ToString(format: @"yyyy-MM-dd HH:mm:ss.fffffff zzz");
                 string updateVersioningTableScript = $@" 
                             USE {migrationConfiguration.DatabaseName} 
                             INSERT INTO DbMigrationsRun (Executed, Filename, version)
                             VALUES ('{sqlFormattedDate}', '{script.FileName}', '1.0.0');
                         ";
 
-                transaction = await connection.BeginTransactionAsync(IsolationLevel.Serializable
-                    , cancellationToken).ConfigureAwait(false) as SqlTransaction;
+                transaction = await connection.BeginTransactionAsync(isolationLevel: IsolationLevel.Serializable
+                    , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false) as SqlTransaction;
 
-                await using SqlCommand cmdScript = new(script.Content, connection, transaction);
-                await using SqlCommand cmdUpdateVersioningTable = new(updateVersioningTableScript, connection, transaction);
+                await using SqlCommand cmdScript = new(cmdText: script.Content, connection: connection, transaction: transaction);
+                await using SqlCommand cmdUpdateVersioningTable = new(cmdText: updateVersioningTableScript, connection: connection, transaction: transaction);
 
-                _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-                _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+                _ = await cmdScript.ExecuteNonQueryAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+                _ = await cmdUpdateVersioningTable.ExecuteNonQueryAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
                 if (transaction != null)
                 {
-                    await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-                    await transaction.DisposeAsync().ConfigureAwait(false);
+                    await transaction.CommitAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+                    await transaction.DisposeAsync().ConfigureAwait(continueOnCapturedContext: false);
                 }
 
-                return new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted);
-            }).ConfigureAwait(false);
+                return new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.MigrationScriptExecuted);
+            }).ConfigureAwait(continueOnCapturedContext: false);
 
             return result;
         }
@@ -140,21 +140,21 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
             {
                 try
                 {
-                    await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
-                    await transaction.DisposeAsync().ConfigureAwait(false);
-                    return new Result<RunMigrationResult>(true
-                        , RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted
-                        , ex);
+                    await transaction.RollbackAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+                    await transaction.DisposeAsync().ConfigureAwait(continueOnCapturedContext: false);
+                    return new Result<RunMigrationResult>(wasSuccessful: true
+                        , value: RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted
+                        , exception: ex);
                 }
                 catch (Exception ex2)
                 {
-                    return new Result<RunMigrationResult>(true
-                        , RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted
-                        , new ApplicationException($"{ex} + {ex2.Message}"));
+                    return new Result<RunMigrationResult>(wasSuccessful: true
+                        , value: RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted
+                        , exception: new ApplicationException(message: $"{ex} + {ex2.Message}"));
                 }
             }
 
-            return new Result<RunMigrationResult>(true, RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted, ex);
+            return new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted, exception: ex);
         }
     }
     private async Task<Result<bool>> TryExecuteSingleScriptAsync(string connectionString
@@ -164,30 +164,30 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
     {
         if (cancellationToken.IsCancellationRequested)
         {
-            return new Result<bool>(true);
+            return new Result<bool>(wasSuccessful: true);
         }
 
         try
         {
-            if (string.IsNullOrWhiteSpace(sqlScriptContent))
+            if (string.IsNullOrWhiteSpace(value: sqlScriptContent))
             {
-                throw new ArgumentException($"{scriptName} script is empty, is there something wrong?");
+                throw new ArgumentException(message: $"{scriptName} script is empty, is there something wrong?");
             }
 
-            await _sqlDatabasePolicy.ExecuteAsync(async () =>
+            await _sqlDatabasePolicy.ExecuteAsync(action: async () =>
             {
-                await using SqlConnection connection = new(connectionString);
-                await using SqlCommand command = new(sqlScriptContent, connection);
+                await using SqlConnection connection = new(connectionString: connectionString);
+                await using SqlCommand command = new(cmdText: sqlScriptContent, connection: connection);
 
-                await command.Connection.OpenAsync(cancellationToken).ConfigureAwait(false);
-                _ = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-            }).ConfigureAwait(false);
+                await command.Connection.OpenAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+                _ = await command.ExecuteNonQueryAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+            }).ConfigureAwait(continueOnCapturedContext: false);
 
-            return new Result<bool>(true);
+            return new Result<bool>(wasSuccessful: true);
         }
         catch (Exception ex)
         {
-            return new Result<bool>(false, ex);
+            return new Result<bool>(wasSuccessful: false, exception: ex);
         }
     }
 }

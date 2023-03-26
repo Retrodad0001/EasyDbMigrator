@@ -6,30 +6,30 @@ public sealed record MigrationConfiguration
     public string DatabaseName { get; }
     public string? ScriptsDirectory { get; }
 
-    public MigrationConfiguration(string connectionString, string databaseName, string? ScriptsDirectory = null)
+    public MigrationConfiguration(string connectionString, string databaseName, string? scriptsDirectory = null)
     {
-        if (string.IsNullOrWhiteSpace(connectionString))
+        if (string.IsNullOrWhiteSpace(value: connectionString))
         {
-            throw new System.ArgumentException("connectionString cannot be null or whitespace");
+            throw new System.ArgumentException(message: "connectionString cannot be null or whitespace");
         }
 
-        if (string.IsNullOrWhiteSpace(databaseName))
+        if (string.IsNullOrWhiteSpace(value: databaseName))
         {
-            throw new System.ArgumentException($"'{nameof(databaseName)}' cannot be null or whitespace.", nameof(databaseName));
+            throw new System.ArgumentException(message: $"'{nameof(databaseName)}' cannot be null or whitespace.", paramName: nameof(databaseName));
         }
 
-        CheckIfCorrectDatabaseName(databaseName);
+        CheckIfCorrectDatabaseName(databaseName: databaseName);
 
         ConnectionString = connectionString;
         DatabaseName = databaseName;
-        this.ScriptsDirectory = ScriptsDirectory;
+        ScriptsDirectory = scriptsDirectory;
     }
 
     private static void CheckIfCorrectDatabaseName(string databaseName)
     {
-        if (databaseName.Trim().Split(" ").Length > 1)
+        if (databaseName.Trim().Split(separator: " ").Length > 1)
         {
-            throw new System.ArgumentException($"'{nameof(databaseName)}' can only be one word.", nameof(databaseName));
+            throw new System.ArgumentException(message: $"'{nameof(databaseName)}' can only be one word.", paramName: nameof(databaseName));
         }
     }
 }

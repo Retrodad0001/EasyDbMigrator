@@ -13,17 +13,17 @@ public sealed class DirectoryHelper : IDirectoryHelper
     {
         var scripts = new List<Script>();
 
-        DirectoryInfo directoryIno = new(directory);
+        DirectoryInfo directoryIno = new(path: directory);
         var files = directoryIno.GetFiles();
 
         foreach (var file in files)
         {
-            await using FileStream fileStream = new(file.FullName, FileMode.Open);
-            using StreamReader reader = new(fileStream);
+            await using FileStream fileStream = new(path: file.FullName, mode: FileMode.Open);
+            using StreamReader reader = new(stream: fileStream);
 
-            string content = await reader.ReadToEndAsync().ConfigureAwait(false);
-            Script script = new(file.FullName, content);
-            scripts.Add(script);
+            string content = await reader.ReadToEndAsync().ConfigureAwait(continueOnCapturedContext: false);
+            Script script = new(filename: file.FullName, content: content);
+            scripts.Add(item: script);
         }
 
         return scripts;

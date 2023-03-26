@@ -16,16 +16,16 @@ public static class IntegrationTestHelper
         List<DbMigrationsRunRowSqlServer> expectedRows
         , string testDatabaseName)
     {
-        using SqlConnection connection = new(connectionString);
+        using SqlConnection connection = new(connectionString: connectionString);
         connection.Open();
 
-        var actual = (List<DbMigrationsRunRowSqlServer>)connection.Query<DbMigrationsRunRowSqlServer>(@$"
+        var actual = (List<DbMigrationsRunRowSqlServer>)connection.Query<DbMigrationsRunRowSqlServer>(sql: @$"
                     use {testDatabaseName}
                     SELECT Id, Executed, Filename, Version 
                     FROM DbMigrationsRun");
 
-        _ = actual.Should().HaveSameCount(expectedRows);
-        _ = actual.Should().Contain(expectedRows);
+        _ = actual.Should().HaveSameCount(otherCollection: expectedRows);
+        _ = actual.Should().Contain(expected: expectedRows);
 
         return true;
     }
@@ -33,15 +33,15 @@ public static class IntegrationTestHelper
     public static bool CheckMigrationsTablePostgresSever(string connectionString,
        List<DbMigrationsRunRowPostgresServer> expectedRows)
     {
-        using NpgsqlConnection connection = new(connectionString);
+        using NpgsqlConnection connection = new(connectionString: connectionString);
         connection.Open();
 
-        var actual = (List<DbMigrationsRunRowPostgresServer>)connection.Query<DbMigrationsRunRowPostgresServer>(@$"
+        var actual = (List<DbMigrationsRunRowPostgresServer>)connection.Query<DbMigrationsRunRowPostgresServer>(sql: @$"
                     SELECT Id, Executed, Filename, Version 
                     FROM DbMigrationsRun");
 
-        _ = actual.Should().HaveSameCount(expectedRows);
-        _ = actual.Should().Contain(expectedRows);
+        _ = actual.Should().HaveSameCount(otherCollection: expectedRows);
+        _ = actual.Should().Contain(expected: expectedRows);
 
         return true;
     }
@@ -49,7 +49,7 @@ public static class IntegrationTestHelper
     public static string GenerateRandomDatabaseName()
     {
    //     string result = Guid.NewGuid().ToString().Replace("-", "");
-        string result = "test" + new Random().Next(100000, 999999) ;
+        string result = "test" + new Random().Next(minValue: 100000, maxValue: 999999) ;
         return result;
     }
 }

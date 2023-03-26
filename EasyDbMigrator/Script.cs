@@ -12,28 +12,28 @@ public sealed record Script
 
     public Script(string filename, string content)
     {
-        if (string.IsNullOrWhiteSpace(filename))
+        if (string.IsNullOrWhiteSpace(value: filename))
         {
-            throw new ArgumentException($"'{nameof(filename)}' cannot be null or whitespace.", nameof(filename));
+            throw new ArgumentException(message: $"'{nameof(filename)}' cannot be null or whitespace.", paramName: nameof(filename));
         }
 
-        if (string.IsNullOrWhiteSpace(content))
+        if (string.IsNullOrWhiteSpace(value: content))
         {
-            throw new ArgumentException($"'{nameof(content)}' cannot be null or whitespace.", nameof(content));
+            throw new ArgumentException(message: $"'{nameof(content)}' cannot be null or whitespace.", paramName: nameof(content));
         }
 
         FileName = filename;
         Content = content;
-        SplitUpNameofScript(filename);
+        SplitUpNameofScript(filename: filename);
     }
     private void SplitUpNameofScript(string filename)
     {
-        int yearPart = int.Parse(filename[..4]);
-        int monthPart = int.Parse(filename.Substring(4, 2));
-        int dayPart = int.Parse(filename.Substring(6, 2));
-        DatePartOfName = new DateTime(yearPart, monthPart, dayPart);
+        int yearPart = int.Parse(s: filename[..4]);
+        int monthPart = int.Parse(s: filename.Substring(startIndex: 4, length: 2));
+        int dayPart = int.Parse(s: filename.Substring(startIndex: 6, length: 2));
+        DatePartOfName = new DateTime(year: yearPart, month: monthPart, day: dayPart);
 
-        SequenceNumberPart = int.Parse(filename.Substring(9, 3));
+        SequenceNumberPart = int.Parse(s: filename.Substring(startIndex: 9, length: 3));
     }
 
     [ExcludeFromCodeCoverage]

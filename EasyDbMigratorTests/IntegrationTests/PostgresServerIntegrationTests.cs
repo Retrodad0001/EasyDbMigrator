@@ -18,231 +18,231 @@ using Xunit;
 namespace EasyDbMigratorTests.IntegrationTests;
 
 [ExcludeFromCodeCoverage]
-[Collection(nameof(NotRunParallel))]
+[Collection(name: nameof(NotRunParallel))]
 public class PostgresServerIntegrationTests
 {
     [Fact]
-    [Trait("Category", "IntegrationTest")]
+    [Trait(name: "Category", value: "IntegrationTest")]
     public async Task When_nothing_goes_wrong_with_running_all_postgres_migrations_on_an_empty_database()
     {
         string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
-        var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName);
+        var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName: databaseName);
 
         try
         {
-            await dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(true);
-            string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(databaseName)?.GetConnectionString();
+            await dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(continueOnCapturedContext: true);
+            string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(name: databaseName)?.GetConnectionString();
 
-            MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
-                , databaseName);
+            MigrationConfiguration config = new(connectionString: connectionString ?? throw new InvalidOperationException()
+                , databaseName: databaseName);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
             Mock<IDataTimeHelper> datetimeHelperMock = new();
-            DateTime executedDataTime = new(2021, 10, 17, 12, 10, 10);
+            DateTime executedDataTime = new(year: 2021, month: 10, day: 17, hour: 12, minute: 10, second: 10);
 
-            _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
+            _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
 
-            var migrator = DbMigrator.CreateForLocalIntegrationTesting(config
-                , loggerMock.Object
-                , datetimeHelperMock.Object
-                , new PostgreSqlConnector());
+            var migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+                , logger: loggerMock.Object
+                , dataTimeHelperMock: datetimeHelperMock.Object
+                , databaseConnector: new PostgreSqlConnector());
 
             List<string> scriptsToExclude = new()
             {
                 "20211230_001_DoStuffScript.sql"
             };
-            migrator.ExcludeTheseScriptsInRun(scriptsToExclude);
+            migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
-            bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(config
-                , CancellationToken.None).ConfigureAwait(true);
+            bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
+                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
             var type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
-            bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(type
-                , config
-                , CancellationToken.None).ConfigureAwait(true);
+            bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
+                , migrationConfiguration: config
+                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
             _ = succeededRunningMigrations.Should().BeTrue();
 
             _ = loggerMock
-                .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync has executed", LogLevel.Information, Times.Exactly(1), false)
-                .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
-                .CheckIfLoggerWasCalled("script: 20211230_002_Script2p.sql was run", LogLevel.Information, Times.Exactly(1), false)
-                .CheckIfLoggerWasCalled("script: 20211231_001_Script1p.sql was run", LogLevel.Information, Times.Exactly(1), false)
-                .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), false);
+                .CheckIfLoggerWasCalled(expectedMessage: "DeleteDatabaseIfExistAsync has executed", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled(expectedMessage: "setup database executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_002_Script2p.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled(expectedMessage: "script: 20211231_001_Script1p.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled(expectedMessage: "migration process executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
 
             List<DbMigrationsRunRowPostgresServer> expectedRows = new()
             {
-                new DbMigrationsRunRowPostgresServer(1, executedDataTime, "20211230_002_Script2p.sql", "1.0.0"),
-                new DbMigrationsRunRowPostgresServer(2, executedDataTime, "20211231_001_Script1p.sql", "1.0.0")
+                new DbMigrationsRunRowPostgresServer(id: 1, executed: executedDataTime, filename: "20211230_002_Script2p.sql", version: "1.0.0"),
+                new DbMigrationsRunRowPostgresServer(id: 2, executed: executedDataTime, filename: "20211231_001_Script1p.sql", version: "1.0.0")
             };
 
-            _ = IntegrationTestHelper.CheckMigrationsTablePostgresSever(connectionString
-              , expectedRows);
+            _ = IntegrationTestHelper.CheckMigrationsTablePostgresSever(connectionString: connectionString
+              , expectedRows: expectedRows);
 
         }
         catch (Exception ex)
         {
-            Assert.True(false, ex.ToString());
+            Assert.True(condition: false, userMessage: ex.ToString());
         }
         finally
         {
-            await dockerPostgresServerEnvironment.DisposeAsync().ConfigureAwait(true);
+            await dockerPostgresServerEnvironment.DisposeAsync().ConfigureAwait(continueOnCapturedContext: true);
         }
     }
 
     [Fact]
-    [Trait("Category", "IntegrationTest")]
+    [Trait(name: "Category", value: "IntegrationTest")]
     public async Task Can_skip_postgres_scripts_if_they_already_run_before()
     {
         string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
-        var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName);
+        var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName: databaseName);
 
         try
         {
-            await dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(true);
-            string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(databaseName)?.GetConnectionString();
+            await dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(continueOnCapturedContext: true);
+            string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(name: databaseName)?.GetConnectionString();
 
-            MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
-                , databaseName);
+            MigrationConfiguration config = new(connectionString: connectionString ?? throw new InvalidOperationException()
+                , databaseName: databaseName);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
             Mock<IDataTimeHelper> datetimeHelperMock1 = new();
-            DateTime executedFirstTimeDataTime = new(2021, 12, 30, 2, 16, 1);
+            DateTime executedFirstTimeDataTime = new(year: 2021, month: 12, day: 30, hour: 2, minute: 16, second: 1);
 
-            _ = datetimeHelperMock1.Setup(x => x.GetCurrentUtcTime()).Returns(executedFirstTimeDataTime);
+            _ = datetimeHelperMock1.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedFirstTimeDataTime);
 
-            var migrator1 = DbMigrator.CreateForLocalIntegrationTesting(config
-                , loggerMock.Object
-                , datetimeHelperMock1.Object
-                , new PostgreSqlConnector());
+            var migrator1 = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+                , logger: loggerMock.Object
+                , dataTimeHelperMock: datetimeHelperMock1.Object
+                , databaseConnector: new PostgreSqlConnector());
 
             List<string> scriptsToExclude = new()
             {
                 "20211230_001_DoStuffScript.sql"
             };
 
-            migrator1.ExcludeTheseScriptsInRun(scriptsToExclude);
+            migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
-            bool succeededDeleteDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(config
-                , CancellationToken.None).ConfigureAwait(true);
+            bool succeededDeleteDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
+                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
             var type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
-            bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(type
-                , config
-                , CancellationToken.None).ConfigureAwait(true);
+            bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
+                , migrationConfiguration: config
+                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
             _ = succeededRunningMigrations.Should().BeTrue();
 
             // now run the migrations again
             var loggerMockSecondRun = new Mock<ILogger<DbMigrator>>();
-            DateTime executedSecondTimeDataTime = new(2021, 12, 31, 2, 16, 1);
+            DateTime executedSecondTimeDataTime = new(year: 2021, month: 12, day: 31, hour: 2, minute: 16, second: 1);
 
             Mock<IDataTimeHelper> datetimeHelperMock2 = new();
-            _ = datetimeHelperMock2.Setup(x => x.GetCurrentUtcTime()).Returns(executedSecondTimeDataTime);
+            _ = datetimeHelperMock2.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedSecondTimeDataTime);
 
-            var migrator2 = DbMigrator.CreateForLocalIntegrationTesting(config
-               , loggerMockSecondRun.Object
-               , datetimeHelperMock2.Object
-               , new PostgreSqlConnector());
+            var migrator2 = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+               , logger: loggerMockSecondRun.Object
+               , dataTimeHelperMock: datetimeHelperMock2.Object
+               , databaseConnector: new PostgreSqlConnector());
 
-            migrator2.ExcludeTheseScriptsInRun(scriptsToExclude);
+            migrator2.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
-            bool succeeded = await migrator2.TryApplyMigrationsAsync(type
-                , config
-                , CancellationToken.None).ConfigureAwait(true);
+            bool succeeded = await migrator2.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
+                , migrationConfiguration: config
+                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
             _ = succeeded.Should().BeTrue();
 
             _ = loggerMockSecondRun
-                .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
-                .CheckIfLoggerWasCalled("setup versioning table executed successfully", LogLevel.Information, Times.Exactly(1), false)
-                .CheckIfLoggerWasCalled("script: 20211230_002_Script2p.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), false)
-                .CheckIfLoggerWasCalled("script: 20211231_001_Script1p.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), false)
-                .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), false);
+                .CheckIfLoggerWasCalled(expectedMessage: "setup database executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled(expectedMessage: "setup versioning table executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_002_Script2p.sql was not run because script was already executed", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled(expectedMessage: "script: 20211231_001_Script1p.sql was not run because script was already executed", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
+                .CheckIfLoggerWasCalled(expectedMessage: "migration process executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
 
             //  version - table should not be updated for the second time
             List<DbMigrationsRunRowPostgresServer> expectedRows = new()
             {
-                new DbMigrationsRunRowPostgresServer(1, executedFirstTimeDataTime, "20211230_002_Script2p.sql", "1.0.0"),
-                new DbMigrationsRunRowPostgresServer(2, executedFirstTimeDataTime, "20211231_001_Script1p.sql", "1.0.0")
+                new DbMigrationsRunRowPostgresServer(id: 1, executed: executedFirstTimeDataTime, filename: "20211230_002_Script2p.sql", version: "1.0.0"),
+                new DbMigrationsRunRowPostgresServer(id: 2, executed: executedFirstTimeDataTime, filename: "20211231_001_Script1p.sql", version: "1.0.0")
             };
 
-            _ = IntegrationTestHelper.CheckMigrationsTablePostgresSever(connectionString
-             , expectedRows);
+            _ = IntegrationTestHelper.CheckMigrationsTablePostgresSever(connectionString: connectionString
+             , expectedRows: expectedRows);
 
         }
         catch (Exception ex)
         {
-            Assert.True(false, ex.ToString());
+            Assert.True(condition: false, userMessage: ex.ToString());
         }
         finally
         {
-            await dockerPostgresServerEnvironment.DisposeAsync().ConfigureAwait(true);
+            await dockerPostgresServerEnvironment.DisposeAsync().ConfigureAwait(continueOnCapturedContext: true);
         }
     }
 
     [Fact]
-    [Trait("Category", "IntegrationTest")]
+    [Trait(name: "Category", value: "IntegrationTest")]
     public async Task Can_cancel_the_postgres_migration_process()
     {
         string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
-        var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName);
+        var dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName: databaseName);
         CancellationTokenSource source = new();
         var token = source.Token;
 
         try
         {
-            await dockerPostgresServerEnvironment.UpAsync(token).ConfigureAwait(true);
-            string? connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(databaseName)?.GetConnectionString();
+            await dockerPostgresServerEnvironment.UpAsync(cancellationToken: token).ConfigureAwait(continueOnCapturedContext: true);
+            string? connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(name: databaseName)?.GetConnectionString();
 
-            MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
-                , databaseName);
+            MigrationConfiguration config = new(connectionString: connectionString ?? throw new InvalidOperationException()
+                , databaseName: databaseName);
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
             Mock<IDataTimeHelper> datetimeHelperMock = new();
-            DateTime executedDataTime = new(2021, 10, 17, 12, 10, 10);
+            DateTime executedDataTime = new(year: 2021, month: 10, day: 17, hour: 12, minute: 10, second: 10);
 
-            _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
+            _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
 
-            var migrator = DbMigrator.CreateForLocalIntegrationTesting(config
-                , loggerMock.Object
-                , datetimeHelperMock.Object
-                , new PostgreSqlConnector());
+            var migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
+                , logger: loggerMock.Object
+                , dataTimeHelperMock: datetimeHelperMock.Object
+                , databaseConnector: new PostgreSqlConnector());
 
             List<string> scriptsToExclude = new()
             {
                 "20211230_001_DoStuffScript.sql"
             };
-            migrator.ExcludeTheseScriptsInRun(scriptsToExclude);
+            migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
-            bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(config
-                , token).ConfigureAwait(true);
+            bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
+                , cancellationToken: token).ConfigureAwait(continueOnCapturedContext: true);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
             var type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
             source.Cancel();
 
-            bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(type
-                , config
-                , token).ConfigureAwait(true);
+            bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
+                , migrationConfiguration: config
+                , cancellationToken: token).ConfigureAwait(continueOnCapturedContext: true);
             _ = succeededRunningMigrations.Should().BeTrue();
 
             _ = loggerMock
-                 .CheckIfLoggerWasCalled("migration process was canceled from the outside", LogLevel.Warning, Times.Exactly(1), false);
+                 .CheckIfLoggerWasCalled(expectedMessage: "migration process was canceled from the outside", expectedLogLevel: LogLevel.Warning, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
         }
         catch (Exception ex)
         {
-            Assert.True(false, ex.ToString());
+            Assert.True(condition: false, userMessage: ex.ToString());
         }
         finally
         {
             source.Dispose();
-            await dockerPostgresServerEnvironment.DisposeAsync().ConfigureAwait(true);
+            await dockerPostgresServerEnvironment.DisposeAsync().ConfigureAwait(continueOnCapturedContext: true);
         }
     }
 
@@ -254,8 +254,8 @@ public class PostgresServerIntegrationTests
         const string password = "stuffy6!";
 
         return (DockerEnvironment)environmentBuilder
-             .SetName(databaseName)
-             .AddPostgresContainer(p => p with
+             .SetName(environmentName: databaseName)
+             .AddPostgresContainer(paramsBuilder: p => p with
              {
                  Name = databaseName,
                  UserName = userName,

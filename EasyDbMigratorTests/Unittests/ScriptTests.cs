@@ -10,13 +10,13 @@ namespace EasyDbMigratorTests.Unittests;
 public class ScriptTests
 {
     [Theory]
-    [InlineData("", true)]
-    [InlineData(" ", true)]
+    [InlineData(data: new object[] { "", true })]
+    [InlineData(data: new object[] { " ", true })]
     public void When_creating_the_parameter_scriptName_should_be_correct(string filename, bool shouldThrowException)
     {
         var act = () =>
         {
-            Script sut = new(filename, "xx");
+            Script unused = new(filename: filename, content: "xx");
         };
 
         if (shouldThrowException)
@@ -30,13 +30,13 @@ public class ScriptTests
     }
 
     [Theory]
-    [InlineData("", true)]
-    [InlineData(" ", true)]
+    [InlineData(data: new object[] { "", true })]
+    [InlineData(data: new object[] { " ", true })]
     public void When_creating_the_parameter_connectionString_should_be_correct(string content, bool shouldThrowException)
     {
-        Action act = () =>
+        var act = () =>
         {
-            Script sut = new("xx", content);
+            Script unused = new(filename: "xx", content: content);
         };
 
         if (shouldThrowException)

@@ -15,10 +15,10 @@ public class AssemblyResourceHelperTests
     {
         var sut = new AssemblyResourceHelper();
 
-        var result = await sut.TryGetScriptsFromAssembly(typeof(HereTheSqlServerScriptsCanBeFound)).ConfigureAwait(true);
+        var result = await sut.TryGetScriptsFromAssembly(typeOfClassWhereScriptsAreLocated: typeof(HereTheSqlServerScriptsCanBeFound)).ConfigureAwait(continueOnCapturedContext: true);
 
-        _ = result.Should().HaveCount(3);
-        _ = result.TrueForAll(script => script.FileName != string.Empty);
-        _ = result.TrueForAll(script => script.FileName.Split('.').Length == 2);//contain only one
+        _ = result.Should().HaveCount(expected: 3);
+        _ = result.TrueForAll(match: script => script.FileName != string.Empty);
+        _ = result.TrueForAll(match: script => script.FileName.Split(separator: '.').Length == 2);//contain only one
     }
 }

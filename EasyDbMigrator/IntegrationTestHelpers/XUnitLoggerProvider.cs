@@ -17,7 +17,7 @@ public sealed class XUnitLoggerProvider : ILoggerProvider
 
     public ILogger CreateLogger(string categoryName)
     {
-        return new XUnitLogHelper(_testOutputHelper, _scopeProvider, categoryName);
+        return new XUnitLogHelper(testOutputHelper: _testOutputHelper, scopeProvider: _scopeProvider, categoryName: categoryName);
     }
 
     public void Dispose()
