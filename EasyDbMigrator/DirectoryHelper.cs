@@ -11,7 +11,7 @@ public sealed class DirectoryHelper : IDirectoryHelper
 {
     public async Task<List<Script>> TryGetScriptsFromDirectoryAsync(string directory)
     {
-        var scripts = new List<Script>();
+        var scriptsToRun = new List<Script>();
 
         DirectoryInfo directoryIno = new(path: directory);
         var files = directoryIno.GetFiles();
@@ -23,9 +23,9 @@ public sealed class DirectoryHelper : IDirectoryHelper
 
             string content = await reader.ReadToEndAsync().ConfigureAwait(continueOnCapturedContext: false);
             Script script = new(filename: file.FullName, content: content);
-            scripts.Add(item: script);
+            scriptsToRun.Add(item: script);
         }
 
-        return scripts;
+        return scriptsToRun;
     }
 }
