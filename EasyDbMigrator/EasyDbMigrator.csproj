@@ -4,7 +4,7 @@
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>2.0.2</Version>
+    <Version>2.0.3</Version>
     <PackageId>Retrodad.EasyDbMigrator</PackageId>
     <Description>EasyDbMigrator is a database migration framework written in C#. It can be used for integration testing on your local machine or in CI/CD Pipelines or for manual migrations.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -17,12 +17,12 @@ For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</P
     <PackageIconUrl />
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <Authors>Retrodad0001</Authors>
-    <AssemblyVersion>2.0.2</AssemblyVersion>
-    <FileVersion>2.0.2</FileVersion>
+    <AssemblyVersion>2.0.3</AssemblyVersion>
+    <FileVersion>2.0.3</FileVersion>
     <PackageProjectUrl>https://github.com/Retrodad0001/EasyDbMigrator</PackageProjectUrl>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <AnalysisLevel>latest</AnalysisLevel>
-    <PackageVersion>2.0.2</PackageVersion>
+    <PackageVersion>2.0.3</PackageVersion>
     <Title>Retrodad.EasyDbMigrator</Title>
   </PropertyGroup>
 
