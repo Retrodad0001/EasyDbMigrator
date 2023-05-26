@@ -10,7 +10,7 @@ public sealed record MigrationConfiguration
     {
         if (string.IsNullOrWhiteSpace(value: connectionString))
         {
-            throw new System.ArgumentException(message: "connectionString cannot be null or whitespace");
+            throw new System.ArgumentException(message: $"'{nameof(connectionString)}' cannot be null or whitespace.", paramName: nameof(connectionString));
         }
 
         if (string.IsNullOrWhiteSpace(value: databaseName))
