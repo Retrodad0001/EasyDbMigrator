@@ -84,7 +84,7 @@ public class PostgresServerIntegrationTests
         }
         catch (Exception ex)
         {
-            Assert.True(condition: false, userMessage: ex.ToString());
+            Assert.Fail(ex.ToString());
         }
         finally
         {
@@ -176,7 +176,7 @@ public class PostgresServerIntegrationTests
         }
         catch (Exception ex)
         {
-            Assert.True(condition: false, userMessage: ex.ToString());
+            Assert.Fail(ex.ToString());
         }
         finally
         {
@@ -237,7 +237,7 @@ public class PostgresServerIntegrationTests
         }
         catch (Exception ex)
         {
-            Assert.True(condition: false, userMessage: ex.ToString());
+            Assert.Fail(ex.ToString());
         }
         finally
         {

@@ -86,7 +86,7 @@ public class SqlServerIntegrationTests
         }
         catch (Exception ex)
         {
-            Assert.True(condition: false, userMessage: ex.ToString());
+            Assert.Fail(ex.ToString());
         }
         finally
         {
@@ -176,7 +176,7 @@ public class SqlServerIntegrationTests
         }
         catch (Exception ex)
         {
-            Assert.True(condition: false, userMessage: ex.ToString());
+            Assert.Fail(ex.ToString());
         }
         finally
         {
@@ -236,7 +236,7 @@ public class SqlServerIntegrationTests
         }
         catch (Exception ex)
         {
-            Assert.True(condition: false, userMessage: ex.ToString());
+            Assert.Fail(ex.ToString());
         }
         finally
         {
