@@ -1,4 +1,6 @@
-﻿using EasyDbMigrator;
+﻿// Ignore Spelling: databasename
+
+using EasyDbMigrator;
 using FluentAssertions;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -14,12 +16,12 @@ public class MigrationConfigurationTests
     [InlineData(data: new object[] { "word1 word2", true })]
     [InlineData(data: new object[] { "", true })]
     [InlineData(data: new object[] { " ", true })]
-    public void The_parameter_databasename_should_have_only_one_word(string databasename, bool shouldThrowException)
+    public void The_parameter_databasename_should_have_only_one_word(string databaseName, bool shouldThrowException)
     {
         var act = () =>
         {
             MigrationConfiguration unused = new(connectionString: "connection string"
-                , databaseName: databasename);
+                , databaseName: databaseName);
         };
 
         if (shouldThrowException)
@@ -40,7 +42,7 @@ public class MigrationConfigurationTests
         var act = () =>
         {
             MigrationConfiguration unused = new(connectionString: connectionString
-                , databaseName: "databasename");
+                , databaseName: "databaseName");
         };
 
         if (shouldThrowException)

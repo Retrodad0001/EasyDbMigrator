@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// Ignore Spelling: Sql
+
+using System.Diagnostics.CodeAnalysis;
 
 namespace ExampleTestLibWithSqlServerScripts;
 

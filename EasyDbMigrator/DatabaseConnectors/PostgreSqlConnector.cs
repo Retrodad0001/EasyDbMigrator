@@ -1,4 +1,6 @@
-﻿using Npgsql;
+﻿// Ignore Spelling: Postgre Sql
+
+using Npgsql;
 using Polly;
 using System;
 using System.Diagnostics.CodeAnalysis;

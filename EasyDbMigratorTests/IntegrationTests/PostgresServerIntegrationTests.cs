@@ -1,4 +1,6 @@
-﻿using EasyDbMigrator;
+﻿// Ignore Spelling: postgres
+
+using EasyDbMigrator;
 using EasyDbMigrator.DatabaseConnectors;
 using EasyDbMigratorTests.IntegrationTests.Helpers;
 using EasyDbMigratorTests.TestHelpers;

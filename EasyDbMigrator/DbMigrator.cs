@@ -1,4 +1,6 @@
-﻿using EasyDbMigrator.DatabaseConnectors;
+﻿// Ignore Spelling: Migrator
+
+using EasyDbMigrator.DatabaseConnectors;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

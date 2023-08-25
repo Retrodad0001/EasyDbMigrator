@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: Utc
+
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigrator;

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: Postgres
+
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigratorTests.TestHelpers;

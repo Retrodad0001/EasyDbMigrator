@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ignore Spelling: Sql
+
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDbMigratorTests.TestHelpers;

@@ -1,4 +1,6 @@
-﻿using Polly;
+﻿// Ignore Spelling: Sql
+
+using Polly;
 using System;
 using System.Data;
 using System.Data.SqlClient;

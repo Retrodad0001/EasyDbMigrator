@@ -1,4 +1,6 @@
-﻿using EasyDbMigrator;
+﻿// Ignore Spelling: versioning Migrator
+
+using EasyDbMigrator;
 using EasyDbMigrator.DatabaseConnectors;
 using EasyDbMigratorTests.TestHelpers;
 using FluentAssertions;

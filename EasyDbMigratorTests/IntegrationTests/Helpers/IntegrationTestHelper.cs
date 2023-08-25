@@ -1,4 +1,6 @@
-﻿using Dapper;
+﻿// Ignore Spelling: Postgres Sql
+
+using Dapper;
 using EasyDbMigratorTests.TestHelpers;
 using FluentAssertions;
 using Npgsql;

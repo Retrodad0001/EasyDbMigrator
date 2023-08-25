@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// Ignore Spelling: Postgre
+
+using System.Diagnostics.CodeAnalysis;
 
 namespace ExampleTestLibWithPostGreSQLServerScripts;
 
