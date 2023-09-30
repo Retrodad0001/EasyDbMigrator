@@ -15,7 +15,7 @@ public class AssemblyResourceHelperTests
     {
         var sut = new AssemblyResourceHelper();
 
-        var result = await sut.TryGetScriptsFromAssembly(typeOfClassWhereScriptsAreLocated: typeof(HereTheSqlServerScriptsCanBeFound)).ConfigureAwait(continueOnCapturedContext: true);
+        var result = await sut.TryGetScriptsFromAssembly(typeOfClassWhereScriptsAreLocated: typeof(HereTheSqlServerScriptsCanBeFound));
 
         _ = result.Should().HaveCount(expected: 3);
         _ = result.TrueForAll(match: script => script.FileName != string.Empty);

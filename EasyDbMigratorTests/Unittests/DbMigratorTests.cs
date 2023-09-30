@@ -103,7 +103,7 @@ public class DbMigratorTests
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             IDirectoryHelper directoryHelper = new DirectoryHelper();
 
-            DbMigrator unused = new (logger: loggerMock.Object
+            DbMigrator unused = new(logger: loggerMock.Object
                 , databaseConnector: new MicrosoftSqlConnector()
                 , assemblyResourceHelper: new AssemblyResourceHelper()
                 , directoryHelper: directoryHelper
@@ -324,7 +324,7 @@ public class DbMigratorTests
 
         bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
             , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+            , cancellationToken: CancellationToken.None);
 
         _ = result.Should().BeTrue();
 
@@ -399,7 +399,7 @@ public class DbMigratorTests
 
         bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
             , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+            , cancellationToken: CancellationToken.None);
 
         _ = result.Should().BeTrue();
 
@@ -472,7 +472,7 @@ public class DbMigratorTests
 
         bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
             , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+            , cancellationToken: CancellationToken.None);
 
         _ = result.Should().BeFalse();
 
@@ -534,7 +534,7 @@ public class DbMigratorTests
 
         bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
             , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+            , cancellationToken: CancellationToken.None);
 
         _ = result.Should().BeFalse();
 
@@ -603,7 +603,7 @@ public class DbMigratorTests
 
         bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
             , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+            , cancellationToken: CancellationToken.None);
 
         _ = result.Should().BeFalse();
 
@@ -674,7 +674,7 @@ public class DbMigratorTests
             , directoryHelper: directoryHelperMock.Object
             , dataTimeHelper: datetimeHelperMock.Object);
 
-        bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType, migrationConfiguration: config, cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+        bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType, migrationConfiguration: config, cancellationToken: CancellationToken.None);
 
         _ = result.Should().BeFalse();
 
@@ -761,7 +761,7 @@ public class DbMigratorTests
 
         bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
             , migrationConfiguration: config
-            , cancellationToken: token).ConfigureAwait(continueOnCapturedContext: true);
+            , cancellationToken: token);
 
         _ = result.Should().BeTrue();
 
@@ -839,7 +839,7 @@ public class DbMigratorTests
 
         bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
                 , migrationConfiguration: config
-                , cancellationToken: token).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: token);
 
         _ = result.Should().BeFalse();
 
@@ -921,7 +921,7 @@ public class DbMigratorTests
 
         bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
             , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+            , cancellationToken: CancellationToken.None);
 
         _ = result.Should().BeTrue();
 
@@ -996,7 +996,7 @@ public class DbMigratorTests
 
         bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
             , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+            , cancellationToken: CancellationToken.None);
 
         _ = result.Should().BeTrue();
 
@@ -1039,7 +1039,7 @@ public class DbMigratorTests
             , dataTimeHelper: datetimeHelperMock.Object);
 
         bool success = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-            , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+            , cancellationToken: CancellationToken.None);
 
         _ = success.Should().BeFalse();
 
@@ -1077,7 +1077,7 @@ public class DbMigratorTests
             , dataTimeHelper: datetimeHelperMock.Object);
 
         bool success = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-            , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+            , cancellationToken: CancellationToken.None);
 
         _ = success.Should().BeTrue();
 

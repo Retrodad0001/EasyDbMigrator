@@ -34,7 +34,7 @@ public class SqlServerIntegrationTests
 
         try
         {
-            await dockerEnvironmentSql.UpAsync().ConfigureAwait(continueOnCapturedContext: true);
+            await dockerEnvironmentSql.UpAsync();
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(name: DATABASE_NAME)?.GetConnectionString();
 
             MigrationConfiguration config = new(connectionString: connectionString ?? throw new InvalidOperationException()
@@ -60,12 +60,12 @@ public class SqlServerIntegrationTests
             migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
             bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: CancellationToken.None);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
             bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSqlServerScriptsCanBeFound)
                 , migrationConfiguration: config
-                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: CancellationToken.None);
             _ = succeededRunningMigrations.Should().BeTrue();
 
             _ = loggerMock
@@ -92,7 +92,7 @@ public class SqlServerIntegrationTests
         }
         finally
         {
-            await dockerEnvironmentSql.DisposeAsync().ConfigureAwait(continueOnCapturedContext: true);
+            await dockerEnvironmentSql.DisposeAsync();
         }
     }
 
@@ -104,7 +104,7 @@ public class SqlServerIntegrationTests
 
         try
         {
-            await dockerEnvironmentSql.UpAsync().ConfigureAwait(continueOnCapturedContext: true);
+            await dockerEnvironmentSql.UpAsync();
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(name: DATABASE_NAME)?.GetConnectionString();
 
             MigrationConfiguration config = new(connectionString: connectionString ?? throw new InvalidOperationException()
@@ -128,14 +128,14 @@ public class SqlServerIntegrationTests
             migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
             bool succeededDeleteDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: CancellationToken.None);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
             var type = typeof(HereTheSqlServerScriptsCanBeFound);
 
             bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
                 , migrationConfiguration: config
-                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: CancellationToken.None);
             _ = succeededRunningMigrations.Should().BeTrue();
 
             //now run the migrations again
@@ -154,7 +154,7 @@ public class SqlServerIntegrationTests
 
             bool succeeded = await migrator2.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
                 , migrationConfiguration: config
-                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: CancellationToken.None);
             _ = succeeded.Should().BeTrue();
 
             _ = loggerMockSecondRun
@@ -182,7 +182,7 @@ public class SqlServerIntegrationTests
         }
         finally
         {
-            await dockerEnvironmentSql.DisposeAsync().ConfigureAwait(continueOnCapturedContext: true);
+            await dockerEnvironmentSql.DisposeAsync();
         }
     }
 
@@ -197,7 +197,7 @@ public class SqlServerIntegrationTests
 
         try
         {
-            await dockerEnvironmentSql.UpAsync(cancellationToken: token).ConfigureAwait(continueOnCapturedContext: true);
+            await dockerEnvironmentSql.UpAsync(cancellationToken: token);
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(name: DATABASE_NAME)?.GetConnectionString();
 
             MigrationConfiguration config = new(connectionString: connectionString ?? throw new InvalidOperationException()
@@ -223,14 +223,14 @@ public class SqlServerIntegrationTests
             migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
             bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                , cancellationToken: token).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: token);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
             source.Cancel();
 
             bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSqlServerScriptsCanBeFound)
                 , migrationConfiguration: config
-                , cancellationToken: token).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: token);
             _ = succeededRunningMigrations.Should().BeTrue();
 
             _ = loggerMock
@@ -242,7 +242,7 @@ public class SqlServerIntegrationTests
         }
         finally
         {
-            await dockerEnvironmentSql.DisposeAsync().ConfigureAwait(continueOnCapturedContext: true);
+            await dockerEnvironmentSql.DisposeAsync();
             source.Dispose();
         }
     }

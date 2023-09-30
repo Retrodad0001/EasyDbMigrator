@@ -32,7 +32,7 @@ public class PostgresServerIntegrationTests
 
         try
         {
-            await dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(continueOnCapturedContext: true);
+            await dockerPostgresServerEnvironment.UpAsync();
             string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(name: databaseName)?.GetConnectionString();
 
             MigrationConfiguration config = new(connectionString: connectionString ?? throw new InvalidOperationException()
@@ -57,14 +57,14 @@ public class PostgresServerIntegrationTests
             migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
             bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: CancellationToken.None);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
             var type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
             bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
                 , migrationConfiguration: config
-                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: CancellationToken.None);
             _ = succeededRunningMigrations.Should().BeTrue();
 
             _ = loggerMock
@@ -90,7 +90,7 @@ public class PostgresServerIntegrationTests
         }
         finally
         {
-            await dockerPostgresServerEnvironment.DisposeAsync().ConfigureAwait(continueOnCapturedContext: true);
+            await dockerPostgresServerEnvironment.DisposeAsync();
         }
     }
 
@@ -103,7 +103,7 @@ public class PostgresServerIntegrationTests
 
         try
         {
-            await dockerPostgresServerEnvironment.UpAsync().ConfigureAwait(continueOnCapturedContext: true);
+            await dockerPostgresServerEnvironment.UpAsync();
             string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(name: databaseName)?.GetConnectionString();
 
             MigrationConfiguration config = new(connectionString: connectionString ?? throw new InvalidOperationException()
@@ -129,14 +129,14 @@ public class PostgresServerIntegrationTests
             migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
             bool succeededDeleteDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: CancellationToken.None);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
             var type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
             bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
                 , migrationConfiguration: config
-                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: CancellationToken.None);
             _ = succeededRunningMigrations.Should().BeTrue();
 
             // now run the migrations again
@@ -155,7 +155,7 @@ public class PostgresServerIntegrationTests
 
             bool succeeded = await migrator2.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
                 , migrationConfiguration: config
-                , cancellationToken: CancellationToken.None).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: CancellationToken.None);
             _ = succeeded.Should().BeTrue();
 
             _ = loggerMockSecondRun
@@ -182,7 +182,7 @@ public class PostgresServerIntegrationTests
         }
         finally
         {
-            await dockerPostgresServerEnvironment.DisposeAsync().ConfigureAwait(continueOnCapturedContext: true);
+            await dockerPostgresServerEnvironment.DisposeAsync();
         }
     }
 
@@ -197,7 +197,7 @@ public class PostgresServerIntegrationTests
 
         try
         {
-            await dockerPostgresServerEnvironment.UpAsync(cancellationToken: token).ConfigureAwait(continueOnCapturedContext: true);
+            await dockerPostgresServerEnvironment.UpAsync(cancellationToken: token);
             string? connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(name: databaseName)?.GetConnectionString();
 
             MigrationConfiguration config = new(connectionString: connectionString ?? throw new InvalidOperationException()
@@ -222,7 +222,7 @@ public class PostgresServerIntegrationTests
             migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
 
             bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                , cancellationToken: token).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: token);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
             var type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
@@ -231,7 +231,7 @@ public class PostgresServerIntegrationTests
 
             bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
                 , migrationConfiguration: config
-                , cancellationToken: token).ConfigureAwait(continueOnCapturedContext: true);
+                , cancellationToken: token);
             _ = succeededRunningMigrations.Should().BeTrue();
 
             _ = loggerMock
@@ -244,7 +244,7 @@ public class PostgresServerIntegrationTests
         finally
         {
             source.Dispose();
-            await dockerPostgresServerEnvironment.DisposeAsync().ConfigureAwait(continueOnCapturedContext: true);
+            await dockerPostgresServerEnvironment.DisposeAsync();
         }
     }
 
