@@ -41,14 +41,12 @@ EasyDBMigrator is an open-source database migration framework. It strongly favor
   
 ## What we want to accomplish?
 
-1. Make it easy to integrate Microsoft SQL migrations in your local integration test suite
-2. Make it easy to integrate Postgre SQL migrations in your local integration test suite
-3. Make it easy to integrate Microsoft SQL migrations in your CI/CD flows
-4. Make it easy to integrate Postgre SQL migrations in your CI/CD flows
+1. Make it easy to integrate Microsoft SQL migrations in your CI/CD flows
+2. Make it easy to integrate Postgre SQL migrations in your CI/CD flows
 5. Make it easy to perform manual Microsoft SQL migrations
 6. Make it easy to perform manual Postgre SQL migrations
 7. Make it easy to integrate this package in your own code/tool
-8. Provide examples and stimulate discussions about writing integration tests in code (so please send me feedback or start a good discussion)
+8. Provide examples how write unit and integration tests (feel free in giving me code feedback or for a good discussion on testing)
 
 ## Get started with EasyDBMigrator :
 
