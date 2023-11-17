@@ -8,6 +8,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+//TODO .net 6 (LTS) support until 12 November 2024
+//TODO .net 7 support until 14 May 2024 --> we will support this version until 12 November 2024
+//TODO .net 8 (LTS) support until 10 November 2026
+//TODO .net 9 ???
+
 namespace EasyDbMigrator;
 
 public class DbMigrator : IDbMigrator
@@ -26,44 +31,29 @@ public class DbMigrator : IDbMigrator
         , IDataTimeHelper dataTimeHelper)
     {
 
-        if (logger is null)
-        {
-            throw new ArgumentNullException(paramName: nameof(logger));
-        }
+        ArgumentNullException.ThrowIfNull(logger);
 
         _logger = logger;
 
-        if (databaseConnector is null)
-        {
-            throw new ArgumentNullException(paramName: nameof(databaseConnector));
-        }
+        ArgumentNullException.ThrowIfNull(databaseConnector);
 
         _databaseConnector = databaseConnector;
 
-        if (assemblyResourceHelper is null)
-        {
-            throw new ArgumentNullException(paramName: nameof(assemblyResourceHelper));
-        }
+        ArgumentNullException.ThrowIfNull(assemblyResourceHelper);
 
         _assemblyResourceHelper = assemblyResourceHelper;
 
-        if (directoryHelper is null)
-        {
-            throw new ArgumentNullException(paramName: nameof(directoryHelper));
-        }
+        ArgumentNullException.ThrowIfNull(directoryHelper);
 
         _directoryHelper = directoryHelper;
 
-        if (dataTimeHelper is null)
-        {
-            throw new ArgumentNullException(paramName: nameof(dataTimeHelper));
-        }
+        ArgumentNullException.ThrowIfNull(dataTimeHelper);
 
         _dataTimeHelper = dataTimeHelper;
     }
 
     /// <summary>
-    /// Create DBMigration object so it can be used in code
+    /// Create DBMigration object
     /// </summary>
     /// <param name="migrationConfiguration">the configuration settings DBMigrator uses to perform its tasks</param>
     /// <param name="logger">the ILogger logging object u want that the DBMigrator should use</param>
@@ -73,20 +63,11 @@ public class DbMigrator : IDbMigrator
         , ILogger logger
         , IDatabaseConnector databaseConnector)
     {
-        if (migrationConfiguration is null)
-        {
-            throw new ArgumentNullException(paramName: nameof(migrationConfiguration));
-        }
+        ArgumentNullException.ThrowIfNull(migrationConfiguration);
 
-        if (logger is null)
-        {
-            throw new ArgumentNullException(paramName: nameof(logger));
-        }
+        ArgumentNullException.ThrowIfNull(logger);
 
-        if (databaseConnector is null)
-        {
-            throw new ArgumentNullException(paramName: nameof(databaseConnector));
-        }
+        ArgumentNullException.ThrowIfNull(databaseConnector);
 
         DbMigrator result = new(logger: logger
             , databaseConnector: databaseConnector
@@ -98,7 +79,7 @@ public class DbMigrator : IDbMigrator
     }
 
     /// <summary>
-    /// Create DBMigration object so it can be used for integration testing
+    /// Create DBMigration
     /// </summary>
     /// <param name="migrationConfiguration">the configuration settings DBMigrator uses to perform its tasks</param>
     /// <param name="logger">the ILogger logging object u want that the DBMigrator should use</param>
@@ -110,25 +91,13 @@ public class DbMigrator : IDbMigrator
         , IDataTimeHelper dataTimeHelperMock
         , IDatabaseConnector databaseConnector)
     {
-        if (migrationConfiguration is null)
-        {
-            throw new ArgumentNullException(paramName: nameof(migrationConfiguration));
-        }
+        ArgumentNullException.ThrowIfNull(migrationConfiguration);
 
-        if (logger is null)
-        {
-            throw new ArgumentNullException(paramName: nameof(logger));
-        }
+        ArgumentNullException.ThrowIfNull(logger);
 
-        if (dataTimeHelperMock is null)
-        {
-            throw new ArgumentNullException(paramName: nameof(dataTimeHelperMock));
-        }
+        ArgumentNullException.ThrowIfNull(dataTimeHelperMock);
 
-        if (databaseConnector is null)
-        {
-            throw new ArgumentNullException(paramName: nameof(databaseConnector));
-        }
+        ArgumentNullException.ThrowIfNull(databaseConnector);
 
         DbMigrator result = new(logger: logger
            , databaseConnector: databaseConnector
@@ -275,7 +244,7 @@ public class DbMigrator : IDbMigrator
         try
         {
             List<Script> unOrderedScripts;
-          
+
             if (string.IsNullOrEmpty(value: migrationConfiguration.ScriptsDirectory))
             {
                 unOrderedScripts = await _assemblyResourceHelper.TryGetScriptsFromAssembly(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated).ConfigureAwait(continueOnCapturedContext: false);

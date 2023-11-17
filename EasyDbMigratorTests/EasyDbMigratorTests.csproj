@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <Nullable>annotations</Nullable>
     <PackageProjectUrl>https://github.com/Retrodad0001/EasyDbMigrator</PackageProjectUrl>
@@ -15,16 +15,16 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Dapper" Version="2.0.151" />
+    <PackageReference Include="Dapper" Version="2.1.21" />
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="Moq" Version="4.20.69" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <PackageReference Include="TestEnvironment.Docker.Containers.Mssql" Version="2.1.7" />
     <PackageReference Include="TestEnvironment.Docker.Containers.Postgres" Version="2.1.6" />
-    <PackageReference Include="xunit" Version="2.5.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.1">
+    <PackageReference Include="xunit" Version="2.6.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

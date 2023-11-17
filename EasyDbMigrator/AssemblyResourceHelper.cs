@@ -19,7 +19,7 @@ public sealed class AssemblyResourceHelper : IAssemblyResourceHelper
             throw new InvalidOperationException(message: $"assembly is null for custom-class : {typeOfClassWhereScriptsAreLocated}");
         }
 
-        var filenames = TryGetManifestResourceNamesFromAssembly(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated);
+        string[] filenames = TryGetManifestResourceNamesFromAssembly(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated);
 
         List<Script> scripts = new();
         foreach (string filename in filenames)
@@ -41,7 +41,7 @@ public sealed class AssemblyResourceHelper : IAssemblyResourceHelper
         return scripts;
     }
 
-    private static IEnumerable<string> TryGetManifestResourceNamesFromAssembly(Type typeOfClassWhereScriptsAreLocated)
+    private static string[] TryGetManifestResourceNamesFromAssembly(Type typeOfClassWhereScriptsAreLocated)
     {
         var assembly = Assembly.GetAssembly(type: typeOfClassWhereScriptsAreLocated);
 
