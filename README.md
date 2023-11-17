@@ -4,7 +4,7 @@
 - add support for .net 8
 - updated all internal packages for stability and security (I do this at least once every month)
 
-## 2.0.x (the latest release)
+## 2.0.x
 - add support for .net 7
 - updated all internal packages for stability and security (I do this at least once every month)
 
