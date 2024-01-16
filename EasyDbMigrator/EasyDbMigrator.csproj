@@ -54,7 +54,7 @@ For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</P
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
     <PackageReference Include="Npgsql" Version="8.0.1" />
     <PackageReference Include="Polly" Version="8.2.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     <PackageReference Include="xunit.abstractions" Version="2.0.3" />
   </ItemGroup>
 
