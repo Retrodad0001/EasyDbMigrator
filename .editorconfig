@@ -305,6 +305,9 @@ dotnet_diagnostic.CA1510.severity = warning
 dotnet_diagnostic.CA1859.severity = warning
 csharp_style_prefer_primary_constructors = true:suggestion
 
+# CS1591: Missing XML comment for publicly visible type or member
+dotnet_diagnostic.CS1591.severity = none
+
 [*.{cs,vb}]
 dotnet_style_operator_placement_when_wrapping = beginning_of_line
 tab_width = 4
@@ -355,4 +358,4 @@ dotnet_diagnostic.IDE0270.severity = none
 
 # IDE0060: Remove unused parameter
 dotnet_diagnostic.IDE0060.severity = warning
-dotnet_style_prefer_collection_expression = false:suggestion
+dotnet_style_prefer_collection_expression = never:suggestion

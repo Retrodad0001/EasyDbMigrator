@@ -4,6 +4,7 @@
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Version>3.0.3</Version>
     <PackageId>Retrodad.EasyDbMigrator</PackageId>
     <Description>EasyDbMigrator is a database migration framework written in C#. It can be used for integration testing on your local machine or in CI/CD Pipelines or for manual migrations.</Description>
