@@ -1,10 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
+using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
 namespace EasyDbMigratorTests.IntegrationTests.Helpers;
 
 [ExcludeFromCodeCoverage]
-[CollectionDefinition(name: nameof(NotRunParallel), DisableParallelization = true)]
+[CollectionDefinition(nameof(NotRunParallel), DisableParallelization = true)]
 public sealed class NotRunParallel
 {
 }

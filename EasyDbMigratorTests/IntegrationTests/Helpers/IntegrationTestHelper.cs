@@ -1,4 +1,5 @@
 ﻿// Ignore Spelling: Postgres Sql
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using Dapper;
 using EasyDbMigratorTests.TestHelpers;
@@ -8,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
+
 
 namespace EasyDbMigratorTests.IntegrationTests.Helpers;
 
@@ -18,16 +21,20 @@ public static class IntegrationTestHelper
         List<DbMigrationsRunRowSqlServer> expectedRows
         , string testDatabaseName)
     {
-        using SqlConnection connection = new(connectionString: connectionString);
+        using SqlConnection connection = new(connectionString);
         connection.Open();
 
-        var actual = (List<DbMigrationsRunRowSqlServer>)connection.Query<DbMigrationsRunRowSqlServer>(sql: @$"
-                    use {testDatabaseName}
+        var actual = (List<DbMigrationsRunRowSqlServer>)connection.Query<DbMigrationsRunRowSqlServer>(
+            new StringBuilder().Append(@"
+                    use ")
+                .Append(testDatabaseName)
+                .Append(@"
                     SELECT Id, Executed, Filename, Version 
-                    FROM DbMigrationsRun");
+                    FROM DbMigrationsRun")
+                .ToString());
 
-        _ = actual.Should().HaveSameCount(otherCollection: expectedRows);
-        _ = actual.Should().Contain(expected: expectedRows);
+        _ = actual.Should().HaveSameCount(expectedRows);
+        _ = actual.Should().Contain(expectedRows);
 
         return true;
     }
@@ -35,15 +42,17 @@ public static class IntegrationTestHelper
     public static bool CheckMigrationsTablePostgresSever(string connectionString,
        List<DbMigrationsRunRowPostgresServer> expectedRows)
     {
-        using NpgsqlConnection connection = new(connectionString: connectionString);
+        using NpgsqlConnection connection = new(connectionString);
         connection.Open();
 
-        var actual = (List<DbMigrationsRunRowPostgresServer>)connection.Query<DbMigrationsRunRowPostgresServer>(sql: @$"
+        var actual = (List<DbMigrationsRunRowPostgresServer>)connection.Query<DbMigrationsRunRowPostgresServer>(
+            new StringBuilder().Append(@"
                     SELECT Id, Executed, Filename, Version 
-                    FROM DbMigrationsRun");
+                    FROM DbMigrationsRun")
+                .ToString());
 
-        _ = actual.Should().HaveSameCount(otherCollection: expectedRows);
-        _ = actual.Should().Contain(expected: expectedRows);
+        _ = actual.Should().HaveSameCount(expectedRows);
+        _ = actual.Should().Contain(expectedRows);
 
         return true;
     }
@@ -51,7 +60,7 @@ public static class IntegrationTestHelper
     public static string GenerateRandomDatabaseName()
     {
    //     string result = Guid.NewGuid().ToString().Replace("-", "");
-        string result = "test" + new Random().Next(minValue: 100000, maxValue: 999999) ;
+        string result = new StringBuilder().Append("test").Append(new Random().Next(100000, 999999)).ToString();
         return result;
     }
 }

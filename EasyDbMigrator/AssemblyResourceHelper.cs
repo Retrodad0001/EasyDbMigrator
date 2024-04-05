@@ -3,39 +3,49 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace EasyDbMigrator;
 
+/// <summary>
+/// Helps to get script files embedded in an assembly
+/// </summary>
 [ExcludeFromCodeCoverage] //is tested with integrationTest
 public sealed class AssemblyResourceHelper : IAssemblyResourceHelper
 {
+    /// <summary>
+    /// Gets the scripts from the assembly where the type of the class is located.
+    /// </summary>
+    /// <param name="typeOfClassWhereScriptsAreLocated"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<List<Script>> TryGetScriptsFromAssembly(Type typeOfClassWhereScriptsAreLocated)
     {
-        var assembly = Assembly.GetAssembly(type: typeOfClassWhereScriptsAreLocated);
+        Assembly? assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
 
-        if (assembly is null)
-        {
-            throw new InvalidOperationException(message: $"assembly is null for custom-class : {typeOfClassWhereScriptsAreLocated}");
-        }
+        string[] filenames = TryGetManifestResourceNamesFromAssembly(typeOfClassWhereScriptsAreLocated);
 
-        string[] filenames = TryGetManifestResourceNamesFromAssembly(typeOfClassWhereScriptsAreLocated: typeOfClassWhereScriptsAreLocated);
-
-        List<Script> scripts = new();
+        List<Script> scripts = new(filenames.Length);
         foreach (string filename in filenames)
         {
-            await using var stream = assembly.GetManifestResourceStream(name: filename);
+            await using Stream? stream = assembly?.GetManifestResourceStream(filename);
+#pragma warning disable IDE0270
             if (stream is null)
+#pragma warning restore IDE0270
             {
-                throw new InvalidOperationException(message: $"steam cannot be null for resource name: {filename}");
+                throw new InvalidOperationException(new StringBuilder()
+                    .Append("steam cannot be null for resource name: ")
+                    .Append(filename)
+                    .ToString());
             }
 
-            using StreamReader reader = new(stream: stream);
-            string filenameWithNoNamespaces = RemoveTheNamespaceFromName(filename: filename);
+            using StreamReader reader = new(stream);
+            string filenameWithNoNamespaces = RemoveTheNamespaceFromName(filename);
 
-            string sqlScriptContent = await reader.ReadToEndAsync().ConfigureAwait(continueOnCapturedContext: false);
-            Script newScript = new(filename: filenameWithNoNamespaces, content: sqlScriptContent);
-            scripts.Add(item: newScript);
+            string sqlScriptContent = await reader.ReadToEndAsync().ConfigureAwait(false);
+            Script newScript = new(filenameWithNoNamespaces, sqlScriptContent);
+            scripts.Add(newScript);
         }
 
         return scripts;
@@ -43,11 +53,15 @@ public sealed class AssemblyResourceHelper : IAssemblyResourceHelper
 
     private static string[] TryGetManifestResourceNamesFromAssembly(Type typeOfClassWhereScriptsAreLocated)
     {
-        var assembly = Assembly.GetAssembly(type: typeOfClassWhereScriptsAreLocated);
+        Assembly? assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
 
-        if (assembly == null)
+#pragma warning disable IDE0270
+        if (assembly is null)
+#pragma warning restore IDE0270
         {
-            throw new InvalidOperationException(message: $"assembly is null for custom-class: {typeOfClassWhereScriptsAreLocated}");
+            throw new InvalidOperationException(new StringBuilder().Append("assembly is null for custom-class: ")
+                .Append(typeOfClassWhereScriptsAreLocated)
+                .ToString());
         }
 
         string[] resourceNames = assembly.GetManifestResourceNames();
@@ -56,8 +70,9 @@ public sealed class AssemblyResourceHelper : IAssemblyResourceHelper
 
     private static string RemoveTheNamespaceFromName(string filename)
     {
-        string[] split = filename.Split(separator: ".");
-        string filenameWithNoNamespaces = split[^2] + "." + split[^1];
+        string[] split = filename.Split(".");
+        string filenameWithNoNamespaces =
+            new StringBuilder().Append(split[^2]).Append('.').Append(split[^1]).ToString();
         return filenameWithNoNamespaces;
     }
 }

@@ -1,4 +1,6 @@
 ﻿// Ignore Spelling: versioning Migrator
+// ReSharper disable HeapView.ObjectAllocation
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using EasyDbMigrator;
 using EasyDbMigrator.DatabaseConnectors;
@@ -10,9 +12,11 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+
 
 namespace EasyDbMigratorTests.Unittests;
 
@@ -22,17 +26,17 @@ public class DbMigratorTests
     [Fact]
     public void When_constructing_the_parameter_DirectoryHelper_Should_be_provided()
     {
-        var act = () =>
+        Action? act = () =>
         {
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             Mock<IDataTimeHelper> datetimeHelperMock = new();
 
-            DbMigrator unused = new(logger: loggerMock.Object
-                , databaseConnector: new MicrosoftSqlConnector()
-                , assemblyResourceHelper: new AssemblyResourceHelper()
-                , directoryHelper: null!
-                , dataTimeHelper: datetimeHelperMock.Object);
+            DbMigrator unused = new(loggerMock.Object
+                , new MicrosoftSqlConnector()
+                , new AssemblyResourceHelper()
+                , null!
+                , datetimeHelperMock.Object);
         };
 
         _ = act.Should().Throw<ArgumentNullException>();
@@ -41,18 +45,18 @@ public class DbMigratorTests
     [Fact]
     public void When_constructing_the_parameter_connector_Should_be_provided()
     {
-        var act = () =>
+        Action? act = () =>
         {
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             Mock<IDataTimeHelper> datetimeHelperMock = new();
             IDirectoryHelper directoryHelper = new DirectoryHelper();
 
-            DbMigrator unused = new(logger: loggerMock.Object
-                , databaseConnector: null!
-                , assemblyResourceHelper: new AssemblyResourceHelper()
-                , directoryHelper: directoryHelper
-                , dataTimeHelper: datetimeHelperMock.Object);
+            DbMigrator unused = new(loggerMock.Object
+                , null!
+                , new AssemblyResourceHelper()
+                , directoryHelper
+                , datetimeHelperMock.Object);
         };
 
         _ = act.Should().Throw<ArgumentNullException>();
@@ -61,17 +65,17 @@ public class DbMigratorTests
     [Fact]
     public void When_constructing_the_parameter_assemblyResourceHelper_should_be_provided()
     {
-        var act = () =>
+        Action? act = () =>
         {
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             Mock<IDataTimeHelper> datetimeHelperMock = new();
             IDirectoryHelper directoryHelper = new DirectoryHelper();
 
-            DbMigrator unused = new(logger: loggerMock.Object
-                , databaseConnector: new MicrosoftSqlConnector()
-                , assemblyResourceHelper: null!
-                , directoryHelper: directoryHelper
-                , dataTimeHelper: datetimeHelperMock.Object);
+            DbMigrator unused = new(loggerMock.Object
+                , new MicrosoftSqlConnector()
+                , null!
+                , directoryHelper
+                , datetimeHelperMock.Object);
         };
 
         _ = act.Should().Throw<ArgumentNullException>();
@@ -80,16 +84,16 @@ public class DbMigratorTests
     [Fact]
     public void When_constructing_the_parameter_logger_should_be_provided()
     {
-        var act = () =>
+        Action? act = () =>
         {
             Mock<IDataTimeHelper> datetimeHelperMock = new();
             IDirectoryHelper directoryHelper = new DirectoryHelper();
 
-            DbMigrator unused = new(logger: null!
-                , databaseConnector: new MicrosoftSqlConnector()
-                , assemblyResourceHelper: new AssemblyResourceHelper()
-                , directoryHelper: directoryHelper
-                , dataTimeHelper: datetimeHelperMock.Object);
+            DbMigrator unused = new(null!
+                , new MicrosoftSqlConnector()
+                , new AssemblyResourceHelper()
+                , directoryHelper
+                , datetimeHelperMock.Object);
         };
 
         _ = act.Should().Throw<ArgumentNullException>();
@@ -98,16 +102,16 @@ public class DbMigratorTests
     [Fact]
     public void When_constructing_the_parameter_dataTimeHelper_should_be_provided()
     {
-        var act = () =>
+        Action? act = () =>
         {
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             IDirectoryHelper directoryHelper = new DirectoryHelper();
 
-            DbMigrator unused = new(logger: loggerMock.Object
-                , databaseConnector: new MicrosoftSqlConnector()
-                , assemblyResourceHelper: new AssemblyResourceHelper()
-                , directoryHelper: directoryHelper
-                , dataTimeHelper: null!);
+            DbMigrator unused = new(loggerMock.Object
+                , new MicrosoftSqlConnector()
+                , new AssemblyResourceHelper()
+                , directoryHelper
+                , null!);
         };
 
         _ = act.Should().Throw<ArgumentNullException>();
@@ -116,15 +120,15 @@ public class DbMigratorTests
     [Fact]
     public void When_using_the_create_method_happy_flow()
     {
-        var act = () =>
+        Action? act = () =>
         {
-            MigrationConfiguration config = new(connectionString: "connection string"
-                , databaseName: "databaseName");
+            MigrationConfiguration config = new("connection string"
+                , "databaseName");
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-            var unused = DbMigrator.Create(migrationConfiguration: config
-                , logger: loggerMock.Object
-                , databaseConnector: new MicrosoftSqlConnector());
+            DbMigrator? unused = DbMigrator.Create(config
+                , loggerMock.Object
+                , new MicrosoftSqlConnector());
         };
 
         _ = act.Should().NotThrow<ArgumentNullException>();
@@ -134,13 +138,13 @@ public class DbMigratorTests
     [Fact]
     public void When_using_the_create_method_the_ILogger_Should_be_provided()
     {
-        var act = () =>
+        Action? act = () =>
         {
-            MigrationConfiguration config = new(connectionString: "connection string"
-                , databaseName: "databaseName");
-            DbMigrator.Create(migrationConfiguration: config
-                , logger: null!
-                , databaseConnector: new PostgreSqlConnector());
+            MigrationConfiguration config = new("connection string"
+                , "databaseName");
+            DbMigrator.Create(config
+                , null!
+                , new PostgreSqlConnector());
         };
 
         _ = act.Should().Throw<ArgumentNullException>();
@@ -149,12 +153,12 @@ public class DbMigratorTests
     [Fact]
     public void When_using_the_create_method_the_MigrationConfiguration_should_be_provided()
     {
-        var act = () =>
+        Action? act = () =>
         {
             var loggerMock = new Mock<ILogger<DbMigrator>>();
-            var unused = DbMigrator.Create(migrationConfiguration: null!
-                , logger: loggerMock.Object
-                , databaseConnector: new MicrosoftSqlConnector());
+            DbMigrator? unused = DbMigrator.Create(null!
+                , loggerMock.Object
+                , new MicrosoftSqlConnector());
         };
 
         _ = act.Should().Throw<ArgumentNullException>();
@@ -163,14 +167,14 @@ public class DbMigratorTests
     [Fact]
     public void When_using_the_create_method_the_IDatabaseConnector_should_be_provided()
     {
-        var act = () =>
+        Action? act = () =>
         {
-            MigrationConfiguration config = new(connectionString: "connection string"
-              , databaseName: "databaseName");
+            MigrationConfiguration config = new("connection string"
+              , "databaseName");
             var loggerMock = new Mock<ILogger<DbMigrator>>();
-            var unused = DbMigrator.Create(migrationConfiguration: config
-                , logger: loggerMock.Object
-                , databaseConnector: null!);
+            DbMigrator? unused = DbMigrator.Create(config
+                , loggerMock.Object
+                , null!);
         };
 
         _ = act.Should().Throw<ArgumentNullException>();
@@ -179,17 +183,17 @@ public class DbMigratorTests
     [Fact]
     public void When_using_the_CreateForLocalIntegrationTesting_method_happy_flow()
     {
-        var act = () =>
+        Action? act = () =>
         {
-            MigrationConfiguration config = new(connectionString: "connection string"
-                , databaseName: "databaseName");
+            MigrationConfiguration config = new("connection string"
+                , "databaseName");
             var loggerMock = new Mock<ILogger<DbMigrator>>();
 
             Mock<IDataTimeHelper> dataTimeHelperMock = new();
-            DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
-                , logger: loggerMock.Object
-                , dataTimeHelperMock: dataTimeHelperMock.Object
-                , databaseConnector: new MicrosoftSqlConnector());
+            DbMigrator.CreateForLocalIntegrationTesting(config
+                , loggerMock.Object
+                , dataTimeHelperMock.Object
+                , new MicrosoftSqlConnector());
         };
 
         _ = act.Should().NotThrow<ArgumentNullException>();
@@ -199,16 +203,16 @@ public class DbMigratorTests
     [Fact]
     public void When_using_the_CreateForLocalIntegrationTesting_method_the_ILogger_should_be_provided()
     {
-        var act = () =>
+        Action? act = () =>
         {
-            MigrationConfiguration config = new(connectionString: "connection string"
-                , databaseName: "databaseName");
+            MigrationConfiguration config = new("connection string"
+                , "databaseName");
             Mock<IDataTimeHelper> dataTimeHelperMock = new();
 
-            var unused = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
-                , logger: null!
-                , dataTimeHelperMock: dataTimeHelperMock.Object
-                , databaseConnector: new MicrosoftSqlConnector());
+            DbMigrator? unused = DbMigrator.CreateForLocalIntegrationTesting(config
+                , null!
+                , dataTimeHelperMock.Object
+                , new MicrosoftSqlConnector());
         };
 
         _ = act.Should().Throw<ArgumentNullException>();
@@ -217,14 +221,14 @@ public class DbMigratorTests
     [Fact]
     public void When_using_the_CreateForLocalIntegrationTesting_method_the_MigrationConfiguration_Should_be_provided()
     {
-        var act = () =>
+        Action? act = () =>
         {
             var loggerMock = new Mock<ILogger<DbMigrator>>();
             Mock<IDataTimeHelper> dataTimeHelperMock = new();
-            DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: null!
-                , logger: loggerMock.Object
-                , dataTimeHelperMock: dataTimeHelperMock.Object
-                , databaseConnector: new PostgreSqlConnector());
+            DbMigrator.CreateForLocalIntegrationTesting(null!
+                , loggerMock.Object
+                , dataTimeHelperMock.Object
+                , new PostgreSqlConnector());
         };
 
         _ = act.Should().Throw<ArgumentNullException>();
@@ -233,16 +237,16 @@ public class DbMigratorTests
     [Fact]
     public void When_using_the_CreateForLocalIntegrationTesting_method_the_dataTimeHelper_Should_be_provided()
     {
-        var act = () =>
+        Action? act = () =>
         {
-            MigrationConfiguration config = new(connectionString: "connection string"
-                , databaseName: "databaseName");
+            MigrationConfiguration config = new("connection string"
+                , "databaseName");
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
-            DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
-                , logger: loggerMock.Object
-                , dataTimeHelperMock: null!
-                , databaseConnector: new MicrosoftSqlConnector());
+            DbMigrator.CreateForLocalIntegrationTesting(config
+                , loggerMock.Object
+                , null!
+                , new MicrosoftSqlConnector());
         };
 
         _ = act.Should().Throw<ArgumentNullException>();
@@ -251,17 +255,17 @@ public class DbMigratorTests
     [Fact]
     public void When_using_the_CreateForLocalIntegrationTesting_method_the_IDateBaseConnector_should_be_provided()
     {
-        var act = () =>
+        Action? act = () =>
         {
-            MigrationConfiguration config = new(connectionString: "connection string"
-                , databaseName: "databasename");
+            MigrationConfiguration config = new("connection string"
+                , "databasename");
             Mock<IDataTimeHelper> dataTimeHelperMock = new();
 
             var loggerMock = new Mock<ILogger<DbMigrator>>();
-            DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
-                , logger: loggerMock.Object
-                , dataTimeHelperMock: dataTimeHelperMock.Object
-                , databaseConnector: null!);
+            DbMigrator.CreateForLocalIntegrationTesting(config
+                , loggerMock.Object
+                , dataTimeHelperMock.Object
+                , null!);
         };
 
         _ = act.Should().Throw<ArgumentNullException>();
@@ -273,16 +277,17 @@ public class DbMigratorTests
         const string databaseName = "EasyDbMigrator";
         const string connectionString = "connectionString";
 
-        MigrationConfiguration config = new(connectionString: connectionString
-            , databaseName: databaseName);
+        MigrationConfiguration config = new(connectionString
+            , databaseName);
 
-        var someType = typeof(DbMigratorTests);
+        // ReSharper disable once HeapView.ClosureAllocation
+        Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
         var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-        Script script1 = new(filename: "20211230_001_Script1.sql", content: "some content");
-        Script script2 = new(filename: "20211230_002_Script2.sql", content: "some content");
+        Script script1 = new("20211230_001_Script1.sql", "some content");
+        Script script2 = new("20211230_002_Script2.sql", "some content");
         List<Script> scripts = new()
         {
             script1,
@@ -290,53 +295,54 @@ public class DbMigratorTests
         };
 
         var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-        _ = assemblyResourceHelperMock.Setup(expression: m => m.TryGetScriptsFromAssembly(someType)).Returns(valueFunction: () => Task.FromResult(result: scripts));
+        _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
 
         var directoryHelperMock = new Mock<IDirectoryHelper>();
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
-            , It.IsAny<CancellationToken>())).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+        _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+            , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()
-          )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+          )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()
-           )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+           )).ReturnsAsync(new Result<bool>(true));
 
-        Result<RunMigrationResult> resultRunMigrations = new(wasSuccessful: true);
-        _ = databaseConnectorMock.Setup(expression: x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
+        Result<RunMigrationResult> resultRunMigrations = new(true);
+        _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<Script>()
                 , It.IsAny<DateTimeOffset>()
-                , It.IsAny<CancellationToken>())).ReturnsAsync(value: resultRunMigrations);
+                , It.IsAny<CancellationToken>())).ReturnsAsync(resultRunMigrations);
 
-        DateTimeOffset executedDataTime = new DateTime(year: 2021, month: 12, day: 31, hour: 2, minute: 16, second: 0);
+        DateTimeOffset executedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
         Mock<IDataTimeHelper> datetimeHelperMock = new();
-        _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
+        _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
 
-        DbMigrator migrator = new(logger: loggerMock.Object
-            , databaseConnector: databaseConnectorMock.Object
-            , assemblyResourceHelper: assemblyResourceHelperMock.Object
-            , directoryHelper: directoryHelperMock.Object
-            , dataTimeHelper: datetimeHelperMock.Object);
+        DbMigrator migrator = new(loggerMock.Object
+            , databaseConnectorMock.Object
+            , assemblyResourceHelperMock.Object
+            , directoryHelperMock.Object
+            , datetimeHelperMock.Object);
 
-        bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
-            , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None);
+        bool result = await migrator.TryApplyMigrationsAsync(someType
+            , config
+            , CancellationToken.None);
 
         _ = result.Should().BeTrue();
 
         _ = loggerMock
-            .CheckIfLoggerWasCalled(expectedMessage: "start running migrations for database: EasyDbMigrator", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: $"connection-string used: {connectionString}", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "setup database executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "setup versioning table executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "Total scripts found: 2", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_001_Script1.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_002_Script2.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "migration process executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+            .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled(
+                new StringBuilder().Append("connection-string used: ").Append(connectionString).ToString(), LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("setup versioning table executed successfully", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("Total scripts found: 2", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("script: 20211230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), false);
     }
 
     [Fact]
@@ -345,19 +351,19 @@ public class DbMigratorTests
         const string databaseName = "EasyDbMigrator";
         const string connectionString = "connectionString";
 
-        MigrationConfiguration config = new(connectionString: connectionString
-            , databaseName: databaseName
-            , scriptsDirectory: "some directory");
+        MigrationConfiguration config = new(connectionString
+            , databaseName
+            , "some directory");
 
-        var someType = typeof(DbMigratorTests);
+        Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
         var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-        // ReSharper disable once StringLiteralTypo
-        Script script1 = new(filename: @"20211230_001_Scripta.sql", content: "some content");
-        // ReSharper disable once StringLiteralTypo
-        Script script2 = new(filename: @"20211230_002_Scriptb.sql", content: "some content");
+        Script script1 = new("20211230_001_Scripta.sql", "some content");
+        Script script2 = new("20211230_002_Scriptb.sql", "some content");
+
+        // ReSharper disable once HeapView.ClosureAllocation
         List<Script> scripts = new()
         {
             script1,
@@ -367,53 +373,54 @@ public class DbMigratorTests
         var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
 
         var directoryHelperMock = new Mock<IDirectoryHelper>();
-        _ = directoryHelperMock.Setup(expression: m => m.TryGetScriptsFromDirectoryAsync(It.IsAny<string>())).ReturnsAsync(valueFunction: () => scripts);
+        _ = directoryHelperMock.Setup(m => m.TryGetScriptsFromDirectoryAsync(It.IsAny<string>())).ReturnsAsync(() => scripts);
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
-            , It.IsAny<CancellationToken>())).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+        _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+            , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()
-          )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+          )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()
-           )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+           )).ReturnsAsync(new Result<bool>(true));
 
-        Result<RunMigrationResult> resultRunMigrations = new(wasSuccessful: true);
-        _ = databaseConnectorMock.Setup(expression: x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
+        Result<RunMigrationResult> resultRunMigrations = new(true);
+        _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<Script>()
                 , It.IsAny<DateTimeOffset>()
-                , It.IsAny<CancellationToken>())).ReturnsAsync(value: resultRunMigrations);
+                , It.IsAny<CancellationToken>())).ReturnsAsync(resultRunMigrations);
 
-        DateTimeOffset executedDataTime = new DateTime(year: 2021, month: 12, day: 31, hour: 2, minute: 16, second: 0);
+        DateTimeOffset executedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
         Mock<IDataTimeHelper> datetimeHelperMock = new();
-        _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
+        _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
 
-        DbMigrator migrator = new(logger: loggerMock.Object
-            , databaseConnector: databaseConnectorMock.Object
-            , assemblyResourceHelper: assemblyResourceHelperMock.Object
-            , directoryHelper: directoryHelperMock.Object
-            , dataTimeHelper: datetimeHelperMock.Object);
+        DbMigrator migrator = new(loggerMock.Object
+            , databaseConnectorMock.Object
+            , assemblyResourceHelperMock.Object
+            , directoryHelperMock.Object
+            , datetimeHelperMock.Object);
 
-        bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
-            , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None);
+        bool result = await migrator.TryApplyMigrationsAsync(someType
+            , config
+            , CancellationToken.None);
 
         _ = result.Should().BeTrue();
 
         _ = loggerMock
-            .CheckIfLoggerWasCalled(expectedMessage: "start running migrations for database: EasyDbMigrator", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: $"connection-string used: {connectionString}", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "setup database executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "setup versioning table executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "Total scripts found: 2", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
+            .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled(
+                new StringBuilder().Append("connection-string used: ").Append(connectionString).ToString(), LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("setup versioning table executed successfully", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("Total scripts found: 2", LogLevel.Information, Times.Exactly(1), false)
             // ReSharper disable once StringLiteralTypo
-            .CheckIfLoggerWasCalled(expectedMessage: @"script: 20211230_001_Scripta.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
+            .CheckIfLoggerWasCalled("script: 20211230_001_Scripta.sql was run", LogLevel.Information, Times.Exactly(1), false)
             // ReSharper disable once StringLiteralTypo
-            .CheckIfLoggerWasCalled(expectedMessage: @"script: 20211230_002_Scriptb.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "migration process executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+            .CheckIfLoggerWasCalled("script: 20211230_002_Scriptb.sql was run", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), false);
     }
 
     [Fact]
@@ -421,16 +428,17 @@ public class DbMigratorTests
     {
         const string databaseName = "EasyDbMigrator";
 
-        MigrationConfiguration config = new(connectionString: "connection"
-            , databaseName: databaseName);
+        MigrationConfiguration config = new("connection"
+            , databaseName);
 
-        var someType = typeof(DbMigratorTests);
+        // ReSharper disable once HeapView.ClosureAllocation
+        Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
         var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-        Script script1 = new(filename: "20211230_001_Script1.sql", content: "some content");
-        Script script2 = new(filename: "20211230_002_Script2.sql", content: "some content");
+        Script script1 = new("20211230_001_Script1.sql", "some content");
+        Script script2 = new("20211230_002_Script2.sql", "some content");
         List<Script> scripts = new()
         {
             script1,
@@ -438,51 +446,51 @@ public class DbMigratorTests
         };
 
         var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-        _ = assemblyResourceHelperMock.Setup(expression: m => m.TryGetScriptsFromAssembly(someType)).Returns(valueFunction: () => Task.FromResult(result: scripts));
+        _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
 
         var directoryHelperMock = new Mock<IDirectoryHelper>();
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
-            , It.IsAny<CancellationToken>())).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+        _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+            , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()
-          )).ReturnsAsync(value: new Result<bool>(wasSuccessful: false, exception: new Exception()));
+          )).ReturnsAsync(new Result<bool>(false, new Exception()));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()
-           )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+           )).ReturnsAsync(new Result<bool>(true));
 
-        Result<RunMigrationResult> resultRunMigrations = new(wasSuccessful: true);
-        _ = databaseConnectorMock.Setup(expression: x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
+        Result<RunMigrationResult> resultRunMigrations = new(true);
+        _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<Script>()
                 , It.IsAny<DateTimeOffset>()
-                , It.IsAny<CancellationToken>())).ReturnsAsync(value: resultRunMigrations);
+                , It.IsAny<CancellationToken>())).ReturnsAsync(resultRunMigrations);
 
-        DateTimeOffset executedDataTime = new DateTime(year: 2021, month: 12, day: 31, hour: 2, minute: 16, second: 0);
+        DateTimeOffset executedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
         Mock<IDataTimeHelper> datetimeHelperMock = new();
-        _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
+        _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
 
-        DbMigrator migrator = new(logger: loggerMock.Object
-            , databaseConnector: databaseConnectorMock.Object
-            , assemblyResourceHelper: assemblyResourceHelperMock.Object
-            , directoryHelper: directoryHelperMock.Object
-            , dataTimeHelper: datetimeHelperMock.Object);
+        DbMigrator migrator = new(loggerMock.Object
+            , databaseConnectorMock.Object
+            , assemblyResourceHelperMock.Object
+            , directoryHelperMock.Object
+            , datetimeHelperMock.Object);
 
-        bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
-            , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None);
+        bool result = await migrator.TryApplyMigrationsAsync(someType
+            , config
+            , CancellationToken.None);
 
         _ = result.Should().BeFalse();
 
         _ = loggerMock
-            .CheckIfLoggerWasCalled(expectedMessage: "start running migrations for database: EasyDbMigrator", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "setup database executed with errors", expectedLogLevel: LogLevel.Error, times: Times.Exactly(callCount: 1), checkExceptionNotNull: true)
-            .CheckIfLoggerWasCalled(expectedMessage: "setup DbMigrationsRun when there is none executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Never(), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "script: 20212230_001_Script1.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Never(), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "script: 20212230_002_Script2.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Never(), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "migration process executed with errors", expectedLogLevel: LogLevel.Error, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+            .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("setup database executed with errors", LogLevel.Error, Times.Exactly(1), true)
+            .CheckIfLoggerWasCalled("setup DbMigrationsRun when there is none executed successfully", LogLevel.Information, Times.Never(), false)
+            .CheckIfLoggerWasCalled("script: 20212230_001_Script1.sql was run", LogLevel.Information, Times.Never(), false)
+            .CheckIfLoggerWasCalled("script: 20212230_002_Script2.sql was run", LogLevel.Information, Times.Never(), false)
+            .CheckIfLoggerWasCalled("migration process executed with errors", LogLevel.Error, Times.Exactly(1), false);
     }
 
 
@@ -491,59 +499,59 @@ public class DbMigratorTests
     {
         const string databaseName = "EasyDbMigrator";
 
-        MigrationConfiguration config = new(connectionString: "connection"
-            , databaseName: databaseName);
+        MigrationConfiguration config = new("connection"
+            , databaseName);
 
-        var someType = typeof(DbMigratorTests);
+        Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
         var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
         var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-        _ = assemblyResourceHelperMock.Setup(expression: x => x.TryGetScriptsFromAssembly(It.IsAny<Type>())).Throws(exception: new ArgumentException());
+        _ = assemblyResourceHelperMock.Setup(x => x.TryGetScriptsFromAssembly(It.IsAny<Type>())).Throws(new ArgumentException());
 
         var directoryHelperMock = new Mock<IDirectoryHelper>();
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
-            , It.IsAny<CancellationToken>())).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+        _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+            , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()
-          )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+          )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()
-           )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+           )).ReturnsAsync(new Result<bool>(true));
 
-        Result<RunMigrationResult> resultRunMigrations = new(wasSuccessful: true);
-        _ = databaseConnectorMock.Setup(expression: x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
+        Result<RunMigrationResult> resultRunMigrations = new(true);
+        _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<Script>()
                 , It.IsAny<DateTimeOffset>()
-                , It.IsAny<CancellationToken>())).ReturnsAsync(value: resultRunMigrations);
+                , It.IsAny<CancellationToken>())).ReturnsAsync(resultRunMigrations);
 
-        DateTimeOffset executedDataTime = new DateTime(year: 2021, month: 12, day: 31, hour: 2, minute: 16, second: 0);
+        DateTimeOffset executedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
         Mock<IDataTimeHelper> datetimeHelperMock = new();
-        _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
+        _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
 
-        DbMigrator migrator = new(logger: loggerMock.Object
-            , databaseConnector: databaseConnectorMock.Object
-            , assemblyResourceHelper: assemblyResourceHelperMock.Object
-            , directoryHelper: directoryHelperMock.Object
-            , dataTimeHelper: datetimeHelperMock.Object);
+        DbMigrator migrator = new(loggerMock.Object
+            , databaseConnectorMock.Object
+            , assemblyResourceHelperMock.Object
+            , directoryHelperMock.Object
+            , datetimeHelperMock.Object);
 
-        bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
-            , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None);
+        bool result = await migrator.TryApplyMigrationsAsync(someType
+            , config
+            , CancellationToken.None);
 
         _ = result.Should().BeFalse();
 
         _ = loggerMock
-            .CheckIfLoggerWasCalled(expectedMessage: "start running migrations for database: EasyDbMigrator", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "setup versioning table executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "Total scripts found: 2", expectedLogLevel: LogLevel.Information, times: Times.Never(), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "One or more scripts could not be loaded, is the sequence patterns correct?", expectedLogLevel: LogLevel.Error, times: Times.Exactly(callCount: 1), checkExceptionNotNull: true)
-            .CheckIfLoggerWasCalled(expectedMessage: "migration process executed with errors", expectedLogLevel: LogLevel.Error, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+            .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("setup versioning table executed successfully", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("Total scripts found: 2", LogLevel.Information, Times.Never(), false)
+            .CheckIfLoggerWasCalled("One or more scripts could not be loaded, is the sequence patterns correct?", LogLevel.Error, Times.Exactly(1), true)
+            .CheckIfLoggerWasCalled("migration process executed with errors", LogLevel.Error, Times.Exactly(1), false);
     }
 
     [Fact]
@@ -551,16 +559,17 @@ public class DbMigratorTests
     {
         const string databaseName = "EasyDbMigrator";
 
-        MigrationConfiguration config = new(connectionString: "connection"
-            , databaseName: databaseName);
+        MigrationConfiguration config = new("connection"
+            , databaseName);
 
-        var someType = typeof(DbMigratorTests);
+        // ReSharper disable once HeapView.ClosureAllocation
+        Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
         var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-        Script script1 = new(filename: "20211230_001_Script1.sql", content: "some content");
-        Script script2 = new(filename: "20211230_002_Script2.sql", content: "some content");
+        Script script1 = new("20211230_001_Script1.sql", "some content");
+        Script script2 = new("20211230_002_Script2.sql", "some content");
         List<Script> scripts = new()
         {
             script1,
@@ -568,51 +577,51 @@ public class DbMigratorTests
         };
 
         var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-        _ = assemblyResourceHelperMock.Setup(expression: m => m.TryGetScriptsFromAssembly(someType)).Returns(valueFunction: () => Task.FromResult(result: scripts));
+        _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
 
         var directoryHelperMock = new Mock<IDirectoryHelper>();
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
-            , It.IsAny<CancellationToken>())).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+        _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+            , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()
-          )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+          )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()
-           )).ReturnsAsync(value: new Result<bool>(wasSuccessful: false, exception: new Exception()));
+           )).ReturnsAsync(new Result<bool>(false, new Exception()));
 
-        Result<RunMigrationResult> resultRunMigrations = new(wasSuccessful: true);
-        _ = databaseConnectorMock.Setup(expression: x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
+        Result<RunMigrationResult> resultRunMigrations = new(true);
+        _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<Script>()
                 , It.IsAny<DateTimeOffset>()
                 , It.IsAny<CancellationToken>()
-                )).ReturnsAsync(value: resultRunMigrations);
+                )).ReturnsAsync(resultRunMigrations);
 
-        DateTimeOffset executedDataTime = new DateTime(year: 2021, month: 12, day: 31, hour: 2, minute: 16, second: 0);
+        DateTimeOffset executedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
         Mock<IDataTimeHelper> datetimeHelperMock = new();
-        _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
+        _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
 
-        DbMigrator migrator = new(logger: loggerMock.Object
-            , databaseConnector: databaseConnectorMock.Object
-            , assemblyResourceHelper: assemblyResourceHelperMock.Object
-            , directoryHelper: directoryHelperMock.Object
-            , dataTimeHelper: datetimeHelperMock.Object);
+        DbMigrator migrator = new(loggerMock.Object
+            , databaseConnectorMock.Object
+            , assemblyResourceHelperMock.Object
+            , directoryHelperMock.Object
+            , datetimeHelperMock.Object);
 
-        bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
-            , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None);
+        bool result = await migrator.TryApplyMigrationsAsync(someType
+            , config
+            , CancellationToken.None);
 
         _ = result.Should().BeFalse();
 
         _ = loggerMock
-           .CheckIfLoggerWasCalled(expectedMessage: "setup database executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-           .CheckIfLoggerWasCalled(expectedMessage: "setup versioning table executed with errors", expectedLogLevel: LogLevel.Error, times: Times.Exactly(callCount: 1), checkExceptionNotNull: true)
-           .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_001_Script1.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Never(), checkExceptionNotNull: false)
-           .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_002_Script2.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Never(), checkExceptionNotNull: false)
-           .CheckIfLoggerWasCalled(expectedMessage: "migration process executed with errors", expectedLogLevel: LogLevel.Error, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+           .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
+           .CheckIfLoggerWasCalled("setup versioning table executed with errors", LogLevel.Error, Times.Exactly(1), true)
+           .CheckIfLoggerWasCalled("script: 20211230_001_Script1.sql was run", LogLevel.Information, Times.Never(), false)
+           .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was run", LogLevel.Information, Times.Never(), false)
+           .CheckIfLoggerWasCalled("migration process executed with errors", LogLevel.Error, Times.Exactly(1), false);
     }
 
     [Fact]
@@ -620,16 +629,17 @@ public class DbMigratorTests
     {
         const string databaseName = "EasyDbMigrator";
 
-        MigrationConfiguration config = new(connectionString: "connection"
-            , databaseName: databaseName);
+        MigrationConfiguration config = new("connection"
+            , databaseName);
 
-        var someType = typeof(DbMigratorTests);
+        // ReSharper disable once HeapView.ClosureAllocation
+        Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-        Script script1 = new(filename: "20211230_001_Script1.sql", content: "some content");
-        Script script2 = new(filename: "20211230_002_Script2.sql", content: "some content");
-        Script script3 = new(filename: "20211230_003_Script3.sql", content: "some content");
+        Script script1 = new("20211230_001_Script1.sql", "some content");
+        Script script2 = new("20211230_002_Script2.sql", "some content");
+        Script script3 = new("20211230_003_Script3.sql", "some content");
         List<Script> scripts = new()
         {
             script1,
@@ -638,62 +648,62 @@ public class DbMigratorTests
         };
 
         var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-        _ = assemblyResourceHelperMock.Setup(expression: m => m.TryGetScriptsFromAssembly(someType)).Returns(valueFunction: () => Task.FromResult(result: scripts));
+        _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
 
         var directoryHelperMock = new Mock<IDirectoryHelper>();
 
         var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
           , It.IsAny<CancellationToken>()
-          )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+          )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
              , It.IsAny<CancellationToken>()
-          )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+          )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
              , It.IsAny<CancellationToken>()
-           )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+           )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.SetupSequence(expression: x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<Script>()
                 , It.IsAny<DateTimeOffset>()
                 , It.IsAny<CancellationToken>()))
-            .ReturnsAsync(value: new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.MigrationScriptExecuted))
-            .ReturnsAsync(value: new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted, exception: new Exception()));
+            .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted))
+            .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted, new Exception()));
 
-        DateTimeOffset executedDataTime = new DateTime(year: 2021, month: 12, day: 31, hour: 2, minute: 16, second: 0);
+        DateTimeOffset executedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
         Mock<IDataTimeHelper> datetimeHelperMock = new();
-        _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
+        _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
 
-        DbMigrator migrator = new(logger: loggerMock.Object
-            , databaseConnector: databaseConnectorMock.Object
-            , assemblyResourceHelper: assemblyResourceHelperMock.Object
-            , directoryHelper: directoryHelperMock.Object
-            , dataTimeHelper: datetimeHelperMock.Object);
+        DbMigrator migrator = new(loggerMock.Object
+            , databaseConnectorMock.Object
+            , assemblyResourceHelperMock.Object
+            , directoryHelperMock.Object
+            , datetimeHelperMock.Object);
 
-        bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType, migrationConfiguration: config, cancellationToken: CancellationToken.None);
+        bool result = await migrator.TryApplyMigrationsAsync(someType, config, CancellationToken.None);
 
         _ = result.Should().BeFalse();
 
         _ = loggerMock
-              .CheckIfLoggerWasCalled(expectedMessage: "start running migrations for database: EasyDbMigrator", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-              .CheckIfLoggerWasCalled(expectedMessage: "setup database executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-              .CheckIfLoggerWasCalled(expectedMessage: "setup versioning table executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-              .CheckIfLoggerWasCalled(expectedMessage: "Total scripts found: 3", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-              .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_001_Script1.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-              .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_002_Script2.sql was not completed due to exception", expectedLogLevel: LogLevel.Error, times: Times.Exactly(callCount: 1), checkExceptionNotNull: true)
-              .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_003_Script3.sql was skipped due to exception in previous script", expectedLogLevel: LogLevel.Warning, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-              .CheckIfLoggerWasCalled(expectedMessage: "migration process executed with errors", expectedLogLevel: LogLevel.Error, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+              .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
+              .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
+              .CheckIfLoggerWasCalled("setup versioning table executed successfully", LogLevel.Information, Times.Exactly(1), false)
+              .CheckIfLoggerWasCalled("Total scripts found: 3", LogLevel.Information, Times.Exactly(1), false)
+              .CheckIfLoggerWasCalled("script: 20211230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), false)
+              .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was not completed due to exception", LogLevel.Error, Times.Exactly(1), true)
+              .CheckIfLoggerWasCalled("script: 20211230_003_Script3.sql was skipped due to exception in previous script", LogLevel.Warning, Times.Exactly(1), false)
+              .CheckIfLoggerWasCalled("migration process executed with errors", LogLevel.Error, Times.Exactly(1), false);
 
         //check that the 3rd script is skipped because of the error in the previous script so we check here that max 2 db calls are made
-        databaseConnectorMock.Verify(expression: x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
+        databaseConnectorMock.Verify(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<Script>()
             , It.IsAny<DateTimeOffset>()
              , It.IsAny<CancellationToken>())
-        , times: Times.Exactly(callCount: 2));
+        , Times.Exactly(2));
     }
 
     [Fact]
@@ -701,18 +711,19 @@ public class DbMigratorTests
     {
         const string databaseName = "EasyDbMigrator";
         using CancellationTokenSource source = new();
-        var token = source.Token;
+        CancellationToken token = source.Token;
 
-        MigrationConfiguration config = new(connectionString: "connection"
-            , databaseName: databaseName);
+        MigrationConfiguration config = new("connection"
+            , databaseName);
 
-        var someType = typeof(DbMigratorTests);
+        // ReSharper disable once HeapView.ClosureAllocation
+        Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-        Script script1 = new(filename: "20211230_001_Script1.sql", content: "some content");
-        Script script2 = new(filename: "20211230_002_Script2.sql", content: "some content");
-        Script script3 = new(filename: "20211230_003_Script3.sql", content: "some content");
+        Script script1 = new("20211230_001_Script1.sql", "some content");
+        Script script2 = new("20211230_002_Script2.sql", "some content");
+        Script script3 = new("20211230_003_Script3.sql", "some content");
         List<Script> scripts = new()
         {
             script1,
@@ -721,59 +732,59 @@ public class DbMigratorTests
         };
 
         var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-        _ = assemblyResourceHelperMock.Setup(expression: m => m.TryGetScriptsFromAssembly(someType)).Returns(valueFunction: () => Task.FromResult(result: scripts));
+        _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
 
         var directoryHelperMock = new Mock<IDirectoryHelper>();
 
         var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
           , It.IsAny<CancellationToken>()
-          )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+          )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
              , It.IsAny<CancellationToken>()
-          )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+          )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
              , It.IsAny<CancellationToken>()
-           )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+           )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.SetupSequence(expression: x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<Script>()
                 , It.IsAny<DateTimeOffset>()
                 , It.IsAny<CancellationToken>()))
-            .ReturnsAsync(value: new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.MigrationScriptExecuted))
-            .ReturnsAsync(value: new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.MigrationScriptExecuted));
+            .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted))
+            .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted));
 
-        DateTimeOffset executedDataTime = new DateTime(year: 2021, month: 12, day: 31, hour: 2, minute: 16, second: 0);
+        DateTimeOffset executedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
         Mock<IDataTimeHelper> datetimeHelperMock = new();
-        _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
+        _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
 
-        DbMigrator migrator = new(logger: loggerMock.Object
-            , databaseConnector: databaseConnectorMock.Object
-            , assemblyResourceHelper: assemblyResourceHelperMock.Object
-            , directoryHelper: directoryHelperMock.Object
-            , dataTimeHelper: datetimeHelperMock.Object);
+        DbMigrator migrator = new(loggerMock.Object
+            , databaseConnectorMock.Object
+            , assemblyResourceHelperMock.Object
+            , directoryHelperMock.Object
+            , datetimeHelperMock.Object);
 
         source.Cancel();
 
-        bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
-            , migrationConfiguration: config
-            , cancellationToken: token);
+        bool result = await migrator.TryApplyMigrationsAsync(someType
+            , config
+            , token);
 
         _ = result.Should().BeTrue();
 
         _ = loggerMock
-              .CheckIfLoggerWasCalled(expectedMessage: "migration process was canceled from the outside", expectedLogLevel: LogLevel.Warning, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+              .CheckIfLoggerWasCalled("migration process was canceled from the outside", LogLevel.Warning, Times.Exactly(1), false);
 
         //check that the 3rd script is skipped because of the error in the previous script so we check here that max 2 db calls are made
-        databaseConnectorMock.Verify(expression: x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
+        databaseConnectorMock.Verify(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<Script>()
             , It.IsAny<DateTimeOffset>()
              , It.IsAny<CancellationToken>())
-        , times: Times.Exactly(callCount: 0));
+        , Times.Exactly(0));
     }
 
     [Fact]
@@ -781,18 +792,19 @@ public class DbMigratorTests
     {
         const string databaseName = "EasyDbMigrator";
         using CancellationTokenSource source = new();
-        var token = source.Token;
+        CancellationToken token = source.Token;
 
-        MigrationConfiguration config = new(connectionString: "connection"
-            , databaseName: databaseName);
+        MigrationConfiguration config = new("connection"
+            , databaseName);
 
-        var someType = typeof(DbMigratorTests);
+        // ReSharper disable once HeapView.ClosureAllocation
+        Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-        Script script1 = new(filename: "20211230_001_Script1.sql", content: "some content");
-        Script script2 = new(filename: "20211230_002_Script2.sql", content: "some content");
-        Script script3 = new(filename: "20211230_003_Script3.sql", content: "some content");
+        Script script1 = new("20211230_001_Script1.sql", "some content");
+        Script script2 = new("20211230_002_Script2.sql", "some content");
+        Script script3 = new("20211230_003_Script3.sql", "some content");
         List<Script> scripts = new()
         {
             script1,
@@ -801,63 +813,63 @@ public class DbMigratorTests
         };
 
         var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-        _ = assemblyResourceHelperMock.Setup(expression: m => m.TryGetScriptsFromAssembly(someType)).Returns(valueFunction: () => Task.FromResult(result: scripts));
+        _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
 
         var directoryHelperMock = new Mock<IDirectoryHelper>();
 
         var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
           , It.IsAny<CancellationToken>()
-          )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+          )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
              , It.IsAny<CancellationToken>()
-          )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+          )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
              , It.IsAny<CancellationToken>()
-           )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+           )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.SetupSequence(expression: x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<Script>()
                 , It.IsAny<DateTimeOffset>()
                 , It.IsAny<CancellationToken>()))
-            .ReturnsAsync(value: new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.MigrationScriptExecuted))
-            .ReturnsAsync(value: new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.MigrationWasCancelled, exception: new Exception()));
+            .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted))
+            .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.MigrationWasCancelled, new Exception()));
 
-        DateTimeOffset executedDataTime = new DateTime(year: 2021, month: 12, day: 31, hour: 2, minute: 16, second: 0);
+        DateTimeOffset executedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
         Mock<IDataTimeHelper> datetimeHelperMock = new();
-        _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
+        _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
 
-        DbMigrator migrator = new(logger: loggerMock.Object
-            , databaseConnector: databaseConnectorMock.Object
-            , assemblyResourceHelper: assemblyResourceHelperMock.Object
-            , directoryHelper: directoryHelperMock.Object
-            , dataTimeHelper: datetimeHelperMock.Object);
+        DbMigrator migrator = new(loggerMock.Object
+            , databaseConnectorMock.Object
+            , assemblyResourceHelperMock.Object
+            , directoryHelperMock.Object
+            , datetimeHelperMock.Object);
 
-        bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
-                , migrationConfiguration: config
-                , cancellationToken: token);
+        bool result = await migrator.TryApplyMigrationsAsync(someType
+                , config
+                , token);
 
         _ = result.Should().BeFalse();
 
         _ = loggerMock
-              .CheckIfLoggerWasCalled(expectedMessage: "start running migrations for database: EasyDbMigrator", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-              .CheckIfLoggerWasCalled(expectedMessage: "setup database executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-              .CheckIfLoggerWasCalled(expectedMessage: "setup versioning table executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-              .CheckIfLoggerWasCalled(expectedMessage: "Total scripts found: 3", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-              .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_001_Script1.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-              .CheckIfLoggerWasCalled(expectedMessage: "migration process was canceled", expectedLogLevel: LogLevel.Warning, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-              .CheckIfLoggerWasCalled(expectedMessage: "migration process executed with errors", expectedLogLevel: LogLevel.Error, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+              .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
+              .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
+              .CheckIfLoggerWasCalled("setup versioning table executed successfully", LogLevel.Information, Times.Exactly(1), false)
+              .CheckIfLoggerWasCalled("Total scripts found: 3", LogLevel.Information, Times.Exactly(1), false)
+              .CheckIfLoggerWasCalled("script: 20211230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), false)
+              .CheckIfLoggerWasCalled("migration process was canceled", LogLevel.Warning, Times.Exactly(1), false)
+              .CheckIfLoggerWasCalled("migration process executed with errors", LogLevel.Error, Times.Exactly(1), false);
 
         //check that the 3rd script is skipped because of the error in the previous script so we check here that max 2 db calls are made
-        databaseConnectorMock.Verify(expression: x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
+        databaseConnectorMock.Verify(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<Script>()
             , It.IsAny<DateTimeOffset>()
              , It.IsAny<CancellationToken>())
-        , times: Times.Exactly(callCount: 2));
+        , Times.Exactly(2));
     }
 
     [Fact]
@@ -865,16 +877,17 @@ public class DbMigratorTests
     {
         const string databaseName = "EasyDbMigrator";
 
-        MigrationConfiguration config = new(connectionString: "connection"
-            , databaseName: databaseName);
+        MigrationConfiguration config = new("connection"
+            , databaseName);
 
-        var someType = typeof(DbMigratorTests);
+        // ReSharper disable once HeapView.ClosureAllocation
+        Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
 
-        Script script1 = new(filename: "20211230_001_Script1.sql", content: "some content");
-        Script script2 = new(filename: "20211230_002_Script2.sql", content: "some content");
-        Script script3 = new(filename: "20211230_003_Script3.sql", content: "some content");
+        Script script1 = new("20211230_001_Script1.sql", "some content");
+        Script script2 = new("20211230_002_Script2.sql", "some content");
+        Script script3 = new("20211230_003_Script3.sql", "some content");
         List<Script> scripts = new()
         {
             script1,
@@ -883,57 +896,57 @@ public class DbMigratorTests
         };
 
         var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-        _ = assemblyResourceHelperMock.Setup(expression: m => m.TryGetScriptsFromAssembly(someType)).Returns(valueFunction: () => Task.FromResult(result: scripts));
+        _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
 
         var directoryHelperMock = new Mock<IDirectoryHelper>();
 
         var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
-            , It.IsAny<CancellationToken>())).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+        _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+            , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()
-          )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+          )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()
-           )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+           )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.SetupSequence(expression: x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.SetupSequence(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                  , It.IsAny<Script>()
                  , It.IsAny<DateTimeOffset>()
                  , It.IsAny<CancellationToken>()))
-                 .ReturnsAsync(value: new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.MigrationScriptExecuted))
-                 .ReturnsAsync(value: new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.ScriptSkippedBecauseAlreadyRun))
-                 .ReturnsAsync(value: new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.MigrationScriptExecuted));
+                 .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted))
+                 .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.ScriptSkippedBecauseAlreadyRun))
+                 .ReturnsAsync(new Result<RunMigrationResult>(true, RunMigrationResult.MigrationScriptExecuted));
 
-        DateTimeOffset executedDataTime = new DateTime(year: 2021, month: 12, day: 31, hour: 2, minute: 16, second: 0);
+        DateTimeOffset executedDataTime = new DateTime(2021, 12, 31, 2, 16, 0);
 
         Mock<IDataTimeHelper> datetimeHelperMock = new();
-        _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
+        _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
 
-        DbMigrator migrator = new(logger: loggerMock.Object
-            , databaseConnector: databaseConnectorMock.Object
-            , assemblyResourceHelper: assemblyResourceHelperMock.Object
-            , directoryHelper: directoryHelperMock.Object
-            , dataTimeHelper: datetimeHelperMock.Object);
+        DbMigrator migrator = new(loggerMock.Object
+            , databaseConnectorMock.Object
+            , assemblyResourceHelperMock.Object
+            , directoryHelperMock.Object
+            , datetimeHelperMock.Object);
 
-        bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
-            , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None);
+        bool result = await migrator.TryApplyMigrationsAsync(someType
+            , config
+            , CancellationToken.None);
 
         _ = result.Should().BeTrue();
 
         _ = loggerMock
-             .CheckIfLoggerWasCalled(expectedMessage: "start running migrations for database: EasyDbMigrator", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-             .CheckIfLoggerWasCalled(expectedMessage: "setup database executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-             .CheckIfLoggerWasCalled(expectedMessage: "setup versioning table executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-             .CheckIfLoggerWasCalled(expectedMessage: "Total scripts found: 3", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-             .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_001_Script1.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-             .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_002_Script2.sql was not run because script was already executed", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-             .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_003_Script3.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-             .CheckIfLoggerWasCalled(expectedMessage: "migration process executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+             .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
+             .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
+             .CheckIfLoggerWasCalled("setup versioning table executed successfully", LogLevel.Information, Times.Exactly(1), false)
+             .CheckIfLoggerWasCalled("Total scripts found: 3", LogLevel.Information, Times.Exactly(1), false)
+             .CheckIfLoggerWasCalled("script: 20211230_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), false)
+             .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), false)
+             .CheckIfLoggerWasCalled("script: 20211230_003_Script3.sql was run", LogLevel.Information, Times.Exactly(1), false)
+             .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), false);
     }
 
     [Fact]
@@ -941,16 +954,17 @@ public class DbMigratorTests
     {
         const string databaseName = "EasyDbMigrator";
 
-        MigrationConfiguration config = new(connectionString: "connection"
-            , databaseName: databaseName);
+        MigrationConfiguration config = new("connection"
+            , databaseName);
 
-        var someType = typeof(DbMigratorTests);
+        // ReSharper disable once HeapView.ClosureAllocation
+        Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
         var databaseConnectorMock = new Mock<IDatabaseConnector>();
 
-        Script script1 = new(filename: "20211230_001_Script1.sql", content: "some content");
-        Script script2 = new(filename: "20211230_002_Script2.sql", content: "some content");
+        Script script1 = new("20211230_001_Script1.sql", "some content");
+        Script script2 = new("20211230_002_Script2.sql", "some content");
         List<Script> scripts = new()
         {
             script1,
@@ -958,56 +972,56 @@ public class DbMigratorTests
         };
 
         var assemblyResourceHelperMock = new Mock<IAssemblyResourceHelper>();
-        _ = assemblyResourceHelperMock.Setup(expression: m => m.TryGetScriptsFromAssembly(someType)).Returns(valueFunction: () => Task.FromResult(result: scripts));
+        _ = assemblyResourceHelperMock.Setup(m => m.TryGetScriptsFromAssembly(someType)).Returns(() => Task.FromResult(scripts));
 
         var directoryHelperMock = new Mock<IDirectoryHelper>();
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
-            , It.IsAny<CancellationToken>())).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+        _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+            , It.IsAny<CancellationToken>())).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(It.IsAny<MigrationConfiguration>()
              , It.IsAny<CancellationToken>()
-          )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+          )).ReturnsAsync(new Result<bool>(true));
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TrySetupDbMigrationsRunTableWhenNotExistAsync(It.IsAny<MigrationConfiguration>()
              , It.IsAny<CancellationToken>()
-           )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+           )).ReturnsAsync(new Result<bool>(true));
 
-        Result<RunMigrationResult> resultRunMigrations = new(wasSuccessful: true);
-        _ = databaseConnectorMock.Setup(expression: x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
+        Result<RunMigrationResult> resultRunMigrations = new(true);
+        _ = databaseConnectorMock.Setup(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
                 , It.IsAny<Script>()
                 , It.IsAny<DateTimeOffset>()
                  , It.IsAny<CancellationToken>()
-                 )).ReturnsAsync(value: resultRunMigrations);
+                 )).ReturnsAsync(resultRunMigrations);
 
-        DateTime executedDataTime = new(year: 2021, month: 12, day: 31, hour: 2, minute: 16, second: 0);
+        DateTime executedDataTime = new(2021, 12, 31, 2, 16, 0);
 
         Mock<IDataTimeHelper> datetimeHelperMock = new();
-        _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
+        _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
 
-        DbMigrator migrator = new(logger: loggerMock.Object
-            , databaseConnector: databaseConnectorMock.Object
-            , assemblyResourceHelper: assemblyResourceHelperMock.Object
-            , directoryHelper: directoryHelperMock.Object
-            , dataTimeHelper: datetimeHelperMock.Object);
+        DbMigrator migrator = new(loggerMock.Object
+            , databaseConnectorMock.Object
+            , assemblyResourceHelperMock.Object
+            , directoryHelperMock.Object
+            , datetimeHelperMock.Object);
 
         //exclude some scripts
-        migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByName: new List<string> { "20211230_001_Script1.sql" });
+        migrator.ExcludeTheseScriptsInRun(new List<string> { "20211230_001_Script1.sql" });
 
-        bool result = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: someType
-            , migrationConfiguration: config
-            , cancellationToken: CancellationToken.None);
+        bool result = await migrator.TryApplyMigrationsAsync(someType
+            , config
+            , CancellationToken.None);
 
         _ = result.Should().BeTrue();
 
         _ = loggerMock
-            .CheckIfLoggerWasCalled(expectedMessage: "start running migrations for database: EasyDbMigrator", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "setup database executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "setup versioning table executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "Total scripts found: 2", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_001_Script1.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Never(), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_002_Script2.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-            .CheckIfLoggerWasCalled(expectedMessage: "migration process executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+            .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("setup versioning table executed successfully", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("Total scripts found: 2", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("script: 20211230_001_Script1.sql was run", LogLevel.Information, Times.Never(), false)
+            .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), false)
+            .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), false);
     }
 
     [Fact]
@@ -1016,8 +1030,8 @@ public class DbMigratorTests
         const string databaseName = "EasyDbMigrator";
         const string connectionString = "connection";
 
-        MigrationConfiguration config = new(connectionString: connectionString
-            , databaseName: databaseName);
+        MigrationConfiguration config = new(connectionString
+            , databaseName);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
 
@@ -1028,23 +1042,23 @@ public class DbMigratorTests
         var directoryHelperMock = new Mock<IDirectoryHelper>();
         Mock<IDataTimeHelper> datetimeHelperMock = new();
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
            , It.IsAny<CancellationToken>()
-           )).ReturnsAsync(value: new Result<bool>(wasSuccessful: false, exception: new Exception()));
+           )).ReturnsAsync(new Result<bool>(false, new Exception()));
 
-        DbMigrator migrator = new(logger: loggerMock.Object
-            , databaseConnector: databaseConnectorMock.Object
-            , assemblyResourceHelper: assemblyResourceHelperMock.Object
-            , directoryHelper: directoryHelperMock.Object
-            , dataTimeHelper: datetimeHelperMock.Object);
+        DbMigrator migrator = new(loggerMock.Object
+            , databaseConnectorMock.Object
+            , assemblyResourceHelperMock.Object
+            , directoryHelperMock.Object
+            , datetimeHelperMock.Object);
 
-        bool success = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-            , cancellationToken: CancellationToken.None);
+        bool success = await migrator.TryDeleteDatabaseIfExistAsync(config
+            , CancellationToken.None);
 
         _ = success.Should().BeFalse();
 
         _ = loggerMock
-            .CheckIfLoggerWasCalled(expectedMessage: "DeleteDatabaseIfExistAsync executed with error", expectedLogLevel: LogLevel.Error, times: Times.Exactly(callCount: 1), checkExceptionNotNull: true);
+            .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync executed with error", LogLevel.Error, Times.Exactly(1), true);
     }
 
     [Fact]
@@ -1053,8 +1067,8 @@ public class DbMigratorTests
         const string databaseName = "EasyDbMigrator";
         const string connectionString = "connection";
 
-        MigrationConfiguration config = new(connectionString: connectionString
-            , databaseName: databaseName);
+        MigrationConfiguration config = new(connectionString
+            , databaseName);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
 
@@ -1066,23 +1080,23 @@ public class DbMigratorTests
 
         Mock<IDataTimeHelper> datetimeHelperMock = new();
 
-        _ = databaseConnectorMock.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = databaseConnectorMock.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()
-             )).ReturnsAsync(value: new Result<bool>(wasSuccessful: true));
+             )).ReturnsAsync(new Result<bool>(true));
 
-        DbMigrator migrator = new(logger: loggerMock.Object
-            , databaseConnector: databaseConnectorMock.Object
-            , assemblyResourceHelper: assemblyResourceHelperMock.Object
-            , directoryHelper: directoryHelperMock.Object
-            , dataTimeHelper: datetimeHelperMock.Object);
+        DbMigrator migrator = new(loggerMock.Object
+            , databaseConnectorMock.Object
+            , assemblyResourceHelperMock.Object
+            , directoryHelperMock.Object
+            , datetimeHelperMock.Object);
 
-        bool success = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-            , cancellationToken: CancellationToken.None);
+        bool success = await migrator.TryDeleteDatabaseIfExistAsync(config
+            , CancellationToken.None);
 
         _ = success.Should().BeTrue();
 
         _ = loggerMock
-            .CheckIfLoggerWasCalled(expectedMessage: "DeleteDatabaseIfExistAsync has executed", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+            .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync has executed", LogLevel.Information, Times.Exactly(1), false);
     }
 
     [Fact]
@@ -1090,17 +1104,17 @@ public class DbMigratorTests
     {
         var sut = new Mock<IDbMigrator>();
 
-        _ = sut.Setup(expression: x => x.ExcludeTheseScriptsInRun(It.IsAny<List<string>>()))
-         .Throws(exception: new Exception());
+        _ = sut.Setup(x => x.ExcludeTheseScriptsInRun(It.IsAny<List<string>>()))
+         .Throws(new Exception());
 
-        _ = sut.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = sut.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()))
-          .ThrowsAsync(exception: new Exception());
+          .ThrowsAsync(new Exception());
 
-        _ = sut.Setup(expression: x => x.TryApplyMigrationsAsync(It.IsAny<Type>()
+        _ = sut.Setup(x => x.TryApplyMigrationsAsync(It.IsAny<Type>()
             , It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()))
-           .ThrowsAsync(exception: new Exception());
+           .ThrowsAsync(new Exception());
 
         //just proving it can be done, no extra assert is needed
     }
@@ -1110,17 +1124,17 @@ public class DbMigratorTests
     {
         var sut = new Mock<DbMigrator>();
 
-        _ = sut.Setup(expression: x => x.ExcludeTheseScriptsInRun(It.IsAny<List<string>>()))
-       .Throws(exception: new Exception());
+        _ = sut.Setup(x => x.ExcludeTheseScriptsInRun(It.IsAny<List<string>>()))
+       .Throws(new Exception());
 
-        _ = sut.Setup(expression: x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
+        _ = sut.Setup(x => x.TryDeleteDatabaseIfExistAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()))
-          .ThrowsAsync(exception: new Exception());
+          .ThrowsAsync(new Exception());
 
-        _ = sut.Setup(expression: x => x.TryApplyMigrationsAsync(It.IsAny<Type>()
+        _ = sut.Setup(x => x.TryApplyMigrationsAsync(It.IsAny<Type>()
             , It.IsAny<MigrationConfiguration>()
             , It.IsAny<CancellationToken>()))
-           .ThrowsAsync(exception: new Exception());
+           .ThrowsAsync(new Exception());
 
         //just proving it can be done, no extra assert is needed
     }
@@ -1146,7 +1160,7 @@ public class DbMigratorTests
     [Fact]
     public void Is_possible_to_inject_EasyDbCreator_in_ServiceCollection()
     {
-        var collection = new ServiceCollection();
+        ServiceCollection? collection = new();
         _ = collection.AddTransient<ILogger, TestLoggerImplementation>();
         _ = collection.AddTransient<IDatabaseConnector, MicrosoftSqlConnector>();
         _ = collection.AddTransient<IAssemblyResourceHelper, AssemblyResourceHelper>();
@@ -1154,9 +1168,9 @@ public class DbMigratorTests
         _ = collection.AddTransient<IDataTimeHelper, DataTimeHelper>();
         _ = collection.AddTransient<IDbMigrator, DbMigrator>();
 
-        using var serviceProvider = collection.BuildServiceProvider();
+        using ServiceProvider? serviceProvider = collection.BuildServiceProvider();
 
-        var migrator = serviceProvider.GetService<IDbMigrator>();
-        migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByName: new List<string>());
+        IDbMigrator? migrator = serviceProvider.GetService<IDbMigrator>();
+        migrator.ExcludeTheseScriptsInRun(new List<string>());
     }
 }

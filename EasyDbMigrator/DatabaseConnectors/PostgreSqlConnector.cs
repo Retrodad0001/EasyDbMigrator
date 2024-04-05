@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator.DatabaseConnectors;
 
+/// <summary>
+/// Connects to a PostgreSql database
+/// </summary>
 [ExcludeFromCodeCoverage] //is tested with integrationTest that will not be included in code coverage
 public sealed class PostgreSqlConnector : IDatabaseConnector
 {
@@ -16,21 +19,34 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
          .WaitAndRetryAsync(retryCount: 3
         , sleepDurationProvider: times => TimeSpan.FromSeconds(value: times * 2));
 
+    /// <summary>
+    /// Tries to delete the database if it exists
+    /// </summary>
+    /// <param name="migrationConfiguration"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<Result<bool>> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
         , CancellationToken cancellationToken)
     {
+        // ReSharper disable once HeapView.ObjectAllocation
         string query = $@"
                DROP DATABASE IF EXISTS  {migrationConfiguration.DatabaseName}
                 ";
 
         var result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
-             , scriptName: @"EasyDbMigrator.Integrationtest_dropDatabase"
+             , scriptName: "EasyDbMigrator.Integrationtest_dropDatabase"
              , sqlScriptContent: query
              , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
         return result;
     }
 
+    /// <summary>
+    /// Tries to create the database if it does not exist
+    /// </summary>
+    /// <param name="migrationConfiguration"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExistAsync(MigrationConfiguration migrationConfiguration
         , CancellationToken cancellationToken)
     {
@@ -40,7 +56,7 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
             return new Result<bool>(wasSuccessful: true);
         }
 
-        string sqlScriptCreateMigrationTable = @$" 
+        const string sqlScriptCreateMigrationTable = @$" 
 
                 CREATE TABLE IF NOT EXISTS DbMigrationsRun (
                     Id          SERIAL PRIMARY KEY,
@@ -58,6 +74,12 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
         return result;
     }
 
+    /// <summary>
+    /// Tries to create the database if it does not exist
+    /// </summary>
+    /// <param name="migrationConfiguration"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration
         , CancellationToken cancellationToken)
     {
@@ -68,6 +90,7 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
         }
 
         // ReSharper disable once StringLiteralTypo
+        // ReSharper disable once HeapView.ObjectAllocation
         string sqlScriptCreateDatabase = @$"
                     SELECT 'CREATE DATABASE {migrationConfiguration.DatabaseName}'
                     WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{migrationConfiguration.DatabaseName}')
@@ -81,6 +104,15 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
         return result;
     }
 
+    /// <summary>
+    /// Runs a migration script
+    /// </summary>
+    /// <param name="migrationConfiguration"></param>
+    /// <param name="script"></param>
+    /// <param name="executedDateTime"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    // ReSharper disable once HeapView.ClosureAllocation
     public async Task<Result<RunMigrationResult>> RunDbMigrationScriptAsync(MigrationConfiguration migrationConfiguration
         , Script script
         , DateTimeOffset executedDateTime
@@ -100,6 +132,7 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
                 await using NpgsqlConnection connection = new(connectionString: migrationConfiguration.ConnectionString);
                 await connection.OpenAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
+                // ReSharper disable once HeapView.ObjectAllocation
                 string checkIfScriptHasExecuted = $@"
                         SELECT Id
                         FROM DbMigrationsRun
@@ -116,6 +149,7 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
                 }
 
                 string sqlFormattedDate = executedDateTime.ToString(format: "yyyy-MM-dd HH:mm:ss");
+                // ReSharper disable once HeapView.ObjectAllocation
                 string updateVersioningTableScript = $@"
                             
                             INSERT INTO DbMigrationsRun (Executed, Filename, version)
@@ -156,6 +190,7 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
                 {
                     return new Result<RunMigrationResult>(wasSuccessful: true
                         , value: RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted
+                        // ReSharper disable once HeapView.ObjectAllocation
                         , exception: new ApplicationException(message: $"{ex} + {ex2.Message}"));
                 }
             }
@@ -164,6 +199,7 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
         }
     }
 
+    // ReSharper disable once HeapView.ClosureAllocation
     private async Task<Result<bool>> TryExecuteSingleScriptAsync(string connectionString
      , string scriptName
      , string sqlScriptContent

@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator.DatabaseConnectors;
 
+/// <summary>
+/// MicrosoftSqlConnector
+/// </summary>
 [ExcludeFromCodeCoverage] //is tested with integrationTest that will not be included in code coverage
 public sealed class MicrosoftSqlConnector : IDatabaseConnector
 {
@@ -17,9 +20,16 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
         .WaitAndRetryAsync(retryCount: 3
         , sleepDurationProvider: times => TimeSpan.FromSeconds(value: times * 2));
 
+    /// <summary>
+    /// Try to delete the database if it exists
+    /// </summary>
+    /// <param name="migrationConfiguration"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<Result<bool>> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
         , CancellationToken cancellationToken)
     {
+        // ReSharper disable once HeapView.ObjectAllocation
         string query = $@"
                 IF EXISTS(SELECT * FROM master.sys.databases WHERE name='{migrationConfiguration.DatabaseName}')
                 BEGIN               
@@ -31,15 +41,22 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                 ";
 
         var result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
-               , scriptName: @"EasyDbMigrator.Integrationtest_dropDatabase"
+               , scriptName: "EasyDbMigrator.Integrationtest_dropDatabase"
                , sqlScriptContent: query
                , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
         return result;
     }
 
+    /// <summary>
+    /// Try to setup the DbMigrationsRun table if it does not exist
+    /// </summary>
+    /// <param name="migrationConfiguration"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<Result<bool>> TrySetupDbMigrationsRunTableWhenNotExistAsync(MigrationConfiguration migrationConfiguration
         , CancellationToken cancellationToken)
     {
+        // ReSharper disable once HeapView.ObjectAllocation
         string sqlScriptCreateMigrationTable = @$" USE {migrationConfiguration.DatabaseName}  
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='DbMigrationsRun' AND xtype='U')
                 BEGIN
@@ -60,8 +77,15 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
         return result;
     }
 
+    /// <summary>
+    /// Try to setup an empty database with default settings when there is no database
+    /// </summary>
+    /// <param name="migrationConfiguration"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<Result<bool>> TrySetupEmptyDataBaseWithDefaultSettingWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration, CancellationToken cancellationToken)
     {
+        // ReSharper disable once HeapView.ObjectAllocation
         string sqlScriptCreateDatabase = @$" 
                 USE Master
                 IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '{migrationConfiguration.DatabaseName}')
@@ -77,6 +101,15 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
         return result;
     }
 
+    /// <summary>
+    /// Run a migration script
+    /// </summary>
+    /// <param name="migrationConfiguration"></param>
+    /// <param name="script"></param>
+    /// <param name="executedDateTime"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    // ReSharper disable once HeapView.ClosureAllocation
     public async Task<Result<RunMigrationResult>> RunDbMigrationScriptAsync(MigrationConfiguration migrationConfiguration
         , Script script
         , DateTimeOffset executedDateTime
@@ -95,6 +128,7 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                 await using SqlConnection connection = new(connectionString: migrationConfiguration.ConnectionString);
                 await connection.OpenAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
+                // ReSharper disable once HeapView.ObjectAllocation
                 string checkIfScriptHasExecuted = $@"USE {migrationConfiguration.DatabaseName} 
                         SELECT Id
                         FROM DbMigrationsRun
@@ -109,7 +143,8 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                     return new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.ScriptSkippedBecauseAlreadyRun);
                 }
 
-                string sqlFormattedDate = executedDateTime.ToString(format: @"yyyy-MM-dd HH:mm:ss.fffffff zzz");
+                string sqlFormattedDate = executedDateTime.ToString(format: "yyyy-MM-dd HH:mm:ss.fffffff zzz");
+                // ReSharper disable once HeapView.ObjectAllocation
                 string updateVersioningTableScript = $@" 
                             USE {migrationConfiguration.DatabaseName} 
                             INSERT INTO DbMigrationsRun (Executed, Filename, version)
@@ -152,6 +187,7 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                 {
                     return new Result<RunMigrationResult>(wasSuccessful: true
                         , value: RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted
+                        // ReSharper disable once HeapView.ObjectAllocation
                         , exception: new ApplicationException(message: $"{ex} + {ex2.Message}"));
                 }
             }
@@ -159,6 +195,7 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
             return new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted, exception: ex);
         }
     }
+    // ReSharper disable once HeapView.ClosureAllocation
     private async Task<Result<bool>> TryExecuteSingleScriptAsync(string connectionString
       , string scriptName
       , string sqlScriptContent

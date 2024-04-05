@@ -1,4 +1,6 @@
 ﻿// Ignore Spelling: Sql
+// ReSharper disable HeapView.ObjectAllocation
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using EasyDbMigrator;
 using EasyDbMigrator.DatabaseConnectors;
@@ -20,70 +22,69 @@ using Xunit;
 namespace EasyDbMigratorTests.IntegrationTests;
 
 [ExcludeFromCodeCoverage]
-[Collection(name: nameof(NotRunParallel))]
+[Collection(nameof(NotRunParallel))]
 public class SqlServerIntegrationTests
 {
-
-    private const string DATABASE_NAME = "EasyDbMigratorSqlServer";
+    private const string DatabaseName = "EasyDbMigratorSqlServer";
 
     [Fact]
-    [Trait(name: "Category", value: "IntegrationTest")]
+    [Trait("Category", "IntegrationTest")]
     public async Task When_nothing_goes_wrong_with_running_the_migrations_on_an_empty_database()
     {
-        var dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
+        DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
 
         try
         {
             await dockerEnvironmentSql.UpAsync();
-            string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(name: DATABASE_NAME)?.GetConnectionString();
+            string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DatabaseName)?.GetConnectionString();
 
-            MigrationConfiguration config = new(connectionString: connectionString ?? throw new InvalidOperationException()
-                , databaseName: DATABASE_NAME);
+            MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
+                , DatabaseName);
 
             Mock<ILogger<DbMigrator>> loggerMock = new();
 
             Mock<IDataTimeHelper> datetimeHelperMock = new();
             DateTimeOffset executedDataTime = DateTime.UtcNow;
 
-            _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
+            _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
 
-            var migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
-                , logger: loggerMock.Object
-                , dataTimeHelperMock: datetimeHelperMock.Object
-                , databaseConnector: new MicrosoftSqlConnector());
+            DbMigrator? migrator = DbMigrator.CreateForLocalIntegrationTesting(config
+                , loggerMock.Object
+                , datetimeHelperMock.Object
+                , new MicrosoftSqlConnector());
 
             List<string> scriptsToExclude = new()
             {
                 "20211230_001_CreateDB.sql"
             };
 
-            migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
+            migrator.ExcludeTheseScriptsInRun(scriptsToExclude);
 
-            bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                , cancellationToken: CancellationToken.None);
+            bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(config
+                , CancellationToken.None);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
-            bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSqlServerScriptsCanBeFound)
-                , migrationConfiguration: config
-                , cancellationToken: CancellationToken.None);
+            bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeof(HereTheSqlServerScriptsCanBeFound)
+                , config
+                , CancellationToken.None);
             _ = succeededRunningMigrations.Should().BeTrue();
 
             _ = loggerMock
-                .CheckIfLoggerWasCalled(expectedMessage: "DeleteDatabaseIfExistAsync has executed", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled(expectedMessage: "setup database executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_002_Script2.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled(expectedMessage: "script: 20211231_001_Script1.sql was run", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled(expectedMessage: "migration process executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+                .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync has executed", LogLevel.Information, Times.Exactly(1), false)
+                .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
+                .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was run", LogLevel.Information, Times.Exactly(1), false)
+                .CheckIfLoggerWasCalled("script: 20211231_001_Script1.sql was run", LogLevel.Information, Times.Exactly(1), false)
+                .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), false);
 
             List<DbMigrationsRunRowSqlServer> expectedRows = new()
             {
-                new DbMigrationsRunRowSqlServer(id: 1, executed: executedDataTime, filename: "20211230_002_Script2.sql", version: "1.0.0"),
-                new DbMigrationsRunRowSqlServer(id: 2, executed: executedDataTime, filename: "20211231_001_Script1.sql", version: "1.0.0")
+                new DbMigrationsRunRowSqlServer(1, executedDataTime, "20211230_002_Script2.sql", "1.0.0"),
+                new DbMigrationsRunRowSqlServer(2, executedDataTime, "20211231_001_Script1.sql", "1.0.0")
             };
 
-            _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString: connectionString
-              , expectedRows: expectedRows
-              , testDatabaseName: DATABASE_NAME);
+            _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString
+              , expectedRows
+              , DatabaseName);
 
         }
         catch (Exception ex)
@@ -97,84 +98,84 @@ public class SqlServerIntegrationTests
     }
 
     [Fact]
-    [Trait(name: "Category", value: "IntegrationTest")]
+    [Trait("Category", "IntegrationTest")]
     public async Task Can_skip_scripts_if_they_already_run_before()
     {
-        var dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
+        DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
 
         try
         {
             await dockerEnvironmentSql.UpAsync();
-            string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(name: DATABASE_NAME)?.GetConnectionString();
+            string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DatabaseName)?.GetConnectionString();
 
-            MigrationConfiguration config = new(connectionString: connectionString ?? throw new InvalidOperationException()
-                , databaseName: DATABASE_NAME);
+            MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
+                , DatabaseName);
 
             Mock<ILogger<DbMigrator>> loggerMock = new();
 
             Mock<IDataTimeHelper> datetimeHelperMock1 = new();
-            var executedFirstTimeDataTime = DateTimeOffset.UtcNow;
+            DateTimeOffset executedFirstTimeDataTime = DateTimeOffset.UtcNow;
 
-            _ = datetimeHelperMock1.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedFirstTimeDataTime);
+            _ = datetimeHelperMock1.Setup(x => x.GetCurrentUtcTime()).Returns(executedFirstTimeDataTime);
 
-            var migrator1 = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
-                , logger: loggerMock.Object
-                , dataTimeHelperMock: datetimeHelperMock1.Object
-                , databaseConnector: new MicrosoftSqlConnector());
+            DbMigrator? migrator1 = DbMigrator.CreateForLocalIntegrationTesting(config
+                , loggerMock.Object
+                , datetimeHelperMock1.Object
+                , new MicrosoftSqlConnector());
 
             List<string> scriptsToExclude = new()
                 { "20211230_001_CreateDB.sql" };
 
-            migrator1.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
+            migrator1.ExcludeTheseScriptsInRun(scriptsToExclude);
 
-            bool succeededDeleteDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                , cancellationToken: CancellationToken.None);
+            bool succeededDeleteDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(config
+                , CancellationToken.None);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
-            var type = typeof(HereTheSqlServerScriptsCanBeFound);
+            Type? type = typeof(HereTheSqlServerScriptsCanBeFound);
 
-            bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
-                , migrationConfiguration: config
-                , cancellationToken: CancellationToken.None);
+            bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(type
+                , config
+                , CancellationToken.None);
             _ = succeededRunningMigrations.Should().BeTrue();
 
             //now run the migrations again
             Mock<ILogger<DbMigrator>> loggerMockSecondRun = new();
-            DateTime executedSecondTimeDataTime = new(year: 2021, month: 12, day: 31, hour: 2, minute: 16, second: 1);
+            DateTime executedSecondTimeDataTime = new(2021, 12, 31, 2, 16, 1);
 
             Mock<IDataTimeHelper> datetimeHelperMock2 = new();
-            _ = datetimeHelperMock2.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedSecondTimeDataTime);
+            _ = datetimeHelperMock2.Setup(x => x.GetCurrentUtcTime()).Returns(executedSecondTimeDataTime);
 
-            var migrator2 = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
-               , logger: loggerMockSecondRun.Object
-               , dataTimeHelperMock: datetimeHelperMock2.Object
-               , databaseConnector: new MicrosoftSqlConnector());
+            DbMigrator? migrator2 = DbMigrator.CreateForLocalIntegrationTesting(config
+               , loggerMockSecondRun.Object
+               , datetimeHelperMock2.Object
+               , new MicrosoftSqlConnector());
 
-            migrator2.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
+            migrator2.ExcludeTheseScriptsInRun(scriptsToExclude);
 
-            bool succeeded = await migrator2.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: type
-                , migrationConfiguration: config
-                , cancellationToken: CancellationToken.None);
+            bool succeeded = await migrator2.TryApplyMigrationsAsync(type
+                , config
+                , CancellationToken.None);
             _ = succeeded.Should().BeTrue();
 
             _ = loggerMockSecondRun
-                .CheckIfLoggerWasCalled(expectedMessage: "setup database executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled(expectedMessage: "setup versioning table executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled(expectedMessage: "script: 20211230_002_Script2.sql was not run because script was already executed", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled(expectedMessage: "script: 20211231_001_Script1.sql was not run because script was already executed", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false)
-                .CheckIfLoggerWasCalled(expectedMessage: "migration process executed successfully", expectedLogLevel: LogLevel.Information, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+                .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
+                .CheckIfLoggerWasCalled("setup versioning table executed successfully", LogLevel.Information, Times.Exactly(1), false)
+                .CheckIfLoggerWasCalled("script: 20211230_002_Script2.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), false)
+                .CheckIfLoggerWasCalled("script: 20211231_001_Script1.sql was not run because script was already executed", LogLevel.Information, Times.Exactly(1), false)
+                .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), false);
 
             //version - table should not be updated for the second time
 
             List<DbMigrationsRunRowSqlServer> expectedRows = new()
             {
-                new DbMigrationsRunRowSqlServer(id: 1, executed: executedFirstTimeDataTime, filename: "20211230_002_Script2.sql", version: "1.0.0"),
-                new DbMigrationsRunRowSqlServer(id: 2, executed: executedFirstTimeDataTime, filename: "20211231_001_Script1.sql", version: "1.0.0")
+                new DbMigrationsRunRowSqlServer(1, executedFirstTimeDataTime, "20211230_002_Script2.sql", "1.0.0"),
+                new DbMigrationsRunRowSqlServer(2, executedFirstTimeDataTime, "20211231_001_Script1.sql", "1.0.0")
             };
 
-            _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString: connectionString
-            , expectedRows: expectedRows
-            , testDatabaseName: DATABASE_NAME);
+            _ = IntegrationTestHelper.CheckMigrationsTableSqlSever(connectionString
+            , expectedRows
+            , DatabaseName);
         }
         catch (Exception ex)
         {
@@ -187,54 +188,54 @@ public class SqlServerIntegrationTests
     }
 
     [Fact]
-    [Trait(name: "Category", value: "IntegrationTest")]
+    [Trait("Category", "IntegrationTest")]
     public async Task Can_cancel_the_migration_process()
     {
-        var dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
+        DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
 
         CancellationTokenSource source = new();
-        var token = source.Token;
+        CancellationToken token = source.Token;
 
         try
         {
-            await dockerEnvironmentSql.UpAsync(cancellationToken: token);
-            string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(name: DATABASE_NAME)?.GetConnectionString();
+            await dockerEnvironmentSql.UpAsync(token);
+            string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DatabaseName)?.GetConnectionString();
 
-            MigrationConfiguration config = new(connectionString: connectionString ?? throw new InvalidOperationException()
-                , databaseName: DATABASE_NAME);
+            MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
+                , DatabaseName);
 
             Mock<ILogger<DbMigrator>> loggerMock = new();
 
             Mock<IDataTimeHelper> datetimeHelperMock = new();
             DateTimeOffset executedDataTime = DateTime.UtcNow;
 
-            _ = datetimeHelperMock.Setup(expression: x => x.GetCurrentUtcTime()).Returns(value: executedDataTime);
+            _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
 
-            var migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
-                , logger: loggerMock.Object
-                , dataTimeHelperMock: datetimeHelperMock.Object
-                , databaseConnector: new MicrosoftSqlConnector());
+            DbMigrator? migrator = DbMigrator.CreateForLocalIntegrationTesting(config
+                , loggerMock.Object
+                , datetimeHelperMock.Object
+                , new MicrosoftSqlConnector());
 
             List<string> scriptsToExclude = new()
             {
                 "20212230_001_CreateDB.sql"
             };
 
-            migrator.ExcludeTheseScriptsInRun(scriptsToExcludeByName: scriptsToExclude);
+            migrator.ExcludeTheseScriptsInRun(scriptsToExclude);
 
-            bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(migrationConfiguration: config
-                , cancellationToken: token);
+            bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(config
+                , token);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
             source.Cancel();
 
-            bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeOfClassWhereScriptsAreLocated: typeof(HereTheSqlServerScriptsCanBeFound)
-                , migrationConfiguration: config
-                , cancellationToken: token);
+            bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeof(HereTheSqlServerScriptsCanBeFound)
+                , config
+                , token);
             _ = succeededRunningMigrations.Should().BeTrue();
 
             _ = loggerMock
-                .CheckIfLoggerWasCalled(expectedMessage: "migration process was canceled from the outside", expectedLogLevel: LogLevel.Warning, times: Times.Exactly(callCount: 1), checkExceptionNotNull: false);
+                .CheckIfLoggerWasCalled("migration process was canceled from the outside", LogLevel.Warning, Times.Exactly(1), false);
         }
         catch (Exception ex)
         {
@@ -249,18 +250,19 @@ public class SqlServerIntegrationTests
 
     private static DockerEnvironment SetupSqlDockerTestEnvironment()
     {
-        var environmentBuilder = new DockerEnvironmentBuilder();
+        DockerEnvironmentBuilder? environmentBuilder = new();
         const string password = "stuffy6!";
 
+        // ReSharper disable once HeapView.ClosureAllocation
         IDictionary<ushort, ushort> ports = new Dictionary<ushort, ushort>
         {
             { 1433, 1433 }
         };
         return (DockerEnvironment)environmentBuilder
-             .SetName(environmentName: DATABASE_NAME)
-             .AddMssqlContainer(paramsBuilder: p => p with
+             .SetName(DatabaseName)
+             .AddMssqlContainer(p => p with
              {
-                 Name = DATABASE_NAME,
+                 Name = DatabaseName,
                  SAPassword = password,
                  Ports = ports
              }).Build();

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -7,13 +9,11 @@ using Xunit.Abstractions;
 namespace EasyDbMigrator.IntegrationTestHelpers;
 
 [ExcludeFromCodeCoverage]
-#pragma warning disable CS8633 // Nullability in constraints for type parameter doesn't match the constraints for type parameter in implicitly implemented interface method'.
 public sealed class XUnitLogHelper<T> : XUnitLogHelper, ILogger<T>
-#pragma warning restore CS8633 // Nullability in constraints for type parameter doesn't match the constraints for type parameter in implicitly implemented interface method'.
 {
     public XUnitLogHelper(ITestOutputHelper testOutputHelper
         , LoggerExternalScopeProvider scopeProvider)
-        : base(testOutputHelper: testOutputHelper, scopeProvider: scopeProvider, categoryName: typeof(T).FullName)
+        : base(testOutputHelper, scopeProvider, typeof(T).FullName)
     {
     }
 }
@@ -27,24 +27,28 @@ public class XUnitLogHelper : ILogger
 
     public static ILogger CreateLogger(ITestOutputHelper testOutputHelper)
     {
-        return new XUnitLogHelper(testOutputHelper: testOutputHelper, scopeProvider: new LoggerExternalScopeProvider(), categoryName: string.Empty);
+        return new XUnitLogHelper(testOutputHelper, new LoggerExternalScopeProvider(), string.Empty);
     }
 
     public static ILogger<T> CreateLogger<T>(ITestOutputHelper testOutputHelper)
     {
-        return new XUnitLogHelper<T>(testOutputHelper: testOutputHelper, scopeProvider: new LoggerExternalScopeProvider());
+        return new XUnitLogHelper<T>(testOutputHelper, new LoggerExternalScopeProvider());
     }
 
     public XUnitLogHelper(ITestOutputHelper testOutputHelper, LoggerExternalScopeProvider scopeProvider, string? categoryName)
     {
-        if (string.IsNullOrEmpty(value: categoryName))
+        if (string.IsNullOrEmpty(categoryName))
         {
-            throw new ArgumentException(message: $"'{nameof(categoryName)}' cannot be null or empty.", paramName: nameof(categoryName));
+            throw new ArgumentException(
+                new StringBuilder().Append('\'')
+                    .Append(nameof(categoryName))
+                    .Append("' cannot be null or empty.")
+                    .ToString(), nameof(categoryName));
         }
 
         _categoryName = categoryName;
-        _testOutputHelper = testOutputHelper ?? throw new ArgumentNullException(paramName: nameof(testOutputHelper));
-        _scopeProvider = scopeProvider ?? throw new ArgumentNullException(paramName: nameof(scopeProvider));
+        _testOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
+        _scopeProvider = scopeProvider ?? throw new ArgumentNullException(nameof(scopeProvider));
     }
     public bool IsEnabled(LogLevel logLevel)
     {
@@ -54,7 +58,7 @@ public class XUnitLogHelper : ILogger
     public IDisposable BeginScope<TState>(TState state)
 #pragma warning restore CS8633 // Nullability in constraints for type parameter doesn't match the constraints for type parameter in implicitly implemented interface method'.
     {
-        return _scopeProvider.Push(state: state);
+        return _scopeProvider.Push(state);
     }
     public void Log<TState>(LogLevel logLevel
         , EventId eventId
@@ -62,23 +66,23 @@ public class XUnitLogHelper : ILogger
         , Exception? exception
         , Func<TState, Exception?, string> formatter)
     {
-        var sb = new StringBuilder();
-        _ = sb.Append(value: GetLogLevelString(logLevel: logLevel))
-          .Append(value: " [").Append(value: _categoryName).Append(value: "] ")
-          .Append(value: formatter(arg1: state, arg2: exception));
+        StringBuilder sb = new();
+        _ = sb.Append(GetLogLevelString(logLevel))
+          .Append(" [").Append(_categoryName).Append("] ")
+          .Append(formatter(state, exception));
 
         if (exception is not null)
         {
-            _ = sb.Append(value: '\n').Append(handler: $"message : {exception.Message} , trace : {exception.StackTrace} ");
+            _ = sb.Append('\n').Append($"message : {exception.Message} , trace : {exception.StackTrace} ");
         }
 
-        _scopeProvider.ForEachScope(callback: (scope, builder) =>
+        _scopeProvider.ForEachScope((scope, builder) =>
         {
-            _ = builder.Append(value: "\n => ");
-            _ = builder.Append(value: scope);
-        }, state: sb);
+            _ = builder.Append("\n => ");
+            _ = builder.Append(scope);
+        }, sb);
 
-        _testOutputHelper.WriteLine(message: sb.ToString());
+        _testOutputHelper.WriteLine(sb.ToString());
     }
     private static string GetLogLevelString(LogLevel logLevel)
     {
@@ -90,8 +94,8 @@ public class XUnitLogHelper : ILogger
             LogLevel.Warning => "warning",
             LogLevel.Error => "Error",
             LogLevel.Critical => "Critical",
-            LogLevel.None => throw new Exception(message: "this is a problem"),
-            _ => throw new ArgumentOutOfRangeException(paramName: nameof(logLevel))
+            LogLevel.None => throw new Exception("this is a problem"),
+            _ => throw new ArgumentOutOfRangeException(nameof(logLevel))
         };
     }
 }
