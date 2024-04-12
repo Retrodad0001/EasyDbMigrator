@@ -1,9 +1,8 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-// ReSharper disable HeapView.ObjectAllocation
 
 using Microsoft.Extensions.Logging;
-using System;
 using Moq;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -14,7 +13,6 @@ namespace EasyDbMigratorTests.TestHelpers;
 public static class LoggingTestExtensions
 {
     public static Mock<ILogger<T>> CheckIfLoggerWasCalled<T>(this Mock<ILogger<T>> mockedLogger
-        // ReSharper disable once HeapView.ClosureAllocation
         , string expectedMessage
         , LogLevel expectedLogLevel
         , Times times

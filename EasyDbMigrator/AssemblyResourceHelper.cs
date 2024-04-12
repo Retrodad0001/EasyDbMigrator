@@ -30,9 +30,7 @@ public sealed class AssemblyResourceHelper : IAssemblyResourceHelper
         foreach (string filename in filenames)
         {
             await using Stream? stream = assembly?.GetManifestResourceStream(filename);
-#pragma warning disable IDE0270
             if (stream is null)
-#pragma warning restore IDE0270
             {
                 throw new InvalidOperationException(new StringBuilder()
                     .Append("steam cannot be null for resource name: ")
@@ -55,9 +53,7 @@ public sealed class AssemblyResourceHelper : IAssemblyResourceHelper
     {
         Assembly? assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
 
-#pragma warning disable IDE0270
         if (assembly is null)
-#pragma warning restore IDE0270
         {
             throw new InvalidOperationException(new StringBuilder().Append("assembly is null for custom-class: ")
                 .Append(typeOfClassWhereScriptsAreLocated)

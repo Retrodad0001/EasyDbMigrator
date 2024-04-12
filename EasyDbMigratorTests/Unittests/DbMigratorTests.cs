@@ -1,5 +1,4 @@
 ﻿// Ignore Spelling: versioning Migrator
-// ReSharper disable HeapView.ObjectAllocation
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using EasyDbMigrator;
@@ -280,7 +279,6 @@ public class DbMigratorTests
         MigrationConfiguration config = new(connectionString
             , databaseName);
 
-        // ReSharper disable once HeapView.ClosureAllocation
         Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
@@ -363,7 +361,6 @@ public class DbMigratorTests
         Script script1 = new("20211230_001_Scripta.sql", "some content");
         Script script2 = new("20211230_002_Scriptb.sql", "some content");
 
-        // ReSharper disable once HeapView.ClosureAllocation
         List<Script> scripts = new()
         {
             script1,
@@ -416,9 +413,7 @@ public class DbMigratorTests
             .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
             .CheckIfLoggerWasCalled("setup versioning table executed successfully", LogLevel.Information, Times.Exactly(1), false)
             .CheckIfLoggerWasCalled("Total scripts found: 2", LogLevel.Information, Times.Exactly(1), false)
-            // ReSharper disable once StringLiteralTypo
             .CheckIfLoggerWasCalled("script: 20211230_001_Scripta.sql was run", LogLevel.Information, Times.Exactly(1), false)
-            // ReSharper disable once StringLiteralTypo
             .CheckIfLoggerWasCalled("script: 20211230_002_Scriptb.sql was run", LogLevel.Information, Times.Exactly(1), false)
             .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), false);
     }
@@ -431,7 +426,6 @@ public class DbMigratorTests
         MigrationConfiguration config = new("connection"
             , databaseName);
 
-        // ReSharper disable once HeapView.ClosureAllocation
         Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
@@ -562,7 +556,6 @@ public class DbMigratorTests
         MigrationConfiguration config = new("connection"
             , databaseName);
 
-        // ReSharper disable once HeapView.ClosureAllocation
         Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
@@ -632,7 +625,6 @@ public class DbMigratorTests
         MigrationConfiguration config = new("connection"
             , databaseName);
 
-        // ReSharper disable once HeapView.ClosureAllocation
         Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
@@ -716,7 +708,6 @@ public class DbMigratorTests
         MigrationConfiguration config = new("connection"
             , databaseName);
 
-        // ReSharper disable once HeapView.ClosureAllocation
         Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
@@ -797,7 +788,6 @@ public class DbMigratorTests
         MigrationConfiguration config = new("connection"
             , databaseName);
 
-        // ReSharper disable once HeapView.ClosureAllocation
         Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
@@ -880,7 +870,6 @@ public class DbMigratorTests
         MigrationConfiguration config = new("connection"
             , databaseName);
 
-        // ReSharper disable once HeapView.ClosureAllocation
         Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();
@@ -957,7 +946,6 @@ public class DbMigratorTests
         MigrationConfiguration config = new("connection"
             , databaseName);
 
-        // ReSharper disable once HeapView.ClosureAllocation
         Type? someType = typeof(DbMigratorTests);
 
         var loggerMock = new Mock<ILogger<DbMigrator>>();

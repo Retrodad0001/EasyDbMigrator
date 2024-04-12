@@ -43,23 +43,23 @@ public class DbMigrator : IDbMigrator
         , IDataTimeHelper dataTimeHelper)
     {
 
-        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(argument: logger);
 
         _logger = logger;
 
-        ArgumentNullException.ThrowIfNull(databaseConnector);
+        ArgumentNullException.ThrowIfNull(argument: databaseConnector);
 
         _databaseConnector = databaseConnector;
 
-        ArgumentNullException.ThrowIfNull(assemblyResourceHelper);
+        ArgumentNullException.ThrowIfNull(argument: assemblyResourceHelper);
 
         _assemblyResourceHelper = assemblyResourceHelper;
 
-        ArgumentNullException.ThrowIfNull(directoryHelper);
+        ArgumentNullException.ThrowIfNull(argument: directoryHelper);
 
         _directoryHelper = directoryHelper;
 
-        ArgumentNullException.ThrowIfNull(dataTimeHelper);
+        ArgumentNullException.ThrowIfNull(argument: dataTimeHelper);
 
         _dataTimeHelper = dataTimeHelper;
     }
@@ -75,12 +75,11 @@ public class DbMigrator : IDbMigrator
         , ILogger logger
         , IDatabaseConnector databaseConnector)
     {
-        // ReSharper disable once HeapView.BoxingAllocation
-        ArgumentNullException.ThrowIfNull(migrationConfiguration);
+        ArgumentNullException.ThrowIfNull(argument: migrationConfiguration);
 
-        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(argument: logger);
 
-        ArgumentNullException.ThrowIfNull(databaseConnector);
+        ArgumentNullException.ThrowIfNull(argument: databaseConnector);
 
         DbMigrator result = new(logger
             , databaseConnector
@@ -104,14 +103,13 @@ public class DbMigrator : IDbMigrator
         , IDataTimeHelper dataTimeHelperMock
         , IDatabaseConnector databaseConnector)
     {
-        // ReSharper disable once HeapView.BoxingAllocation
-        ArgumentNullException.ThrowIfNull(migrationConfiguration);
+        ArgumentNullException.ThrowIfNull(argument: migrationConfiguration);
 
-        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(argument: logger);
 
-        ArgumentNullException.ThrowIfNull(dataTimeHelperMock);
+        ArgumentNullException.ThrowIfNull(argument: dataTimeHelperMock);
 
-        ArgumentNullException.ThrowIfNull(databaseConnector);
+        ArgumentNullException.ThrowIfNull(argument: databaseConnector);
 
         DbMigrator result = new(logger
            , databaseConnector
@@ -139,11 +137,11 @@ public class DbMigrator : IDbMigrator
 
         if (succeeded.HasFailure)
         {
-            _logger.Log(LogLevel.Error, succeeded.Exception, "DeleteDatabaseIfExistAsync executed with error");
+            _logger.Log(logLevel: LogLevel.Error, exception: succeeded.Exception, message: "DeleteDatabaseIfExistAsync executed with error");
             return false;
         }
 
-        _logger.Log(LogLevel.Information, "DeleteDatabaseIfExistAsync has executed");
+        _logger.Log(logLevel: LogLevel.Information, message: "DeleteDatabaseIfExistAsync has executed");
         return true;
     }
 
@@ -161,8 +159,10 @@ public class DbMigrator : IDbMigrator
     {
         if (IsCancellationRequested(cancellationToken))
         {
-            _logger.Log(LogLevel.Warning,
-                new StringBuilder().Append("migration process was canceled from the outside").ToString());
+#pragma warning disable CA2254 // Template should be a static expression
+            _logger.Log(logLevel: LogLevel.Warning,
+                message: new StringBuilder().Append("migration process was canceled from the outside").ToString());
+#pragma warning restore CA2254 // Template should be a static expression
             return true;
         }
 
@@ -173,30 +173,30 @@ public class DbMigrator : IDbMigrator
 
         if (setupDatabaseAction.HasFailure)
         {
-            _logger.Log(LogLevel.Error, setupDatabaseAction.Exception, "setup database executed with errors");
-            _logger.Log(LogLevel.Error, null, "migration process executed with errors");
+            _logger.Log(logLevel: LogLevel.Error, exception: setupDatabaseAction.Exception, message: "setup database executed with errors");
+            _logger.Log(logLevel: LogLevel.Error, exception: null, message: "migration process executed with errors");
             return false;
         }
 
-        _logger.Log(LogLevel.Information, "setup database executed successfully");
+        _logger.Log(logLevel: LogLevel.Information, message: "setup database executed successfully");
         var createVersioningTableAction = await TrySetupDbMigrationsTableWhenNotExistAsync(migrationConfiguration
            , cancellationToken).ConfigureAwait(false);
 
         if (createVersioningTableAction.HasFailure)
         {
-            _logger.Log(LogLevel.Error, createVersioningTableAction.Exception, "setup versioning table executed with errors");
-            _logger.Log(LogLevel.Error, null, "migration process executed with errors");
+            _logger.Log(logLevel: LogLevel.Error, exception: createVersioningTableAction.Exception, message: "setup versioning table executed with errors");
+            _logger.Log(logLevel: LogLevel.Error, exception: null, message: "migration process executed with errors");
             return false;
         }
 
-        _logger.Log(LogLevel.Information, "setup versioning table executed successfully");
+        _logger.Log(logLevel: LogLevel.Information, message: "setup versioning table executed successfully");
 
         var loadScriptsAction = await TryLoadingScripts(typeOfClassWhereScriptsAreLocated, migrationConfiguration).ConfigureAwait(false);
 
         if (loadScriptsAction.HasFailure)
         {
-            _logger.Log(LogLevel.Error, loadScriptsAction.Exception, "One or more scripts could not be loaded, is the sequence patterns correct?");
-            _logger.Log(LogLevel.Error, null, "migration process executed with errors");
+            _logger.Log(logLevel: LogLevel.Error, exception: loadScriptsAction.Exception, message: "One or more scripts could not be loaded, is the sequence patterns correct?");
+            _logger.Log(logLevel: LogLevel.Error, exception: null, message: "migration process executed with errors");
             return false;
         }
 
@@ -208,11 +208,11 @@ public class DbMigrator : IDbMigrator
 
         if (runMigrationsScriptsAction.HasFailure)
         {
-            _logger.Log(LogLevel.Error, null, "migration process executed with errors");
+            _logger.Log(logLevel: LogLevel.Error, exception: null, message: "migration process executed with errors");
             return false;
         }
 
-        _logger.Log(LogLevel.Information, "migration process executed successfully");
+        _logger.Log(logLevel: LogLevel.Information, message: "migration process executed successfully");
         return true;
     }
 
@@ -232,10 +232,8 @@ public class DbMigrator : IDbMigrator
 
     private void LogBasicInformation(ref MigrationConfiguration migrationConfiguration)
     {
-        // ReSharper disable once HeapView.ObjectAllocation
-        _logger.Log(LogLevel.Information, "start running migrations for database: {migrationConfiguration.DatabaseName}", migrationConfiguration.DatabaseName);
-        // ReSharper disable once HeapView.ObjectAllocation
-        _logger.Log(LogLevel.Information, "connection-string used: {migrationConfiguration.ConnectionString}", migrationConfiguration.ConnectionString);
+        _logger.Log(logLevel: LogLevel.Information, message: "start running migrations for database: {migrationConfiguration.DatabaseName}", args: migrationConfiguration.DatabaseName);
+        _logger.Log(logLevel: LogLevel.Information, message: "connection-string used: {migrationConfiguration.ConnectionString}", args: migrationConfiguration.ConnectionString);
     }
 
     private async Task<Result<bool>> TrySetupEmptyDataBaseWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration
@@ -271,9 +269,7 @@ public class DbMigrator : IDbMigrator
                 unOrderedScripts = await _directoryHelper.TryGetScriptsFromDirectoryAsync(migrationConfiguration.ScriptsDirectory).ConfigureAwait(false);
             }
 
-            // ReSharper disable once HeapView.ObjectAllocation
-            // ReSharper disable once HeapView.BoxingAllocation
-            _logger.Log(LogLevel.Information, "Total scripts found: {unOrderedScripts.Count}", unOrderedScripts.Count);
+            _logger.Log(logLevel: LogLevel.Information, message: "Total scripts found: {unOrderedScripts.Count}", args: unOrderedScripts.Count);
             var unOrderedScriptsWithoutExcludedScripts = RemoveExcludedScripts(unOrderedScripts, _excludedScriptsList);
             var orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(unOrderedScriptsWithoutExcludedScripts);
             return new Result<List<Script>>(true, orderedScriptsWithoutExcludedScripts);
@@ -293,8 +289,7 @@ public class DbMigrator : IDbMigrator
         {
             if (skipBecauseOfErrorWithPreviousScript)
             {
-                // ReSharper disable once HeapView.ObjectAllocation
-                _logger.Log(LogLevel.Warning, "script: {script.FileName} was skipped due to exception in previous script", script.FileName);
+                _logger.Log(logLevel: LogLevel.Warning, message: "script: {script.FileName} was skipped due to exception in previous script", args: script.FileName);
                 continue;
             }
 
@@ -307,23 +302,22 @@ public class DbMigrator : IDbMigrator
 
             if (result.Value == RunMigrationResult.MigrationWasCancelled)
             {
-                _logger.Log(LogLevel.Warning, new StringBuilder().Append("migration process was canceled").ToString());
+#pragma warning disable CA2254 // Template should be a static expression
+                _logger.Log(logLevel: LogLevel.Warning, message: new StringBuilder().Append("migration process was canceled").ToString());
+#pragma warning restore CA2254 // Template should be a static expression
                 return new Result<bool>(false);
             }
             else if (result.Value == RunMigrationResult.MigrationScriptExecuted)
             {
-                // ReSharper disable once HeapView.ObjectAllocation
-                _logger.Log(LogLevel.Information, "script: {script.FileName} was run", script.FileName);
+                _logger.Log(logLevel: LogLevel.Information, message: "script: {script.FileName} was run", args: script.FileName);
             }
             else if (result.Value == RunMigrationResult.ScriptSkippedBecauseAlreadyRun)
             {
-                // ReSharper disable once HeapView.ObjectAllocation
-                _logger.Log(LogLevel.Information, "script: {script.FileName} was not run because script was already executed", script.FileName);
+                _logger.Log(logLevel: LogLevel.Information, message: "script: {script.FileName} was not run because script was already executed", args: script.FileName);
             }
             else if (result.Value == RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted)
             {
-                // ReSharper disable once HeapView.ObjectAllocation
-                _logger.Log(LogLevel.Error, result.Exception, "script: {script.FileName} was not completed due to exception", script.FileName);
+                _logger.Log(logLevel: LogLevel.Error, exception: result.Exception, message: "script: {script.FileName} was not completed due to exception", args: script.FileName);
                 skipBecauseOfErrorWithPreviousScript = true;
             }
         }
@@ -331,11 +325,8 @@ public class DbMigrator : IDbMigrator
         return skipBecauseOfErrorWithPreviousScript ? new Result<bool>(false) : new Result<bool>(true);
     }
 
-    // ReSharper disable once HeapView.ClosureAllocation
     private static List<Script> RemoveExcludedScripts(IEnumerable<Script> scripts, IReadOnlyCollection<string> excludedScripts)
     {
-        // ReSharper disable once HeapView.DelegateAllocation
-        // ReSharper disable once HeapView.ClosureAllocation
         var result = scripts.Where(p => excludedScripts.All(x => x != p.FileName)).ToList();
         return result;
     }
@@ -343,6 +334,7 @@ public class DbMigrator : IDbMigrator
     private static List<Script> SetScriptsInCorrectSequence(List<Script> scripts)
     {
         return scripts.OrderBy(s => s.DatePartOfName)
-            .ThenBy(s => s.SequenceNumberPart).ToList();
+                      .ThenBy(s => s.SequenceNumberPart)
+                      .ToList();
     }
 }

@@ -1,5 +1,4 @@
 ﻿// Ignore Spelling: Sql
-// ReSharper disable HeapView.ObjectAllocation
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using EasyDbMigrator;
@@ -53,10 +52,11 @@ public class SqlServerIntegrationTests
                 , datetimeHelperMock.Object
                 , new MicrosoftSqlConnector());
 
-            List<string> scriptsToExclude = new()
+            List<string> list = new()
             {
                 "20211230_001_CreateDB.sql"
             };
+            List<string> scriptsToExclude = list;
 
             migrator.ExcludeTheseScriptsInRun(scriptsToExclude);
 
@@ -253,7 +253,6 @@ public class SqlServerIntegrationTests
         DockerEnvironmentBuilder? environmentBuilder = new();
         const string password = "stuffy6!";
 
-        // ReSharper disable once HeapView.ClosureAllocation
         IDictionary<ushort, ushort> ports = new Dictionary<ushort, ushort>
         {
             { 1433, 1433 }

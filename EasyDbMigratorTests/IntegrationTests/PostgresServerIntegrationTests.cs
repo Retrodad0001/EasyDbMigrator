@@ -1,6 +1,4 @@
 ﻿// Ignore Spelling: postgres
-// ReSharper disable HeapView.ObjectAllocation
-// ReSharper disable HeapView.ClosureAllocation
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using EasyDbMigrator;
@@ -53,17 +51,19 @@ public class PostgresServerIntegrationTests
                 , datetimeHelperMock.Object
                 , new PostgreSqlConnector());
 
-            List<string> scriptsToExclude = new()
+            List<string> list = new()
             {
                 "20211230_001_DoStuffScript.sql"
             };
+
+            List<string> scriptsToExclude = list;
             migrator.ExcludeTheseScriptsInRun(scriptsToExclude);
 
             bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(config
                 , CancellationToken.None);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
-            Type? type = typeof(HereThePostgreSqlServerScriptsCanBeFound);
+            Type? type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
             bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(type
                 , config
@@ -135,7 +135,7 @@ public class PostgresServerIntegrationTests
                 , CancellationToken.None);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
-            Type? type = typeof(HereThePostgreSqlServerScriptsCanBeFound);
+            Type? type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
             bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(type
                 , config
@@ -228,7 +228,7 @@ public class PostgresServerIntegrationTests
                 , token);
             _ = succeededDeleteDatabase.Should().BeTrue();
 
-            Type? type = typeof(HereThePostgreSqlServerScriptsCanBeFound);
+            Type? type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
             source.Cancel();
 
@@ -253,7 +253,7 @@ public class PostgresServerIntegrationTests
 
     private static DockerEnvironment SetupPostgresServerTestEnvironment(string databaseName)
     {
-        DockerEnvironmentBuilder? environmentBuilder = new ();
+        DockerEnvironmentBuilder? environmentBuilder = new();
 
         const string userName = "retrodad";
         const string password = "stuffy6!";

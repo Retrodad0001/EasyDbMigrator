@@ -28,7 +28,6 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
     public async Task<Result<bool>> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
         , CancellationToken cancellationToken)
     {
-        // ReSharper disable once HeapView.ObjectAllocation
         string query = $@"
                DROP DATABASE IF EXISTS  {migrationConfiguration.DatabaseName}
                 ";
@@ -89,8 +88,6 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
             return new Result<bool>(wasSuccessful: true);
         }
 
-        // ReSharper disable once StringLiteralTypo
-        // ReSharper disable once HeapView.ObjectAllocation
         string sqlScriptCreateDatabase = @$"
                     SELECT 'CREATE DATABASE {migrationConfiguration.DatabaseName}'
                     WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{migrationConfiguration.DatabaseName}')
@@ -112,7 +109,6 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
     /// <param name="executedDateTime"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    // ReSharper disable once HeapView.ClosureAllocation
     public async Task<Result<RunMigrationResult>> RunDbMigrationScriptAsync(MigrationConfiguration migrationConfiguration
         , Script script
         , DateTimeOffset executedDateTime
@@ -132,7 +128,6 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
                 await using NpgsqlConnection connection = new(connectionString: migrationConfiguration.ConnectionString);
                 await connection.OpenAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
-                // ReSharper disable once HeapView.ObjectAllocation
                 string checkIfScriptHasExecuted = $@"
                         SELECT Id
                         FROM DbMigrationsRun
@@ -149,7 +144,6 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
                 }
 
                 string sqlFormattedDate = executedDateTime.ToString(format: "yyyy-MM-dd HH:mm:ss");
-                // ReSharper disable once HeapView.ObjectAllocation
                 string updateVersioningTableScript = $@"
                             
                             INSERT INTO DbMigrationsRun (Executed, Filename, version)
@@ -190,7 +184,6 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
                 {
                     return new Result<RunMigrationResult>(wasSuccessful: true
                         , value: RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted
-                        // ReSharper disable once HeapView.ObjectAllocation
                         , exception: new ApplicationException(message: $"{ex} + {ex2.Message}"));
                 }
             }
@@ -199,7 +192,6 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
         }
     }
 
-    // ReSharper disable once HeapView.ClosureAllocation
     private async Task<Result<bool>> TryExecuteSingleScriptAsync(string connectionString
      , string scriptName
      , string sqlScriptContent

@@ -13,11 +13,12 @@ public sealed class XUnitLoggerProvider : ILoggerProvider
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly LoggerExternalScopeProvider _scopeProvider = new();
 
+
     /// <summary>
     /// Constructor for the logger provider.
     /// </summary>
     /// <param name="testOutputHelper"></param>
-    public XUnitLoggerProvider(ITestOutputHelper testOutputHelper)
+    public XUnitLoggerProvider(ITestOutputHelper testOutputHelper) : base()
     {
         _testOutputHelper = testOutputHelper;
     }

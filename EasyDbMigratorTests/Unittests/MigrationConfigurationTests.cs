@@ -13,11 +13,10 @@ namespace EasyDbMigratorTests.Unittests;
 public class MigrationConfigurationTests
 {
     [Theory]
-    [InlineData(new object[] { "word", false })]
-    [InlineData(new object[] { "word1 word2", true })]
-    [InlineData(new object[] { "", true })]
-    [InlineData(new object[] { " ", true })]
-    // ReSharper disable once HeapView.ClosureAllocation
+    [InlineData(data: new object[] { "word", false })]
+    [InlineData(data: new object[] { "word1 word2", true })]
+    [InlineData(data: new object[] { "", true })]
+    [InlineData(data: new object[] { " ", true })]
     public void The_parameter_databasename_should_have_only_one_word(string databaseName, bool shouldThrowException)
     {
         Action? act = () =>
@@ -38,8 +37,6 @@ public class MigrationConfigurationTests
 
     [Theory]
     [InlineData(new object[] { "", true })]
-    [InlineData(new object[] { " ", true })]
-    // ReSharper disable once HeapView.ClosureAllocation
     public void The_parameter_connectionString_should_be_correct(string connectionString, bool shouldThrowException)
     {
         Action? act = () =>

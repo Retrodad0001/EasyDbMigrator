@@ -12,9 +12,8 @@ namespace EasyDbMigratorTests.Unittests;
 public class ScriptTests
 {
     [Theory]
-    [InlineData(new object[] { "", true })]
-    [InlineData(new object[] { " ", true })]
-    // ReSharper disable once HeapView.ClosureAllocation
+    [InlineData(data: new object[] { "", true })]
+    [InlineData(data: new object[] { " ", true })]
     public void When_creating_the_parameter_scriptName_should_be_correct(string filename, bool shouldThrowException)
     {
         Action? act = () =>
@@ -33,9 +32,8 @@ public class ScriptTests
     }
 
     [Theory]
-    [InlineData(new object[] { "", true })]
-    [InlineData(new object[] { " ", true })]
-    // ReSharper disable once HeapView.ClosureAllocation
+    [InlineData(data: new object[] { "", true })]
+    [InlineData(data: new object[] { " ", true })]
     public void When_creating_the_parameter_connectionString_should_be_correct(string content, bool shouldThrowException)
     {
         Action? act = () =>

@@ -58,7 +58,6 @@ public sealed record Script
     }
     private void SplitUpNameofScript(string filename)
     {
-        // ReSharper disable once HeapView.ObjectAllocation
         int yearPart = int.Parse(filename[..4]);
         int monthPart = int.Parse(filename.Substring(4, 2));
         int dayPart = int.Parse(filename.Substring(6, 2));
