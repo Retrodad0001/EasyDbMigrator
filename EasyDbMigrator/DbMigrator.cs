@@ -9,11 +9,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-//TODO .net 6 (LTS) support until 12 November 2024
-//TODO .net 7 support until 14 May 2024 --> we will support this version until 12 November 2024
-//TODO .net 8 (LTS) support until 10 November 2026
-//TODO .net 9 ???
-
 namespace EasyDbMigrator;
 
 /// <summary>
