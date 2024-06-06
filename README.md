@@ -2,16 +2,11 @@
 
 ## 3.0.x (the latest release)
 - add support for .net 8
-- updated all internal packages for stability and security (I do this at least once every month)
+- monthly updates all packages for stability and security
 
 ## 2.0.x
 - add support for .net 7
-- updated all internal packages for stability and security (I do this at least once every month)
-
-## 1.4.0 
-- updated all internal packages for stability and security (I do this at least once every month)
-- add support for .net 6.0 LTS (exclusive)
-- removed support for .Net 5.0
+- monthly update all packages for stability and security
 
 # INFO:
 
