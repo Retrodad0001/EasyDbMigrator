@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>3.0.7</Version>
+    <Version>3.0.8</Version>
     <PackageId>Retrodad.EasyDbMigrator</PackageId>
     <Description>EasyDbMigrator is a database migration framework written in C#. It can be used for integration testing on your local machine or in CI/CD Pipelines or for manual migrations.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -18,12 +18,12 @@ For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</P
     <PackageIconUrl />
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <Authors>Retrodad0001</Authors>
-    <AssemblyVersion>3.0.7</AssemblyVersion>
-    <FileVersion>3.0.7</FileVersion>
+    <AssemblyVersion>3.0.8</AssemblyVersion>
+    <FileVersion>3.0.8</FileVersion>
     <PackageProjectUrl>https://github.com/Retrodad0001/EasyDbMigrator</PackageProjectUrl>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <AnalysisLevel>latest</AnalysisLevel>
-    <PackageVersion>3.0.7</PackageVersion>
+    <PackageVersion>3.0.8</PackageVersion>
     <Title>Retrodad.EasyDbMigrator</Title>
   </PropertyGroup>
 
@@ -54,7 +54,7 @@ For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</P
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
     <PackageReference Include="Npgsql" Version="8.0.3" />
-    <PackageReference Include="Polly" Version="8.3.1" />
+    <PackageReference Include="Polly" Version="8.4.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     <PackageReference Include="xunit.abstractions" Version="2.0.3" />
   </ItemGroup>
