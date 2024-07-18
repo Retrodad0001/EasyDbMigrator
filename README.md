@@ -2,11 +2,11 @@
 
 ## 3.0.x (the latest release)
 - add support for .net 8
-- monthly updates all packages for stability and security
+- monthly updates of all packages for stability and security
 
 ## 2.0.x
 - add support for .net 7
-- monthly update all packages for stability and security
+- monthly update of all packages for stability and security
 
 # INFO:
 
@@ -32,16 +32,16 @@
 
 ## What is EasyDBMigrator?
 
-EasyDBMigrator is an open-source database migration framework. It strongly favors simplicity and easy to use for automatic CI/CD strategies and local integration testing scenario's and easy integration in own code.
+EasyDBMigrator is an open-source database migration framework. It strongly favors simplicity and ease of use for automatic CI/CD strategies and local integration testing scenarios and easy integration in its own code.
   
-## What we want to accomplish?
+## What do we want to accomplish?
 
 1. Make it easy to integrate Microsoft SQL migrations in your CI/CD flows
 2. Make it easy to integrate Postgre SQL migrations in your CI/CD flows
 5. Make it easy to perform manual Microsoft SQL migrations
 6. Make it easy to perform manual Postgre SQL migrations
-7. Make it easy to integrate this package in your own code/tool
-8. Provide examples how write unit and integration tests (feel free in giving me code feedback or for a good discussion on testing)
+7. Make it easy to integrate this package into your own code/tool
+8. Provide examples of how to write unit and integration tests (feel free to give me code feedback or for a good discussion on testing)
 
 ## Get started with EasyDBMigrator :
 
