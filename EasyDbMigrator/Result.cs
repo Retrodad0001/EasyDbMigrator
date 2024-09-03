@@ -6,6 +6,7 @@ using System.Text;
 
 namespace EasyDbMigrator;
 
+//TODO when new union types are available in .net than use that instead of this Result type
 public sealed class Result<T>
 {
     public bool HasFailure => !WasSuccessful;

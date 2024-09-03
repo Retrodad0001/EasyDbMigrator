@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator;
 
-
 /// <summary>
 /// Helper class to get scripts from a directory
 /// </summary>
