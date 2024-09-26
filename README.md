@@ -1,7 +1,7 @@
 # The Latest news and Roadmap
 
 ## 3.0.x (the latest release)
-- add support for .net 8
+- add support for .net 8 and .NET 9 (when stable version is out)
 - monthly updates of all packages for stability and security
 
 ## 2.0.x
