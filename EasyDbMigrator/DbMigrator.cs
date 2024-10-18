@@ -11,6 +11,12 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator;
 
+//TODO remove .net 6 actions
+//TODO add .net 9 actions
+//TOOD add. net 9 target
+//TOOD update packages
+
+
 /// <summary>
 /// The main class to run the migration scripts
 /// </summary>
