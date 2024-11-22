@@ -35,7 +35,14 @@ public class SqlServerIntegrationTests
         try
         {
             await dockerEnvironmentSql.UpAsync();
+
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DatabaseName)?.GetConnectionString();
+            System.Data.SqlClient.SqlConnectionStringBuilder builder = new(connectionString)
+            {
+                Encrypt = false,
+                TrustServerCertificate = true
+            };
+            connectionString = builder.ConnectionString;
 
             MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
                 , DatabaseName);
@@ -107,6 +114,12 @@ public class SqlServerIntegrationTests
         {
             await dockerEnvironmentSql.UpAsync();
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DatabaseName)?.GetConnectionString();
+            System.Data.SqlClient.SqlConnectionStringBuilder builder = new(connectionString)
+            {
+                Encrypt = false,
+                TrustServerCertificate = true
+            };
+            connectionString = builder.ConnectionString;
 
             MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
                 , DatabaseName);
@@ -200,6 +213,12 @@ public class SqlServerIntegrationTests
         {
             await dockerEnvironmentSql.UpAsync(token);
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DatabaseName)?.GetConnectionString();
+            System.Data.SqlClient.SqlConnectionStringBuilder builder = new(connectionString)
+            {
+                Encrypt = false,
+                TrustServerCertificate = true
+            };
+            connectionString = builder.ConnectionString;
 
             MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
                 , DatabaseName);

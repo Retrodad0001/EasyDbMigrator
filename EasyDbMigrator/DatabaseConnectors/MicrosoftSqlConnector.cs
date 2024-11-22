@@ -1,9 +1,9 @@
 ﻿// Ignore Spelling: Sql
 
+using Microsoft.Data.SqlClient;
 using Polly;
 using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,6 +43,7 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                , scriptName: "EasyDbMigrator.Integrationtest_dropDatabase"
                , sqlScriptContent: query
                , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+
         return result;
     }
 
@@ -115,6 +116,7 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
         {
             return new Result<RunMigrationResult>(wasSuccessful: true, value: RunMigrationResult.MigrationWasCancelled);
         }
+
 
         SqlTransaction? transaction = null;
         try

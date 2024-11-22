@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+	  <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
 	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	  <PackageProjectUrl>https://github.com/Retrodad0001/EasyDbMigrator</PackageProjectUrl>
 	  <RepositoryUrl>https://github.com/Retrodad0001/EasyDbMigrator</RepositoryUrl>
@@ -26,6 +26,10 @@
     <EmbeddedResource Include="SqlServerMigrationScripts\20211230_001_CreateDB.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
   </ItemGroup>
 
 </Project>

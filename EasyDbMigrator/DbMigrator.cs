@@ -11,11 +11,7 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator;
 
-//TODO remove .net 6 actions
-//TODO add .net 9 actions
-//TOOD add. net 9 target
-//TOOD update packages
-
+//TODO versie 4.0.0 and deploy new package
 
 /// <summary>
 /// The main class to run the migration scripts
@@ -43,25 +39,19 @@ public class DbMigrator : IDbMigrator
         , IDirectoryHelper directoryHelper
         , IDataTimeHelper dataTimeHelper)
     {
-
         ArgumentNullException.ThrowIfNull(argument: logger);
-
         _logger = logger;
 
         ArgumentNullException.ThrowIfNull(argument: databaseConnector);
-
         _databaseConnector = databaseConnector;
 
         ArgumentNullException.ThrowIfNull(argument: assemblyResourceHelper);
-
         _assemblyResourceHelper = assemblyResourceHelper;
 
         ArgumentNullException.ThrowIfNull(argument: directoryHelper);
-
         _directoryHelper = directoryHelper;
 
         ArgumentNullException.ThrowIfNull(argument: dataTimeHelper);
-
         _dataTimeHelper = dataTimeHelper;
     }
 
@@ -76,7 +66,9 @@ public class DbMigrator : IDbMigrator
         , ILogger logger
         , IDatabaseConnector databaseConnector)
     {
+#pragma warning disable CA1871 // Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'
         ArgumentNullException.ThrowIfNull(argument: migrationConfiguration);
+#pragma warning restore CA1871 // Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'
 
         ArgumentNullException.ThrowIfNull(argument: logger);
 
@@ -104,7 +96,9 @@ public class DbMigrator : IDbMigrator
         , IDataTimeHelper dataTimeHelperMock
         , IDatabaseConnector databaseConnector)
     {
+#pragma warning disable CA1871 // Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'
         ArgumentNullException.ThrowIfNull(argument: migrationConfiguration);
+#pragma warning restore CA1871 // Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'
 
         ArgumentNullException.ThrowIfNull(argument: logger);
 
@@ -132,7 +126,6 @@ public class DbMigrator : IDbMigrator
     public virtual async Task<bool> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
         , CancellationToken cancellationToken = default)
     {
-
         var succeeded = await _databaseConnector.TryDeleteDatabaseIfExistAsync(migrationConfiguration
             , cancellationToken).ConfigureAwait(false);
 
