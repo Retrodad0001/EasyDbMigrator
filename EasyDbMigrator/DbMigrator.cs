@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 
 namespace EasyDbMigrator;
 
-//TODO versie 4.0.0 and deploy new package
-
 /// <summary>
 /// The main class to run the migration scripts
 /// </summary>
@@ -79,6 +77,7 @@ public class DbMigrator : IDbMigrator
             , new AssemblyResourceHelper()
             , new DirectoryHelper()
             , new DataTimeHelper());
+
 
         return result;
     }
