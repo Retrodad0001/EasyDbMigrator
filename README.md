@@ -2,6 +2,7 @@
 
 ## 4.0.x (the latest release)
 - add support for .net 9 and removed the not supported .net versions
+- is AOT compatible
 
 ## 3.0.x (the latest release)
 - add support for .net 8 and
