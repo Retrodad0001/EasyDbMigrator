@@ -88,8 +88,6 @@ EasyDBMigrator is an open-source database migration framework. It strongly favor
 
 
 ## Alternatives
-https://github.com/chucknorris/roundhouse
-
 https://github.com/erikbra/grate
 
 https://github.com/fluentmigrator/fluentmigrator
