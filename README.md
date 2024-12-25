@@ -36,7 +36,7 @@
 
 ## What is EasyDBMigrator?
 
-EasyDBMigrator is an open-source database migration framework. It strongly favors simplicity and ease of use for automatic CI/CD strategies and local integration testing scenarios and easy integration in its own code.
+EasyDBMigrator is an open-source database migration framework. It strongly favors simplicity and ease of use for automatic CI/CD strategies, integration testing scenarios and easy integration in your own code.
   
 ## What do we want to accomplish?
 
