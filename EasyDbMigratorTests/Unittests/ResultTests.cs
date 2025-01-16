@@ -1,7 +1,6 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using EasyDbMigrator;
-using FluentAssertions;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
@@ -14,35 +13,35 @@ public class ResultTests
     private sealed class MyCustomTypeUsedInResult { }
 
     [Fact]
-    public void Can_create_success_result_with_custom_type()
+    public void CanCreateSuccessResultWithCustomType()
     {
         Result<MyCustomTypeUsedInResult> result = new(true, new MyCustomTypeUsedInResult());
 
-        _ = result.WasSuccessful.Should().BeTrue();
-        _ = result.HasFailure.Should().BeFalse();
-        _ = result.Value.Should().NotBeNull();
-        _ = result.Exception.Should().BeNull();
+        Assert.True(result.WasSuccessful);
+        Assert.False(result.HasFailure);
+        Assert.NotNull(result.Value);
+        Assert.Null(result.Exception);
     }
 
     [Fact]
-    public void When_creating_failure_result_an_Exception_can_be_added()
+    public void WhenCreatingFailureResultAnExceptionCanBeAdded()
     {
         Result<MyCustomTypeUsedInResult> result = new(false, new System.Exception());
 
-        _ = result.WasSuccessful.Should().BeFalse();
-        _ = result.HasFailure.Should().BeTrue();
-        _ = result.Value.Should().BeNull();
-        _ = result.Exception.Should().NotBeNull();
+        Assert.False(result.WasSuccessful);
+        Assert.True(result.HasFailure);
+        Assert.Null(result.Value);
+        Assert.NotNull(result.Exception);
     }
 
     [Fact]
-    public void When_creating_failure_result_exception_is_not_mandatory()
+    public void WhenCreatingFailureResultExceptionIsNotMandatory()
     {
         Result<MyCustomTypeUsedInResult> result = new(false);
 
-        _ = result.WasSuccessful.Should().BeFalse();
-        _ = result.HasFailure.Should().BeTrue();
-        _ = result.Value.Should().BeNull();
-        _ = result.Exception.Should().BeNull();
+        Assert.False(result.WasSuccessful);
+        Assert.True(result.HasFailure);
+        Assert.Null(result.Value);
+        Assert.Null(result.Exception);
     }
 }

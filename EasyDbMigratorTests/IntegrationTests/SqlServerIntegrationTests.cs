@@ -6,7 +6,6 @@ using EasyDbMigrator.DatabaseConnectors;
 using EasyDbMigratorTests.IntegrationTests.Helpers;
 using EasyDbMigratorTests.TestHelpers;
 using ExampleTestLibWithSqlServerScripts;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
@@ -28,7 +27,7 @@ public class SqlServerIntegrationTests
 
     [Fact]
     [Trait("Category", "IntegrationTest")]
-    public async Task When_nothing_goes_wrong_with_running_the_migrations_on_an_empty_database()
+    public async Task WhenNothingGoesWrongWithRunningTheMigrationsOnAnEmptyDatabase()
     {
         DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
 
@@ -69,12 +68,12 @@ public class SqlServerIntegrationTests
 
             bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(config
                 , CancellationToken.None);
-            _ = succeededDeleteDatabase.Should().BeTrue();
+            Assert.True(succeededDeleteDatabase);
 
             bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeof(HereTheSqlServerScriptsCanBeFound)
                 , config
                 , CancellationToken.None);
-            _ = succeededRunningMigrations.Should().BeTrue();
+            Assert.True(succeededRunningMigrations);
 
             _ = loggerMock
                 .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync has executed", LogLevel.Information, Times.Exactly(1), false)
@@ -106,7 +105,7 @@ public class SqlServerIntegrationTests
 
     [Fact]
     [Trait("Category", "IntegrationTest")]
-    public async Task Can_skip_scripts_if_they_already_run_before()
+    public async Task CanSkipScriptsIfTheyAlreadyRunBefore()
     {
         DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
 
@@ -143,14 +142,14 @@ public class SqlServerIntegrationTests
 
             bool succeededDeleteDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(config
                 , CancellationToken.None);
-            _ = succeededDeleteDatabase.Should().BeTrue();
+            Assert.True(succeededDeleteDatabase);
 
             Type? type = typeof(HereTheSqlServerScriptsCanBeFound);
 
             bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(type
                 , config
                 , CancellationToken.None);
-            _ = succeededRunningMigrations.Should().BeTrue();
+            Assert.True(succeededRunningMigrations);
 
             //now run the migrations again
             Mock<ILogger<DbMigrator>> loggerMockSecondRun = new();
@@ -169,7 +168,7 @@ public class SqlServerIntegrationTests
             bool succeeded = await migrator2.TryApplyMigrationsAsync(type
                 , config
                 , CancellationToken.None);
-            _ = succeeded.Should().BeTrue();
+            Assert.True(succeeded);
 
             _ = loggerMockSecondRun
                 .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
@@ -202,7 +201,7 @@ public class SqlServerIntegrationTests
 
     [Fact]
     [Trait("Category", "IntegrationTest")]
-    public async Task Can_cancel_the_migration_process()
+    public async Task CanCancelTheMigrationProcess()
     {
         DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment();
 
@@ -244,14 +243,14 @@ public class SqlServerIntegrationTests
 
             bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(config
                 , token);
-            _ = succeededDeleteDatabase.Should().BeTrue();
+            Assert.True(succeededDeleteDatabase);
 
             source.Cancel();
 
             bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(typeof(HereTheSqlServerScriptsCanBeFound)
                 , config
                 , token);
-            _ = succeededRunningMigrations.Should().BeTrue();
+            Assert.True(succeededRunningMigrations);
 
             _ = loggerMock
                 .CheckIfLoggerWasCalled("migration process was canceled from the outside", LogLevel.Warning, Times.Exactly(1), false);

@@ -2,7 +2,6 @@
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using EasyDbMigrator;
-using FluentAssertions;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Xunit;
@@ -17,41 +16,41 @@ public class MigrationConfigurationTests
     [InlineData(data: new object[] { "word1 word2", true })]
     [InlineData(data: new object[] { "", true })]
     [InlineData(data: new object[] { " ", true })]
-    public void The_parameter_databasename_should_have_only_one_word(string databaseName, bool shouldThrowException)
+    public void TheParameterDatabasenameShouldHaveOnlyOneWord(string databaseName, bool shouldThrowException)
     {
-        Action? act = () =>
+        static void act(string databaseName)
         {
             MigrationConfiguration unused = new("connection string"
                 , databaseName);
-        };
+        }
 
         if (shouldThrowException)
         {
-            _ = act.Should().Throw<ArgumentException>();
+            Assert.Throws<ArgumentException>(() => act(databaseName));
         }
         else
         {
-            _ = act.Should().NotThrow();
+            act(databaseName);
         }
     }
 
     [Theory]
     [InlineData(new object[] { "", true })]
-    public void The_parameter_connectionString_should_be_correct(string connectionString, bool shouldThrowException)
+    public void TheParameterConnectionStringShouldBeCorrect(string connectionString, bool shouldThrowException)
     {
-        Action? act = () =>
+        static void act(string connectionString)
         {
             MigrationConfiguration unused = new(connectionString
                 , "databaseName");
-        };
+        }
 
         if (shouldThrowException)
         {
-            _ = act.Should().Throw<ArgumentException>();
+            Assert.Throws<ArgumentException>(() => act(connectionString));
         }
         else
         {
-            _ = act.Should().NotThrow();
+            act(connectionString);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace EasyDbMigrator;
 
 /// <summary>
-/// Interface for getting scripts from a directory.
+/// Interface for getting scripts from a directory and mocking this stuff out.
 /// </summary>
 public interface IDirectoryHelper
 {

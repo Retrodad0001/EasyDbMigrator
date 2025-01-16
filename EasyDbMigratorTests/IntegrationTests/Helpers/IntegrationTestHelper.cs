@@ -3,14 +3,13 @@
 
 using Dapper;
 using EasyDbMigratorTests.TestHelpers;
-using FluentAssertions;
 using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
+using Xunit;
 
 namespace EasyDbMigratorTests.IntegrationTests.Helpers;
 
@@ -33,14 +32,21 @@ public static class IntegrationTestHelper
                     FROM DbMigrationsRun")
                 .ToString());
 
-        _ = actual.Should().HaveSameCount(expectedRows);
-        _ = actual.Should().Contain(expectedRows);
+        Assert.Equal(expected: expectedRows.Count, actual: actual.Count);
+
+        for (int i = 0; i < actual.Count; i++)
+        {
+            Assert.Equal(expectedRows[i].Id, actual[i].Id);
+            Assert.Equal(expectedRows[i].Executed, actual[i].Executed);
+            Assert.Equal(expectedRows[i].Filename, actual[i].Filename);
+            Assert.Equal(expectedRows[i].Version, actual[i].Version);
+        }
 
         return true;
     }
 
     public static bool CheckMigrationsTablePostgresSever(string connectionString,
-       List<DbMigrationsRunRowPostgresServer> expectedRows)
+           List<DbMigrationsRunRowPostgresServer> expectedRows)
     {
         using NpgsqlConnection connection = new(connectionString);
         connection.Open();
@@ -51,15 +57,21 @@ public static class IntegrationTestHelper
                     FROM DbMigrationsRun")
                 .ToString());
 
-        _ = actual.Should().HaveSameCount(expectedRows);
-        _ = actual.Should().Contain(expectedRows);
+        Assert.Equal(expected: expectedRows.Count, actual: actual.Count);
+
+        for (int i = 0; i < actual.Count; i++)
+        {
+            Assert.Equal(expectedRows[i].Id, actual[i].Id);
+            Assert.Equal(expectedRows[i].Executed, actual[i].Executed);
+            Assert.Equal(expectedRows[i].Filename, actual[i].Filename);
+            Assert.Equal(expectedRows[i].Version, actual[i].Version);
+        }
 
         return true;
     }
-    
+
     public static string GenerateRandomDatabaseName()
     {
-   //     string result = Guid.NewGuid().ToString().Replace("-", "");
         string result = new StringBuilder().Append("test").Append(new Random().Next(100000, 999999)).ToString();
         return result;
     }

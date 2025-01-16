@@ -6,7 +6,6 @@ using EasyDbMigrator.DatabaseConnectors;
 using EasyDbMigratorTests.IntegrationTests.Helpers;
 using EasyDbMigratorTests.TestHelpers;
 using ExampleTestLibWithPostGreSQLServerScripts;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
@@ -26,7 +25,7 @@ public class PostgresServerIntegrationTests
 {
     [Fact]
     [Trait("Category", "IntegrationTest")]
-    public async Task When_nothing_goes_wrong_with_running_all_postgres_migrations_on_an_empty_database()
+    public async Task WhenNothingGoesWrongWithRunningAllPostgresMigrationsOnAnEmptyDatabase()
     {
         string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
         DockerEnvironment? dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName);
@@ -61,14 +60,14 @@ public class PostgresServerIntegrationTests
 
             bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(config
                 , CancellationToken.None);
-            _ = succeededDeleteDatabase.Should().BeTrue();
+            Assert.True(succeededDeleteDatabase);
 
             Type? type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
             bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(type
                 , config
                 , CancellationToken.None);
-            _ = succeededRunningMigrations.Should().BeTrue();
+            Assert.True(succeededRunningMigrations);
 
             _ = loggerMock
                 .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync has executed", LogLevel.Information, Times.Exactly(1), false)
@@ -99,7 +98,7 @@ public class PostgresServerIntegrationTests
 
     [Fact]
     [Trait("Category", "IntegrationTest")]
-    public async Task Can_skip_postgres_scripts_if_they_already_run_before()
+    public async Task CanSkipPostgresScriptsIfTheyAlreadyRunBefore()
     {
         string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
         DockerEnvironment? dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName);
@@ -133,14 +132,14 @@ public class PostgresServerIntegrationTests
 
             bool succeededDeleteDatabase = await migrator1.TryDeleteDatabaseIfExistAsync(config
                 , CancellationToken.None);
-            _ = succeededDeleteDatabase.Should().BeTrue();
+            Assert.True(succeededDeleteDatabase);
 
             Type? type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
             bool succeededRunningMigrations = await migrator1.TryApplyMigrationsAsync(type
                 , config
                 , CancellationToken.None);
-            _ = succeededRunningMigrations.Should().BeTrue();
+            Assert.True(succeededRunningMigrations);
 
             // now run the migrations again
             var loggerMockSecondRun = new Mock<ILogger<DbMigrator>>();
@@ -159,7 +158,7 @@ public class PostgresServerIntegrationTests
             bool succeeded = await migrator2.TryApplyMigrationsAsync(type
                 , config
                 , CancellationToken.None);
-            _ = succeeded.Should().BeTrue();
+            Assert.True(succeeded);
 
             _ = loggerMockSecondRun
                 .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
@@ -191,7 +190,7 @@ public class PostgresServerIntegrationTests
 
     [Fact]
     [Trait("Category", "IntegrationTest")]
-    public async Task Can_cancel_the_postgres_migration_process()
+    public async Task CanCancelThePostgresMigrationProcess()
     {
         string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
         DockerEnvironment? dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(databaseName);
@@ -226,7 +225,7 @@ public class PostgresServerIntegrationTests
 
             bool succeededDeleteDatabase = await migrator.TryDeleteDatabaseIfExistAsync(config
                 , token);
-            _ = succeededDeleteDatabase.Should().BeTrue();
+            Assert.True(succeededDeleteDatabase);
 
             Type? type = typeof(HereThePostgreSQLServerScriptsCanBeFound);
 
@@ -235,7 +234,7 @@ public class PostgresServerIntegrationTests
             bool succeededRunningMigrations = await migrator.TryApplyMigrationsAsync(type
                 , config
                 , token);
-            _ = succeededRunningMigrations.Should().BeTrue();
+            Assert.True(succeededRunningMigrations);
 
             _ = loggerMock
                  .CheckIfLoggerWasCalled("migration process was canceled from the outside", LogLevel.Warning, Times.Exactly(1), false);

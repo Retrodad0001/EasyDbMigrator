@@ -2,7 +2,6 @@
 
 using EasyDbMigrator;
 using ExampleTestLibWithSqlServerScripts;
-using FluentAssertions;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Xunit;
@@ -19,7 +18,8 @@ public class AssemblyResourceHelperTests
 
         var result = await sut.TryGetScriptsFromAssembly(typeof(HereTheSqlServerScriptsCanBeFound));
 
-        _ = result.Should().HaveCount(3);
+        Assert.Equal(expected: 3, actual: result.Count);
+
         _ = result.TrueForAll(script => script.FileName != string.Empty);
         _ = result.TrueForAll(script => script.FileName.Split('.').Length == 2);//contain only one
     }
