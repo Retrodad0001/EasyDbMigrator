@@ -4,6 +4,8 @@
 - add support for .net 9 and removed the not supported .net versions
 - is AOT compatible
 
+! from version 4.0.2 on EasyDBMigrator will not use the Fluent Assertions package for internal testing. The reason is that Fluent Assertions is a commercial product now. EasyDBMigration will only use non-commercial opensource software.
+
 ## 3.0.x (the latest release)
 - add support for .net 8 and
 - monthly updates of all packages for stability and security
