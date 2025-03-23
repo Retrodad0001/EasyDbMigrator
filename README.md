@@ -66,11 +66,11 @@ EasyDBMigrator is an open-source database migration framework. It strongly favor
 
             //for writing the logging output from EasyDBMigrator to the test explorer output window
             var logger = XUnitLoghelper.CreateLogger<DatabaseTests>(_testOutputHelper);
-            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDataTimeHelper>();
+            Mock<IDataTimeHelper> datetimeHelperMock = new Mock<IDateTimeHelper>();
 
             DbMigrator migrator = DbMigrator.CreateForLocalIntegrationTesting(migrationConfiguration: config
                   , logger: loggerMock.Object
-                  , dataTimeHelperMock: datetimeHelperMock.Object
+                  , dateTimeHelperMock: datetimeHelperMock.Object
                   , databaseConnector: new MicrosoftSqlConnector()); 
             //can also use the PostgreSqlConnector to connect to PostgreSQL instead of Microsoft Sql Server
 
