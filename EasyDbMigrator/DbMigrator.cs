@@ -20,7 +20,7 @@ public class DbMigrator : IDbMigrator
     private readonly IDatabaseConnector _databaseConnector;
     private readonly IAssemblyResourceHelper _assemblyResourceHelper;
     private readonly IDirectoryHelper _directoryHelper;
-    private readonly IDataTimeHelper _dataTimeHelper;
+    private readonly IDateTimeHelper _dataTimeHelper;
     private readonly List<string> _excludedScriptsList = new();
 
     /// <summary>
@@ -35,7 +35,7 @@ public class DbMigrator : IDbMigrator
         , IDatabaseConnector databaseConnector
         , IAssemblyResourceHelper assemblyResourceHelper
         , IDirectoryHelper directoryHelper
-        , IDataTimeHelper dataTimeHelper)
+        , IDateTimeHelper dataTimeHelper)
     {
         ArgumentNullException.ThrowIfNull(argument: logger);
         _logger = logger;
@@ -76,7 +76,7 @@ public class DbMigrator : IDbMigrator
             , databaseConnector
             , new AssemblyResourceHelper()
             , new DirectoryHelper()
-            , new DataTimeHelper());
+            , new DateTimeHelper());
 
 
         return result;
@@ -92,7 +92,7 @@ public class DbMigrator : IDbMigrator
     /// <returns></returns>
     public static DbMigrator CreateForLocalIntegrationTesting(MigrationConfiguration? migrationConfiguration
         , ILogger logger
-        , IDataTimeHelper dataTimeHelperMock
+        , IDateTimeHelper dataTimeHelperMock
         , IDatabaseConnector databaseConnector)
     {
 #pragma warning disable CA1871 // Do not pass a nullable struct to 'ArgumentNullException.ThrowIfNull'

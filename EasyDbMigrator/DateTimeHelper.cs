@@ -9,7 +9,7 @@ namespace EasyDbMigrator;
 /// Helper for getting the current time
 /// </summary>
 [ExcludeFromCodeCoverage] //tested in integrationTest
-public sealed class DataTimeHelper : IDataTimeHelper
+public sealed class DateTimeHelper : IDateTimeHelper
 {
     /// <summary>
     /// gets the current Utc time

@@ -5,7 +5,7 @@ namespace EasyDbMigrator;
 /// <summary>
 /// Interface for getting the current time.
 /// </summary>
-public interface IDataTimeHelper
+public interface IDateTimeHelper
 {
     /// <summary>
     /// Get the current time in UTC.

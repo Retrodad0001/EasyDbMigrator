@@ -48,7 +48,7 @@ public class SqlServerIntegrationTests
 
             Mock<ILogger<DbMigrator>> loggerMock = new();
 
-            Mock<IDataTimeHelper> datetimeHelperMock = new();
+            Mock<IDateTimeHelper> datetimeHelperMock = new();
             DateTimeOffset executedDataTime = DateTime.UtcNow;
 
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);
@@ -125,7 +125,7 @@ public class SqlServerIntegrationTests
 
             Mock<ILogger<DbMigrator>> loggerMock = new();
 
-            Mock<IDataTimeHelper> datetimeHelperMock1 = new();
+            Mock<IDateTimeHelper> datetimeHelperMock1 = new();
             DateTimeOffset executedFirstTimeDataTime = DateTimeOffset.UtcNow;
 
             _ = datetimeHelperMock1.Setup(x => x.GetCurrentUtcTime()).Returns(executedFirstTimeDataTime);
@@ -155,7 +155,7 @@ public class SqlServerIntegrationTests
             Mock<ILogger<DbMigrator>> loggerMockSecondRun = new();
             DateTime executedSecondTimeDataTime = new(2021, 12, 31, 2, 16, 1);
 
-            Mock<IDataTimeHelper> datetimeHelperMock2 = new();
+            Mock<IDateTimeHelper> datetimeHelperMock2 = new();
             _ = datetimeHelperMock2.Setup(x => x.GetCurrentUtcTime()).Returns(executedSecondTimeDataTime);
 
             DbMigrator? migrator2 = DbMigrator.CreateForLocalIntegrationTesting(config
@@ -224,7 +224,7 @@ public class SqlServerIntegrationTests
 
             Mock<ILogger<DbMigrator>> loggerMock = new();
 
-            Mock<IDataTimeHelper> datetimeHelperMock = new();
+            Mock<IDateTimeHelper> datetimeHelperMock = new();
             DateTimeOffset executedDataTime = DateTime.UtcNow;
 
             _ = datetimeHelperMock.Setup(x => x.GetCurrentUtcTime()).Returns(executedDataTime);

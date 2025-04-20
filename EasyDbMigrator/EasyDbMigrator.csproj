@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<IsAotCompatible>true</IsAotCompatible>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -54,10 +55,12 @@ For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</P
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.4" />
     <PackageReference Include="Npgsql" Version="9.0.3" />
     <PackageReference Include="Polly" Version="8.5.2" />
     <PackageReference Include="xunit.abstractions" Version="2.0.3" />
+	<None Include="docs\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

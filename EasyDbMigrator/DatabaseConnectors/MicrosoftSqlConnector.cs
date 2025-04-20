@@ -1,5 +1,6 @@
 ﻿// Ignore Spelling: Sql
 
+
 using Microsoft.Data.SqlClient;
 using Polly;
 using System;
