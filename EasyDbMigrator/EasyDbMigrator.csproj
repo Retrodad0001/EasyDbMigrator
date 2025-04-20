@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
-	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<IsAotCompatible>true</IsAotCompatible>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -63,12 +62,9 @@ For help and release info see: https://github.com/Retrodad0001/EasyDbMigrator</P
   </ItemGroup>
 
   <ItemGroup>
-	  <None Include="README.md" Pack="true" PackagePath="\"/>
-
 	  <None Include="..\Icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
-		
     </None>
   </ItemGroup>
 
