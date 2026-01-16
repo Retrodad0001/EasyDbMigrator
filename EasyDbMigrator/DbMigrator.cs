@@ -1,8 +1,8 @@
 ﻿// Ignore Spelling: Migrator
 
-//TODO .NET 8 end of life 10-11-2026
-//TODO .NET 9 end of life 10-11-2026
-//TOOD .NET 10 end of life 14-11-2028
+//TODO .NET 8 end of life 10-11-2026 + half year extra support in this package
+//TODO .NET 9 end of life 10-11-2026 + half year extra support in this package
+//TODO .NET 10 end of life 14-11-2028 + half year extra support in this package
 
 using EasyDbMigrator.DatabaseConnectors;
 using Microsoft.Extensions.Logging;
