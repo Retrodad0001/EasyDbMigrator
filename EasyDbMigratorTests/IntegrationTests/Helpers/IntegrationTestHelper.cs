@@ -3,10 +3,10 @@
 
 using Dapper;
 using EasyDbMigratorTests.TestHelpers;
+using Microsoft.Data.SqlClient;
 using Npgsql;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Xunit;

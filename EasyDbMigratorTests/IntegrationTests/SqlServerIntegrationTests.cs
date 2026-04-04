@@ -6,6 +6,7 @@ using EasyDbMigrator.DatabaseConnectors;
 using EasyDbMigratorTests.IntegrationTests.Helpers;
 using EasyDbMigratorTests.TestHelpers;
 using ExampleTestLibWithSqlServerScripts;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
@@ -36,7 +37,7 @@ public class SqlServerIntegrationTests
             await dockerEnvironmentSql.UpAsync();
 
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DatabaseName)?.GetConnectionString();
-            System.Data.SqlClient.SqlConnectionStringBuilder builder = new(connectionString)
+            SqlConnectionStringBuilder builder = new(connectionString)
             {
                 Encrypt = false,
                 TrustServerCertificate = true
@@ -113,7 +114,7 @@ public class SqlServerIntegrationTests
         {
             await dockerEnvironmentSql.UpAsync();
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DatabaseName)?.GetConnectionString();
-            System.Data.SqlClient.SqlConnectionStringBuilder builder = new(connectionString)
+            SqlConnectionStringBuilder builder = new(connectionString)
             {
                 Encrypt = false,
                 TrustServerCertificate = true
@@ -212,7 +213,7 @@ public class SqlServerIntegrationTests
         {
             await dockerEnvironmentSql.UpAsync(token);
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DatabaseName)?.GetConnectionString();
-            System.Data.SqlClient.SqlConnectionStringBuilder builder = new(connectionString)
+            SqlConnectionStringBuilder builder = new(connectionString)
             {
                 Encrypt = false,
                 TrustServerCertificate = true
