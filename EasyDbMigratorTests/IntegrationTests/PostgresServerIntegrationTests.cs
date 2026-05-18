@@ -32,7 +32,7 @@ public class PostgresServerIntegrationTests
 
         try
         {
-            await dockerPostgresServerEnvironment.UpAsync();
+            await dockerPostgresServerEnvironment.UpAsync(TestContext.Current.CancellationToken);
             string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(databaseName)?.GetConnectionString();
 
             MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()
@@ -105,7 +105,7 @@ public class PostgresServerIntegrationTests
 
         try
         {
-            await dockerPostgresServerEnvironment.UpAsync();
+            await dockerPostgresServerEnvironment.UpAsync(TestContext.Current.CancellationToken);
             string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(databaseName)?.GetConnectionString();
 
             MigrationConfiguration config = new(connectionString ?? throw new InvalidOperationException()

@@ -3,6 +3,7 @@
 //TODO .NET 8 end of life 10-11-2026 + half year extra support in this package
 //TODO .NET 9 end of life 10-11-2026 + half year extra support in this package
 //TODO .NET 10 end of life 14-11-2028 + half year extra support in this package
+//TODO remove xunit and use MStest (new version)
 
 using EasyDbMigrator.DatabaseConnectors;
 using Microsoft.Extensions.Logging;

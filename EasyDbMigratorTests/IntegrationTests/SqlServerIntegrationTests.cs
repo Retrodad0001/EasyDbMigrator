@@ -34,7 +34,7 @@ public class SqlServerIntegrationTests
 
         try
         {
-            await dockerEnvironmentSql.UpAsync();
+            await dockerEnvironmentSql.UpAsync(TestContext.Current.CancellationToken);
 
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DatabaseName)?.GetConnectionString();
             SqlConnectionStringBuilder builder = new(connectionString)
@@ -112,7 +112,7 @@ public class SqlServerIntegrationTests
 
         try
         {
-            await dockerEnvironmentSql.UpAsync();
+            await dockerEnvironmentSql.UpAsync(TestContext.Current.CancellationToken);
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(DatabaseName)?.GetConnectionString();
             SqlConnectionStringBuilder builder = new(connectionString)
             {
