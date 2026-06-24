@@ -98,6 +98,9 @@ dotnet_diagnostic.CA1707.severity = warning
 # IDE0059: Unnecessary assignment of a value
 dotnet_diagnostic.IDE0059.severity = warning
 
+# CA1873: Avoid potentially expensive logging
+dotnet_diagnostic.CA1873.severity = warning
+
 [*.vb]
 #### Naming styles ####
 
