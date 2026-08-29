@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace EasyDbMigrator;
@@ -65,6 +66,7 @@ public sealed record Script
         SequenceNumberPart = int.Parse(filename.Substring(9, 3));
     }
 
+    [ExcludeFromCodeCoverage] //this method is used for debug only
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     public override string ToString()
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

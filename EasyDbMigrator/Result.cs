@@ -1,6 +1,7 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace EasyDbMigrator;
@@ -26,6 +27,7 @@ public sealed class Result<T>
         Exception = exception;
     }
 
+    [ExcludeFromCodeCoverage] //this method is used for debug only
     public override string ToString()
     {
         return new StringBuilder().Append("isSuccess: ")

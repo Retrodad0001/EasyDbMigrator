@@ -3,6 +3,7 @@
 using EasyDbMigrator;
 using ExampleTestLibWithSqlServerScripts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
@@ -23,5 +24,13 @@ public class AssemblyResourceHelperTests
 
         _ = result.TrueForAll(script => script.FileName != string.Empty);
         _ = result.TrueForAll(script => script.FileName.Split('.').Length == 2);
+    }
+
+    [TestMethod]
+    public async Task TryGetScriptsFromAssemblyThrowsWhenTypeIsNull()
+    {
+        AssemblyResourceHelper sut = new();
+
+        _ = await Assert.ThrowsExactlyAsync<ArgumentNullException>(() => sut.TryGetScriptsFromAssembly(null!));
     }
 }
