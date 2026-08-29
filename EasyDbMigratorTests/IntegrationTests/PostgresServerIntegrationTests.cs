@@ -45,16 +45,15 @@ public class PostgresServerIntegrationTests
 
         string containerName = IntegrationTestHelper.GenerateRandomDatabaseName();
         const string databaseName = MigrationDatabaseName;
-        diagnostics.Step("container name", containerName);
+        diagnostics.WatchContainer(containerName);
         diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(containerName);
 
         try
         {
-            diagnostics.Step("starting the Postgres container (this pulls the image on a cold machine)");
-            await dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("Postgres container is up");
+            await diagnostics.StartContainerAsync("Postgres"
+                , () => dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(containerName)?.GetConnectionString();
             diagnostics.Step("connection string from the container", connectionString);
@@ -124,6 +123,7 @@ public class PostgresServerIntegrationTests
         {
             diagnostics.Step("disposing the Postgres container");
             await dockerPostgresServerEnvironment.DisposeAsync();
+            diagnostics.Step("Postgres container disposed");
         }
     }
 
@@ -135,16 +135,15 @@ public class PostgresServerIntegrationTests
 
         string containerName = IntegrationTestHelper.GenerateRandomDatabaseName();
         const string databaseName = MigrationDatabaseName;
-        diagnostics.Step("container name", containerName);
+        diagnostics.WatchContainer(containerName);
         diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(containerName);
 
         try
         {
-            diagnostics.Step("starting the Postgres container (this pulls the image on a cold machine)");
-            await dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("Postgres container is up");
+            await diagnostics.StartContainerAsync("Postgres"
+                , () => dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(containerName)?.GetConnectionString();
             diagnostics.Step("connection string from the container", connectionString);
@@ -232,6 +231,7 @@ public class PostgresServerIntegrationTests
         {
             diagnostics.Step("disposing the Postgres container");
             await dockerPostgresServerEnvironment.DisposeAsync();
+            diagnostics.Step("Postgres container disposed");
         }
     }
 
@@ -243,7 +243,7 @@ public class PostgresServerIntegrationTests
 
         string containerName = IntegrationTestHelper.GenerateRandomDatabaseName();
         const string databaseName = MigrationDatabaseName;
-        diagnostics.Step("container name", containerName);
+        diagnostics.WatchContainer(containerName);
         diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(containerName);
@@ -252,9 +252,8 @@ public class PostgresServerIntegrationTests
 
         try
         {
-            diagnostics.Step("starting the Postgres container (this pulls the image on a cold machine)");
-            await dockerPostgresServerEnvironment.UpAsync(token);
-            diagnostics.Step("Postgres container is up");
+            await diagnostics.StartContainerAsync("Postgres"
+                , () => dockerPostgresServerEnvironment.UpAsync(token));
 
             string? connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(containerName)?.GetConnectionString();
             diagnostics.Step("connection string from the container", connectionString);
@@ -307,6 +306,7 @@ public class PostgresServerIntegrationTests
             diagnostics.Step("disposing the Postgres container");
             source.Dispose();
             await dockerPostgresServerEnvironment.DisposeAsync();
+            diagnostics.Step("Postgres container disposed");
         }
     }
 
@@ -318,7 +318,7 @@ public class PostgresServerIntegrationTests
 
         string containerName = IntegrationTestHelper.GenerateRandomDatabaseName();
         const string databaseName = MigrationDatabaseName;
-        diagnostics.Step("container name", containerName);
+        diagnostics.WatchContainer(containerName);
         diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(containerName);
@@ -329,9 +329,8 @@ public class PostgresServerIntegrationTests
 
         try
         {
-            diagnostics.Step("starting the Postgres container (this pulls the image on a cold machine)");
-            await dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("Postgres container is up");
+            await diagnostics.StartContainerAsync("Postgres"
+                , () => dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(containerName)?.GetConnectionString();
             diagnostics.Step("connection string from the container", connectionString);
@@ -396,6 +395,7 @@ public class PostgresServerIntegrationTests
         {
             diagnostics.Step("disposing the Postgres container");
             await dockerPostgresServerEnvironment.DisposeAsync();
+            diagnostics.Step("Postgres container disposed");
 
             if (Directory.Exists(scriptsDirectory))
             {
@@ -412,7 +412,7 @@ public class PostgresServerIntegrationTests
 
         string containerName = IntegrationTestHelper.GenerateRandomDatabaseName();
         const string databaseName = MigrationDatabaseName;
-        diagnostics.Step("container name", containerName);
+        diagnostics.WatchContainer(containerName);
         diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(containerName);
@@ -423,9 +423,8 @@ public class PostgresServerIntegrationTests
 
         try
         {
-            diagnostics.Step("starting the Postgres container (this pulls the image on a cold machine)");
-            await dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("Postgres container is up");
+            await diagnostics.StartContainerAsync("Postgres"
+                , () => dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(containerName)?.GetConnectionString();
             diagnostics.Step("connection string from the container", connectionString);
@@ -492,6 +491,7 @@ public class PostgresServerIntegrationTests
         {
             diagnostics.Step("disposing the Postgres container");
             await dockerPostgresServerEnvironment.DisposeAsync();
+            diagnostics.Step("Postgres container disposed");
 
             if (Directory.Exists(scriptsDirectory))
             {
@@ -508,16 +508,15 @@ public class PostgresServerIntegrationTests
 
         string containerName = IntegrationTestHelper.GenerateRandomDatabaseName();
         const string databaseName = MigrationDatabaseName;
-        diagnostics.Step("container name", containerName);
+        diagnostics.WatchContainer(containerName);
         diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(containerName);
 
         try
         {
-            diagnostics.Step("starting the Postgres container (this pulls the image on a cold machine)");
-            await dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("Postgres container is up");
+            await diagnostics.StartContainerAsync("Postgres"
+                , () => dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(containerName)?.GetConnectionString();
             diagnostics.Step("connection string from the container", connectionString);
@@ -610,6 +609,7 @@ public class PostgresServerIntegrationTests
         {
             diagnostics.Step("disposing the Postgres container");
             await dockerPostgresServerEnvironment.DisposeAsync();
+            diagnostics.Step("Postgres container disposed");
         }
     }
 
@@ -621,7 +621,7 @@ public class PostgresServerIntegrationTests
 
         string containerName = IntegrationTestHelper.GenerateRandomDatabaseName();
         const string databaseName = MigrationDatabaseName;
-        diagnostics.Step("container name", containerName);
+        diagnostics.WatchContainer(containerName);
         diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(containerName);
@@ -632,9 +632,8 @@ public class PostgresServerIntegrationTests
 
         try
         {
-            diagnostics.Step("starting the Postgres container (this pulls the image on a cold machine)");
-            await dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("Postgres container is up");
+            await diagnostics.StartContainerAsync("Postgres"
+                , () => dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(containerName)?.GetConnectionString();
             diagnostics.Step("connection string from the container", connectionString);
@@ -720,6 +719,7 @@ public class PostgresServerIntegrationTests
         {
             diagnostics.Step("disposing the Postgres container");
             await dockerPostgresServerEnvironment.DisposeAsync();
+            diagnostics.Step("Postgres container disposed");
 
             if (Directory.Exists(scriptsDirectory))
             {
@@ -736,16 +736,15 @@ public class PostgresServerIntegrationTests
 
         string containerName = IntegrationTestHelper.GenerateRandomDatabaseName();
         const string databaseName = MigrationDatabaseName;
-        diagnostics.Step("container name", containerName);
+        diagnostics.WatchContainer(containerName);
         diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerPostgresServerEnvironment = SetupPostgresServerTestEnvironment(containerName);
 
         try
         {
-            diagnostics.Step("starting the Postgres container (this pulls the image on a cold machine)");
-            await dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("Postgres container is up");
+            await diagnostics.StartContainerAsync("Postgres"
+                , () => dockerPostgresServerEnvironment.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerPostgresServerEnvironment.GetContainer<PostgresContainer>(containerName)?.GetConnectionString();
             diagnostics.Step("connection string from the container", connectionString);
@@ -840,6 +839,7 @@ public class PostgresServerIntegrationTests
         {
             diagnostics.Step("disposing the Postgres container");
             await dockerPostgresServerEnvironment.DisposeAsync();
+            diagnostics.Step("Postgres container disposed");
         }
     }
 

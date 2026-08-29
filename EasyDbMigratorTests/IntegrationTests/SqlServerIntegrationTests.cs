@@ -46,16 +46,15 @@ public class SqlServerIntegrationTests
 
         string containerName = IntegrationTestHelper.GenerateRandomDatabaseName();
         const string databaseName = DatabaseNameUsedByTheEmbeddedScripts;
-        diagnostics.Step("container name", containerName);
+        diagnostics.WatchContainer(containerName);
         diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment(containerName);
 
         try
         {
-            diagnostics.Step("starting the SQL Server container (this pulls the image on a cold machine)");
-            await dockerEnvironmentSql.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("SQL Server container is up");
+            await diagnostics.StartContainerAsync("SQL Server"
+                , () => dockerEnvironmentSql.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(containerName)?.GetConnectionString();
             SqlConnectionStringBuilder builder = new(connectionString)
@@ -127,6 +126,7 @@ public class SqlServerIntegrationTests
         {
             diagnostics.Step("disposing the SQL Server container");
             await dockerEnvironmentSql.DisposeAsync();
+            diagnostics.Step("SQL Server container disposed");
         }
     }
 
@@ -138,16 +138,15 @@ public class SqlServerIntegrationTests
 
         string containerName = IntegrationTestHelper.GenerateRandomDatabaseName();
         const string databaseName = DatabaseNameUsedByTheEmbeddedScripts;
-        diagnostics.Step("container name", containerName);
+        diagnostics.WatchContainer(containerName);
         diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment(containerName);
 
         try
         {
-            diagnostics.Step("starting the SQL Server container (this pulls the image on a cold machine)");
-            await dockerEnvironmentSql.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("SQL Server container is up");
+            await diagnostics.StartContainerAsync("SQL Server"
+                , () => dockerEnvironmentSql.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(containerName)?.GetConnectionString();
             SqlConnectionStringBuilder builder = new(connectionString)
@@ -237,6 +236,7 @@ public class SqlServerIntegrationTests
         {
             diagnostics.Step("disposing the SQL Server container");
             await dockerEnvironmentSql.DisposeAsync();
+            diagnostics.Step("SQL Server container disposed");
         }
     }
 
@@ -248,7 +248,7 @@ public class SqlServerIntegrationTests
 
         string containerName = IntegrationTestHelper.GenerateRandomDatabaseName();
         const string databaseName = DatabaseNameUsedByTheEmbeddedScripts;
-        diagnostics.Step("container name", containerName);
+        diagnostics.WatchContainer(containerName);
         diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment(containerName);
@@ -258,9 +258,8 @@ public class SqlServerIntegrationTests
 
         try
         {
-            diagnostics.Step("starting the SQL Server container (this pulls the image on a cold machine)");
-            await dockerEnvironmentSql.UpAsync(token);
-            diagnostics.Step("SQL Server container is up");
+            await diagnostics.StartContainerAsync("SQL Server"
+                , () => dockerEnvironmentSql.UpAsync(token));
 
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(containerName)?.GetConnectionString();
             SqlConnectionStringBuilder builder = new(connectionString)
@@ -317,6 +316,7 @@ public class SqlServerIntegrationTests
         {
             diagnostics.Step("disposing the SQL Server container");
             await dockerEnvironmentSql.DisposeAsync();
+            diagnostics.Step("SQL Server container disposed");
             source.Dispose();
         }
     }
@@ -328,7 +328,8 @@ public class SqlServerIntegrationTests
         TestDiagnostics diagnostics = new(TestContext);
 
         string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
-        diagnostics.Step("generated database name", databaseName);
+        diagnostics.WatchContainer(databaseName);
+        diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment(databaseName);
 
@@ -338,9 +339,8 @@ public class SqlServerIntegrationTests
 
         try
         {
-            diagnostics.Step("starting the SQL Server container (this pulls the image on a cold machine)");
-            await dockerEnvironmentSql.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("SQL Server container is up");
+            await diagnostics.StartContainerAsync("SQL Server"
+                , () => dockerEnvironmentSql.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(databaseName)?.GetConnectionString();
             SqlConnectionStringBuilder builder = new(connectionString)
@@ -409,6 +409,7 @@ public class SqlServerIntegrationTests
         {
             diagnostics.Step("disposing the SQL Server container");
             await dockerEnvironmentSql.DisposeAsync();
+            diagnostics.Step("SQL Server container disposed");
 
             if (Directory.Exists(scriptsDirectory))
             {
@@ -424,7 +425,8 @@ public class SqlServerIntegrationTests
         TestDiagnostics diagnostics = new(TestContext);
 
         string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
-        diagnostics.Step("generated database name", databaseName);
+        diagnostics.WatchContainer(databaseName);
+        diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment(databaseName);
 
@@ -434,9 +436,8 @@ public class SqlServerIntegrationTests
 
         try
         {
-            diagnostics.Step("starting the SQL Server container (this pulls the image on a cold machine)");
-            await dockerEnvironmentSql.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("SQL Server container is up");
+            await diagnostics.StartContainerAsync("SQL Server"
+                , () => dockerEnvironmentSql.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(databaseName)?.GetConnectionString();
             SqlConnectionStringBuilder builder = new(connectionString)
@@ -512,6 +513,7 @@ public class SqlServerIntegrationTests
         {
             diagnostics.Step("disposing the SQL Server container");
             await dockerEnvironmentSql.DisposeAsync();
+            diagnostics.Step("SQL Server container disposed");
 
             if (Directory.Exists(scriptsDirectory))
             {
@@ -528,16 +530,15 @@ public class SqlServerIntegrationTests
 
         string containerName = IntegrationTestHelper.GenerateRandomDatabaseName();
         const string databaseName = DatabaseNameUsedByTheEmbeddedScripts;
-        diagnostics.Step("container name", containerName);
+        diagnostics.WatchContainer(containerName);
         diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment(containerName);
 
         try
         {
-            diagnostics.Step("starting the SQL Server container (this pulls the image on a cold machine)");
-            await dockerEnvironmentSql.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("SQL Server container is up");
+            await diagnostics.StartContainerAsync("SQL Server"
+                , () => dockerEnvironmentSql.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(containerName)?.GetConnectionString();
             SqlConnectionStringBuilder builder = new(connectionString)
@@ -633,6 +634,7 @@ public class SqlServerIntegrationTests
         {
             diagnostics.Step("disposing the SQL Server container");
             await dockerEnvironmentSql.DisposeAsync();
+            diagnostics.Step("SQL Server container disposed");
         }
     }
 
@@ -643,7 +645,8 @@ public class SqlServerIntegrationTests
         TestDiagnostics diagnostics = new(TestContext);
 
         string databaseName = IntegrationTestHelper.GenerateRandomDatabaseName();
-        diagnostics.Step("generated database name", databaseName);
+        diagnostics.WatchContainer(databaseName);
+        diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment(databaseName);
 
@@ -653,9 +656,8 @@ public class SqlServerIntegrationTests
 
         try
         {
-            diagnostics.Step("starting the SQL Server container (this pulls the image on a cold machine)");
-            await dockerEnvironmentSql.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("SQL Server container is up");
+            await diagnostics.StartContainerAsync("SQL Server"
+                , () => dockerEnvironmentSql.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(databaseName)?.GetConnectionString();
             SqlConnectionStringBuilder builder = new(connectionString)
@@ -747,6 +749,7 @@ public class SqlServerIntegrationTests
         {
             diagnostics.Step("disposing the SQL Server container");
             await dockerEnvironmentSql.DisposeAsync();
+            diagnostics.Step("SQL Server container disposed");
 
             if (Directory.Exists(scriptsDirectory))
             {
@@ -763,16 +766,15 @@ public class SqlServerIntegrationTests
 
         string containerName = IntegrationTestHelper.GenerateRandomDatabaseName();
         const string databaseName = DatabaseNameUsedByTheEmbeddedScripts;
-        diagnostics.Step("container name", containerName);
+        diagnostics.WatchContainer(containerName);
         diagnostics.Step("migration database name", databaseName);
 
         DockerEnvironment? dockerEnvironmentSql = SetupSqlDockerTestEnvironment(containerName);
 
         try
         {
-            diagnostics.Step("starting the SQL Server container (this pulls the image on a cold machine)");
-            await dockerEnvironmentSql.UpAsync(TestContext.CancellationToken);
-            diagnostics.Step("SQL Server container is up");
+            await diagnostics.StartContainerAsync("SQL Server"
+                , () => dockerEnvironmentSql.UpAsync(TestContext.CancellationToken));
 
             string connectionString = dockerEnvironmentSql.GetContainer<MssqlContainer>(containerName)?.GetConnectionString();
             SqlConnectionStringBuilder builder = new(connectionString)
@@ -870,6 +872,7 @@ public class SqlServerIntegrationTests
         {
             diagnostics.Step("disposing the SQL Server container");
             await dockerEnvironmentSql.DisposeAsync();
+            diagnostics.Step("SQL Server container disposed");
         }
     }
 

@@ -4,13 +4,14 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Diagnostics.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace EasyDbMigratorTests.TestHelpers;
 
@@ -29,6 +30,8 @@ public sealed class TestDiagnostics
     private readonly Stopwatch _stopwatch = Stopwatch.StartNew();
     private readonly List<string> _steps = new();
     private readonly List<CapturedLog> _capturedLogs = new();
+    private readonly List<string> _watchedContainers = new();
+    private TimeSpan _elapsedAtPreviousStep;
     private int _stepNumber;
 
     public TestDiagnostics(TestContext testContext, [CallerMemberName] string testName = "")
@@ -36,23 +39,95 @@ public sealed class TestDiagnostics
         _testContext = testContext;
         _testName = testName;
         Step("test started");
+        Step(DockerDiagnostics.DescribeHost());
     }
 
     /// <summary>
-    /// Record (and immediately print) that the test reached a certain point.
-    /// When something later blows up, the last recorded step tells you where.
+    /// Registers a container so the failure report can show its docker log. A
+    /// container that never becomes ready makes the test framework throw a
+    /// timeout, and only the container log says why it refused to start.
+    /// </summary>
+    public void WatchContainer(string containerName)
+    {
+        _watchedContainers.Add(containerName);
+        Step("container name", containerName);
+    }
+
+    /// <summary>
+    /// Starts a container and brackets it with a BEGIN and an END line. The BEGIN
+    /// line carries how many containers are already running, because a readiness
+    /// timeout almost always comes down to how many engines were booting at once.
+    /// When the start throws there is a FAILED line instead of an END line, so a
+    /// missing END is never something you have to infer.
+    /// </summary>
+    public Task StartContainerAsync(string engine, Func<Task> start)
+    {
+        string what = new StringBuilder()
+            .Append("starting the ").Append(engine)
+            .Append(" container; containers already running: ")
+            .Append(DockerDiagnostics.CountRunningContainers())
+            .ToString();
+
+        return RunStepAsync(what, start);
+    }
+
+    /// <summary>
+    /// Runs a piece of work between a BEGIN and an END line so the report shows
+    /// both that the work started and how long it took. A throwing operation is
+    /// reported as FAILED with its duration and the exception type, and the
+    /// exception is rethrown untouched.
+    /// </summary>
+    public async Task RunStepAsync(string what, Func<Task> work)
+    {
+        ArgumentNullException.ThrowIfNull(work);
+
+        Step(new StringBuilder().Append("BEGIN ").Append(what).ToString());
+        Stopwatch stepTimer = Stopwatch.StartNew();
+
+        try
+        {
+            await work().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Step(new StringBuilder().Append("FAILED ").Append(what)
+                .Append(" after ").Append(Seconds(stepTimer))
+                .Append("s with ").Append(ex.GetType().Name)
+                .ToString());
+            throw;
+        }
+
+        Step(new StringBuilder().Append("END ").Append(what)
+            .Append(" (took ").Append(Seconds(stepTimer)).Append("s)")
+            .ToString());
+    }
+
+    /// <summary>
+    /// Record (and immediately print) that the test reached a certain point. Each
+    /// line also carries the time since the previous step, so a long pause is
+    /// attributed to the operation that caused it.
     /// </summary>
     public void Step(string message)
     {
         _stepNumber++;
+        TimeSpan elapsed = _stopwatch.Elapsed;
+        TimeSpan sincePreviousStep = elapsed - _elapsedAtPreviousStep;
+        _elapsedAtPreviousStep = elapsed;
+
         string line = new StringBuilder()
             .Append("[STEP ").Append(_stepNumber.ToString("00", CultureInfo.InvariantCulture))
-            .Append(" @ ").Append(_stopwatch.Elapsed.TotalSeconds.ToString("00.000", CultureInfo.InvariantCulture))
+            .Append(" @ ").Append(elapsed.TotalSeconds.ToString("00.000", CultureInfo.InvariantCulture))
+            .Append("s +").Append(sincePreviousStep.TotalSeconds.ToString("00.000", CultureInfo.InvariantCulture))
             .Append("s] ").Append(message)
             .ToString();
 
         _steps.Add(line);
         WriteLine(line);
+    }
+
+    private static string Seconds(Stopwatch timer)
+    {
+        return timer.Elapsed.TotalSeconds.ToString("0.000", CultureInfo.InvariantCulture);
     }
 
     /// <summary>
@@ -210,6 +285,17 @@ public sealed class TestDiagnostics
             {
                 _ = report.Append(line).Append(Environment.NewLine);
             }
+        }
+
+        _ = report.Append(Environment.NewLine)
+            .Append("--- docker containers ---").Append(Environment.NewLine)
+            .Append(DockerDiagnostics.DescribeContainers()).Append(Environment.NewLine);
+
+        foreach (string containerName in _watchedContainers)
+        {
+            _ = report.Append(Environment.NewLine)
+                .Append(DockerDiagnostics.DescribeContainerLogs(containerName, tailLines: 40))
+                .Append(Environment.NewLine);
         }
 
         return report.ToString();
