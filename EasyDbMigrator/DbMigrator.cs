@@ -1,15 +1,16 @@
 ﻿// Ignore Spelling: Migrator
 
-// *** NEXT MAJOR RELEASE ***
-//TODO .NET 8 end of life 10-12-2026 + half year extra support in this package (month later than lts)
-//TODO .NET 9 end of life 10-12-2026 + half year extra support in this package (month later than lts)
+// *** NEXT MAJOR RELEASE 2026-12-11 ***
+//TODO .NET 8 end of life 10-11-2026 (month later than lts)
+//TODO .NET 9 end of life 10-11-2026 (month later than lts)
 //TODO  remove xunit and use newest MStest after .net 8 and 9 end of life (new version)
 //TODO  delete .editor config en resetup warnings after .net 8 and 9 end of life (new version)
 //TODO  remove all warnings in this package after .net 8 and 9 end of life (new version)
+//TODO add .net 11 support after 
 
 // FUTURE PLANS
-//TODO .NET 10 end of life 14-11-2028 + half year extra support in this package
-
+//TODO 2027-06      depricate older packages half year after .net 8 and 9 end of life (new version)
+//TODO 2027-14-11   .NET 10 end of life 14-11-2028 + half year extra support in this package
 
 using EasyDbMigrator.DatabaseConnectors;
 using Microsoft.Extensions.Logging;
