@@ -35,11 +35,12 @@ jobs:
     # The integration tests start their own SQL Server and Postgres containers, which
     # is why this job runs on Linux: the Windows runners cannot run Linux containers.
     # One target framework per step on purpose. Without -f the frameworks run at the
-    # same time, and with 4 parallel test workers each that is up to 12 database
+    # same time, and with parallel test workers each that was up to 12 database
     # containers at once, which a 4 vCPU runner cannot start before the readiness
-    # check gives up. One framework at a time keeps the peak at 4 containers.
+    # check gives up. One framework at a time, with Workers = 2 in AssemblyInfo.cs,
+    # keeps the peak at 2 containers.
     - name: Run all tests with code-coverage (net10.0)
-      run: dotnet test --no-build -f net10.0 --coverage --coverage-output-format cobertura
+      run: dotnet test --no-build -f net10.0 --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml
 
     - name: Run all tests (net9.0)
       run: dotnet test --no-build -f net9.0
@@ -47,7 +48,12 @@ jobs:
     - name: Run all tests (net8.0)
       run: dotnet test --no-build -f net8.0
 
+    # TestResults is in .gitignore and the Codecov CLI skips git-ignored paths when
+    # it searches on its own, so the report is handed over by an explicit path.
     - name: Upload code coverage to Codecov
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./TestResults/coverage.cobertura.xml
+        disable_search: true
+        fail_ci_if_error: true
