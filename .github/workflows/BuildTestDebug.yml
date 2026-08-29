@@ -54,6 +54,7 @@ jobs:
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODE_GOV_DOTNET }}
+        slug: Retrodad0001/EasyDbMigrator
         files: ./TestResults/coverage.cobertura.xml
         disable_search: true
         fail_ci_if_error: true
