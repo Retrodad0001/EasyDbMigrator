@@ -53,7 +53,7 @@ jobs:
     - name: Upload code coverage to Codecov
       uses: codecov/codecov-action@v5
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+        token: ${{ secrets.CODE_GOV_DOTNET }}
         files: ./TestResults/coverage.cobertura.xml
         disable_search: true
         fail_ci_if_error: true
