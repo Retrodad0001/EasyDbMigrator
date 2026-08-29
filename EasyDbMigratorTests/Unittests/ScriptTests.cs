@@ -1,18 +1,19 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using EasyDbMigrator;
-using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics.CodeAnalysis;
-using Xunit;
+using System;
 
 namespace EasyDbMigratorTests.Unittests;
 
 [ExcludeFromCodeCoverage]
+[TestClass]
 public class ScriptTests
 {
-    [Theory]
-    [InlineData(data: new object[] { "", true })]
-    [InlineData(data: new object[] { " ", true })]
+    [TestMethod]
+    [DataRow("", true)]
+    [DataRow(" ", true)]
     public void WhenCreatingTheParameterScriptNameShouldBeCorrect(string filename, bool shouldThrowException)
     {
         static void act(string filename)
@@ -22,7 +23,7 @@ public class ScriptTests
 
         if (shouldThrowException)
         {
-            Assert.Throws<ArgumentException>(() => act(filename));
+            Assert.ThrowsExactly<ArgumentException>(() => act(filename));
         }
         else
         {
@@ -30,9 +31,9 @@ public class ScriptTests
         }
     }
 
-    [Theory]
-    [InlineData(data: new object[] { "", true })]
-    [InlineData(data: new object[] { " ", true })]
+    [TestMethod]
+    [DataRow("", true)]
+    [DataRow(" ", true)]
     public void WhenCreatingTheParameterConnectionStringShouldBeCorrect(string content, bool shouldThrowException)
     {
         static void act(string content)
@@ -42,7 +43,7 @@ public class ScriptTests
 
         if (shouldThrowException)
         {
-            Assert.Throws<ArgumentException>(() => act(content));
+            Assert.ThrowsExactly<ArgumentException>(() => act(content));
         }
         else
         {

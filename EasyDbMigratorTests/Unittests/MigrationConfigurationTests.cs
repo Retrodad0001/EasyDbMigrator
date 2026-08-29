@@ -2,20 +2,21 @@
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using EasyDbMigrator;
-using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics.CodeAnalysis;
-using Xunit;
+using System;
 
 namespace EasyDbMigratorTests.Unittests;
 
 [ExcludeFromCodeCoverage]
+[TestClass]
 public class MigrationConfigurationTests
 {
-    [Theory]
-    [InlineData(data: new object[] { "word", false })]
-    [InlineData(data: new object[] { "word1 word2", true })]
-    [InlineData(data: new object[] { "", true })]
-    [InlineData(data: new object[] { " ", true })]
+    [TestMethod]
+    [DataRow("word", false)]
+    [DataRow("word1 word2", true)]
+    [DataRow("", true)]
+    [DataRow(" ", true)]
     public void TheParameterDatabasenameShouldHaveOnlyOneWord(string databaseName, bool shouldThrowException)
     {
         static void act(string databaseName)
@@ -26,7 +27,7 @@ public class MigrationConfigurationTests
 
         if (shouldThrowException)
         {
-            Assert.Throws<ArgumentException>(() => act(databaseName));
+            Assert.ThrowsExactly<ArgumentException>(() => act(databaseName));
         }
         else
         {
@@ -34,8 +35,8 @@ public class MigrationConfigurationTests
         }
     }
 
-    [Theory]
-    [InlineData(new object[] { "", true })]
+    [TestMethod]
+    [DataRow("", true)]
     public void TheParameterConnectionStringShouldBeCorrect(string connectionString, bool shouldThrowException)
     {
         static void act(string connectionString)
@@ -46,7 +47,7 @@ public class MigrationConfigurationTests
 
         if (shouldThrowException)
         {
-            Assert.Throws<ArgumentException>(() => act(connectionString));
+            Assert.ThrowsExactly<ArgumentException>(() => act(connectionString));
         }
         else
         {

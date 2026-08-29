@@ -5,7 +5,6 @@ using Microsoft.Data.SqlClient;
 using Polly;
 using System;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,7 +13,6 @@ namespace EasyDbMigrator.DatabaseConnectors;
 /// <summary>
 /// MicrosoftSqlConnector
 /// </summary>
-[ExcludeFromCodeCoverage] //is tested with integrationTest that will not be included in code coverage
 public sealed class MicrosoftSqlConnector : IDatabaseConnector
 {
     private readonly AsyncPolicy _sqlDatabasePolicy = Policy.Handle<Exception>()
@@ -41,7 +39,6 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                 ";
 
         var result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
-               , scriptName: "EasyDbMigrator.Integrationtest_dropDatabase"
                , sqlScriptContent: query
                , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
@@ -70,7 +67,6 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                 END";
 
         var result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
-            , scriptName: "EasyDbMigrator.SetupDbMigrationsRunTable"
             , sqlScriptContent: sqlScriptCreateMigrationTable
             , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
@@ -93,7 +89,6 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
                 END";
 
         var result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
-            , scriptName: "SetupEmptyDb"
             , sqlScriptContent: sqlScriptCreateDatabase
             , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
@@ -192,7 +187,6 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
         }
     }
     private async Task<Result<bool>> TryExecuteSingleScriptAsync(string connectionString
-      , string scriptName
       , string sqlScriptContent
       , CancellationToken cancellationToken)
     {
@@ -203,11 +197,6 @@ public sealed class MicrosoftSqlConnector : IDatabaseConnector
 
         try
         {
-            if (string.IsNullOrWhiteSpace(value: sqlScriptContent))
-            {
-                throw new ArgumentException(message: $"{scriptName} script is empty, is there something wrong?");
-            }
-
             await _sqlDatabasePolicy.ExecuteAsync(action: async () =>
             {
                 await using SqlConnection connection = new(connectionString: connectionString);

@@ -2,25 +2,26 @@
 
 using EasyDbMigrator;
 using ExampleTestLibWithSqlServerScripts;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Xunit;
 
 namespace EasyDbMigratorTests.Unittests;
 
 [ExcludeFromCodeCoverage]
+[TestClass]
 public class AssemblyResourceHelperTests
 {
-    [Fact]
+    [TestMethod]
     public async Task TryConvertResourceNamesToScriptsInCorrectSequenceByTypeAsync()
     {
         AssemblyResourceHelper? sut = new();
 
         var result = await sut.TryGetScriptsFromAssembly(typeof(HereTheSqlServerScriptsCanBeFound));
 
-        Assert.Equal(expected: 3, actual: result.Count);
+        Assert.HasCount(expected: 3, collection: result);
 
         _ = result.TrueForAll(script => script.FileName != string.Empty);
-        _ = result.TrueForAll(script => script.FileName.Split('.').Length == 2);//contain only one
+        _ = result.TrueForAll(script => script.FileName.Split('.').Length == 2);
     }
 }

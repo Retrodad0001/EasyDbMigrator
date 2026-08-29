@@ -1,12 +1,10 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace EasyDbMigrator;
 
-//TODO when new union types are available in .NET than use that instead of this custom Result type
 public sealed class Result<T>
 {
     public bool HasFailure => !WasSuccessful;
@@ -28,7 +26,6 @@ public sealed class Result<T>
         Exception = exception;
     }
 
-    [ExcludeFromCodeCoverage] //this method is used for debug only
     public override string ToString()
     {
         return new StringBuilder().Append("isSuccess: ")

@@ -2,13 +2,15 @@
     "cSpell.words": [
         "accessibilities",
         "buildtransitive",
+        "cobertura",
         "contentfiles",
         "datname",
         "Integrationtest",
         "msbuild",
+        "mstest",
         "netcoreapp",
         "Npgsql",
-        "Retrodad",
-        "xunit"
+        "Parallelize",
+        "Retrodad"
     ]
 }

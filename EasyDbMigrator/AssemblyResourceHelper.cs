@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -11,7 +10,6 @@ namespace EasyDbMigrator;
 /// <summary>
 /// Helps to get script files embedded in an assembly
 /// </summary>
-[ExcludeFromCodeCoverage] //is tested with integrationTest
 public sealed class AssemblyResourceHelper : IAssemblyResourceHelper
 {
     /// <summary>
@@ -22,21 +20,16 @@ public sealed class AssemblyResourceHelper : IAssemblyResourceHelper
     /// <exception cref="InvalidOperationException"></exception>
     public async Task<List<Script>> TryGetScriptsFromAssembly(Type typeOfClassWhereScriptsAreLocated)
     {
-        Assembly? assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
+        ArgumentNullException.ThrowIfNull(argument: typeOfClassWhereScriptsAreLocated);
 
-        string[] filenames = TryGetManifestResourceNamesFromAssembly(typeOfClassWhereScriptsAreLocated);
+        Assembly assembly = typeOfClassWhereScriptsAreLocated.Assembly;
+        string[] filenames = assembly.GetManifestResourceNames();
 
         List<Script> scripts = new(filenames.Length);
         foreach (string filename in filenames)
         {
-            await using Stream? stream = assembly?.GetManifestResourceStream(filename);
-            if (stream is null)
-            {
-                throw new InvalidOperationException(new StringBuilder()
-                    .Append("steam cannot be null for resource name: ")
-                    .Append(filename)
-                    .ToString());
-            }
+            await using Stream stream = assembly.GetManifestResourceStream(filename)
+                ?? throw new InvalidOperationException(new StringBuilder().Append("stream cannot be null for resource name: ").Append(filename).ToString());
 
             using StreamReader reader = new(stream);
             string filenameWithNoNamespaces = RemoveTheNamespaceFromName(filename);
@@ -47,21 +40,6 @@ public sealed class AssemblyResourceHelper : IAssemblyResourceHelper
         }
 
         return scripts;
-    }
-
-    private static string[] TryGetManifestResourceNamesFromAssembly(Type typeOfClassWhereScriptsAreLocated)
-    {
-        Assembly? assembly = Assembly.GetAssembly(typeOfClassWhereScriptsAreLocated);
-
-        if (assembly is null)
-        {
-            throw new InvalidOperationException(new StringBuilder().Append("assembly is null for custom-class: ")
-                .Append(typeOfClassWhereScriptsAreLocated)
-                .ToString());
-        }
-
-        string[] resourceNames = assembly.GetManifestResourceNames();
-        return resourceNames;
     }
 
     private static string RemoveTheNamespaceFromName(string filename)

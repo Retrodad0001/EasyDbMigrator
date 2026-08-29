@@ -3,7 +3,6 @@
 using Npgsql;
 using Polly;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,7 +11,6 @@ namespace EasyDbMigrator.DatabaseConnectors;
 /// <summary>
 /// Connects to a PostgreSql database
 /// </summary>
-[ExcludeFromCodeCoverage] //is tested with integrationTest that will not be included in code coverage
 public sealed class PostgreSqlConnector : IDatabaseConnector
 {
     private readonly AsyncPolicy _postgreSqlDatabasePolicy = Policy.Handle<Exception>()
@@ -20,7 +18,10 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
         , sleepDurationProvider: times => TimeSpan.FromSeconds(value: times * 2));
 
     /// <summary>
-    /// Tries to delete the database if it exists
+    /// Tries to delete the database if it exists. Postgres refuses to drop a
+    /// database that still has sessions attached, so the pooled connections are
+    /// released and any remaining backend is terminated first. This mirrors the
+    /// SET OFFLINE WITH ROLLBACK IMMEDIATE that MicrosoftSqlConnector uses.
     /// </summary>
     /// <param name="migrationConfiguration"></param>
     /// <param name="cancellationToken"></param>
@@ -28,20 +29,51 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
     public async Task<Result<bool>> TryDeleteDatabaseIfExistAsync(MigrationConfiguration migrationConfiguration
         , CancellationToken cancellationToken)
     {
-        string query = $@"
-               DROP DATABASE IF EXISTS  {migrationConfiguration.DatabaseName}
-                ";
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return new Result<bool>(wasSuccessful: true);
+        }
 
-        var result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
-             , scriptName: "EasyDbMigrator.Integrationtest_dropDatabase"
-             , sqlScriptContent: query
-             , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+        try
+        {
+            await using (NpgsqlConnection pooledConnection = new(connectionString: BuildMigrationDatabaseConnectionString(migrationConfiguration)))
+            {
+                NpgsqlConnection.ClearPool(pooledConnection);
+            }
 
-        return result;
+            await _postgreSqlDatabasePolicy.ExecuteAsync(action: async () =>
+            {
+                await using NpgsqlConnection connection = new(connectionString: migrationConfiguration.ConnectionString);
+                await connection.OpenAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+
+                await using NpgsqlCommand terminateOtherSessions = new(
+                    cmdText: @"
+                        SELECT pg_terminate_backend(pid)
+                        FROM pg_stat_activity
+                        WHERE datname = @databaseName AND pid <> pg_backend_pid()"
+                    , connection: connection);
+                _ = terminateOtherSessions.Parameters.AddWithValue("databaseName", migrationConfiguration.DatabaseName);
+
+                _ = await terminateOtherSessions.ExecuteNonQueryAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+
+                await using NpgsqlCommand dropDatabase = new(
+                    cmdText: $@"DROP DATABASE IF EXISTS ""{migrationConfiguration.DatabaseName}"""
+                    , connection: connection);
+
+                _ = await dropDatabase.ExecuteNonQueryAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+            }).ConfigureAwait(continueOnCapturedContext: false);
+
+            return new Result<bool>(wasSuccessful: true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<bool>(wasSuccessful: false, exception: ex);
+        }
     }
 
     /// <summary>
-    /// Tries to create the database if it does not exist
+    /// Tries to create the versioning table inside the database named by
+    /// <see cref="MigrationConfiguration.DatabaseName"/> when it does not exist yet
     /// </summary>
     /// <param name="migrationConfiguration"></param>
     /// <param name="cancellationToken"></param>
@@ -55,7 +87,7 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
             return new Result<bool>(wasSuccessful: true);
         }
 
-        const string sqlScriptCreateMigrationTable = @$" 
+        const string sqlScriptCreateMigrationTable = @$"
 
                 CREATE TABLE IF NOT EXISTS DbMigrationsRun (
                     Id          SERIAL PRIMARY KEY,
@@ -65,8 +97,7 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
                 );
                 ";
 
-        var result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
-            , scriptName: "EasyDbMigrator.SetupDbMigrationsRunTable"
+        var result = await TryExecuteSingleScriptAsync(connectionString: BuildMigrationDatabaseConnectionString(migrationConfiguration)
             , sqlScriptContent: sqlScriptCreateMigrationTable
             , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
@@ -74,7 +105,10 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
     }
 
     /// <summary>
-    /// Tries to create the database if it does not exist
+    /// Tries to create the database named by <see cref="MigrationConfiguration.DatabaseName"/>
+    /// when it does not exist yet. The connection string is expected to carry no
+    /// Database of its own, so this connects to the server default and creates the
+    /// migration database from there.
     /// </summary>
     /// <param name="migrationConfiguration"></param>
     /// <param name="cancellationToken"></param>
@@ -88,17 +122,48 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
             return new Result<bool>(wasSuccessful: true);
         }
 
-        string sqlScriptCreateDatabase = @$"
-                    SELECT 'CREATE DATABASE {migrationConfiguration.DatabaseName}'
-                    WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '{migrationConfiguration.DatabaseName}')
-                    ";
+        try
+        {
+            await _postgreSqlDatabasePolicy.ExecuteAsync(action: async () =>
+            {
+                await using NpgsqlConnection connection = new(connectionString: migrationConfiguration.ConnectionString);
+                await connection.OpenAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
-        var result = await TryExecuteSingleScriptAsync(connectionString: migrationConfiguration.ConnectionString
-            , scriptName: "SetupEmptyDb"
-            , sqlScriptContent: sqlScriptCreateDatabase
-            , cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+                await using NpgsqlCommand checkDatabaseExists = new(
+                    cmdText: "SELECT 1 FROM pg_database WHERE datname = @databaseName"
+                    , connection: connection);
+                _ = checkDatabaseExists.Parameters.AddWithValue("databaseName", migrationConfiguration.DatabaseName);
 
-        return result;
+                object? alreadyExists = await checkDatabaseExists.ExecuteScalarAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+
+                if (alreadyExists is not null)
+                {
+                    return;
+                }
+
+                await using NpgsqlCommand createDatabase = new(
+                    cmdText: $@"CREATE DATABASE ""{migrationConfiguration.DatabaseName}"""
+                    , connection: connection);
+
+                _ = await createDatabase.ExecuteNonQueryAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+            }).ConfigureAwait(continueOnCapturedContext: false);
+
+            return new Result<bool>(wasSuccessful: true);
+        }
+        catch (Exception ex)
+        {
+            return new Result<bool>(wasSuccessful: false, exception: ex);
+        }
+    }
+
+    private static string BuildMigrationDatabaseConnectionString(MigrationConfiguration migrationConfiguration)
+    {
+        NpgsqlConnectionStringBuilder builder = new(migrationConfiguration.ConnectionString)
+        {
+            Database = migrationConfiguration.DatabaseName
+        };
+
+        return builder.ConnectionString;
     }
 
     /// <summary>
@@ -125,7 +190,7 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
             var result = await _postgreSqlDatabasePolicy.ExecuteAsync(action: async () =>
             {
 
-                await using NpgsqlConnection connection = new(connectionString: migrationConfiguration.ConnectionString);
+                await using NpgsqlConnection connection = new(connectionString: BuildMigrationDatabaseConnectionString(migrationConfiguration));
                 await connection.OpenAsync(cancellationToken: cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
                 string checkIfScriptHasExecuted = $@"
@@ -193,7 +258,6 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
     }
 
     private async Task<Result<bool>> TryExecuteSingleScriptAsync(string connectionString
-     , string scriptName
      , string sqlScriptContent
      , CancellationToken cancellationToken)
 
@@ -205,11 +269,6 @@ public sealed class PostgreSqlConnector : IDatabaseConnector
 
         try
         {
-            if (string.IsNullOrWhiteSpace(value: sqlScriptContent))
-            {
-                throw new ArgumentException(message: $"{scriptName} script is empty, is there something wrong?");
-            }
-
             await _postgreSqlDatabasePolicy.ExecuteAsync(action: async () =>
             {
                 await using NpgsqlConnection connection = new(connectionString: connectionString);

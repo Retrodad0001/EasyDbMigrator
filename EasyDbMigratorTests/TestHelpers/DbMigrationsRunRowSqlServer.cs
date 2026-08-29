@@ -1,12 +1,12 @@
 ﻿// Ignore Spelling: Sql
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-using System;
 using System.Diagnostics.CodeAnalysis;
+using System;
 
 namespace EasyDbMigratorTests.TestHelpers;
 
-[ExcludeFromCodeCoverage] //this class is used for testing only
+[ExcludeFromCodeCoverage]
 public record DbMigrationsRunRowSqlServer
 {
     public int Id { get; }

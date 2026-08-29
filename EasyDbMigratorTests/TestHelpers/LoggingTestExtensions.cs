@@ -2,10 +2,9 @@
 
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
 using System.Diagnostics.CodeAnalysis;
+using System;
 using System.Text;
-
 
 namespace EasyDbMigratorTests.TestHelpers;
 
@@ -34,6 +33,7 @@ public static class LoggingTestExtensions
 
         Func<object, Type, bool> state = (v, _) => string.Compare(v.ToString(), expectedMessage, StringComparison.Ordinal) == 0;
 
+#pragma warning disable CA1873 // Avoid potentially expensive logging
         if (checkExceptionNotNull)
         {
             mockedLogger.Verify(x => x.Log(
@@ -53,6 +53,7 @@ public static class LoggingTestExtensions
                     It.IsAny<Exception>(),
                     It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)), times);
         }
+#pragma warning restore CA1873 // Avoid potentially expensive logging
 
         return mockedLogger;
     }

@@ -1,17 +1,5 @@
 ﻿// Ignore Spelling: Migrator
 
-// *** NEXT MAJOR RELEASE 2026-12-11 ***
-//TODO .NET 8 end of life 10-11-2026 (month later than lts)
-//TODO .NET 9 end of life 10-11-2026 (month later than lts)
-//TODO  remove xunit and use newest MStest after .net 8 and 9 end of life (new version)
-//TODO  delete .editor config en resetup warnings after .net 8 and 9 end of life (new version)
-//TODO  remove all warnings in this package after .net 8 and 9 end of life (new version)
-//TODO add .net 11 support after 
-
-// FUTURE PLANS
-//TODO 2027-06      depricate older packages half year after .net 8 and 9 end of life (new version)
-//TODO 2027-14-11   .NET 10 end of life 14-11-2028 + half year extra support in this package
-
 using EasyDbMigrator.DatabaseConnectors;
 using Microsoft.Extensions.Logging;
 using System;
@@ -237,8 +225,10 @@ public class DbMigrator : IDbMigrator
 
     private void LogBasicInformation(ref MigrationConfiguration migrationConfiguration)
     {
+#pragma warning disable CA1873 // Avoid potentially expensive logging
         _logger.Log(logLevel: LogLevel.Information, message: "start running migrations for database: {migrationConfiguration.DatabaseName}", args: migrationConfiguration.DatabaseName);
         _logger.Log(logLevel: LogLevel.Information, message: "connection-string used: {migrationConfiguration.ConnectionString}", args: migrationConfiguration.ConnectionString);
+#pragma warning restore CA1873 // Avoid potentially expensive logging
     }
 
     private async Task<Result<bool>> TrySetupEmptyDataBaseWhenThereIsNoDatabaseAsync(MigrationConfiguration migrationConfiguration
@@ -274,7 +264,9 @@ public class DbMigrator : IDbMigrator
                 unOrderedScripts = await _directoryHelper.TryGetScriptsFromDirectoryAsync(migrationConfiguration.ScriptsDirectory).ConfigureAwait(false);
             }
 
+#pragma warning disable CA1873 // Avoid potentially expensive logging
             _logger.Log(logLevel: LogLevel.Information, message: "Total scripts found: {unOrderedScripts.Count}", args: unOrderedScripts.Count);
+#pragma warning restore CA1873 // Avoid potentially expensive logging
             var unOrderedScriptsWithoutExcludedScripts = RemoveExcludedScripts(unOrderedScripts, _excludedScriptsList);
             var orderedScriptsWithoutExcludedScripts = SetScriptsInCorrectSequence(unOrderedScriptsWithoutExcludedScripts);
             return new Result<List<Script>>(true, orderedScriptsWithoutExcludedScripts);
@@ -314,11 +306,15 @@ public class DbMigrator : IDbMigrator
             }
             else if (result.Value == RunMigrationResult.MigrationScriptExecuted)
             {
+#pragma warning disable CA1873 // Avoid potentially expensive logging
                 _logger.Log(logLevel: LogLevel.Information, message: "script: {script.FileName} was run", args: script.FileName);
+#pragma warning restore CA1873 // Avoid potentially expensive logging
             }
             else if (result.Value == RunMigrationResult.ScriptSkippedBecauseAlreadyRun)
             {
+#pragma warning disable CA1873 // Avoid potentially expensive logging
                 _logger.Log(logLevel: LogLevel.Information, message: "script: {script.FileName} was not run because script was already executed", args: script.FileName);
+#pragma warning restore CA1873 // Avoid potentially expensive logging
             }
             else if (result.Value == RunMigrationResult.ExceptionWasThrownWhenScriptWasExecuted)
             {

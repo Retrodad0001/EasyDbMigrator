@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -8,7 +7,6 @@ namespace EasyDbMigrator;
 /// <summary>
 /// Helper class to get scripts from a directory
 /// </summary>
-[ExcludeFromCodeCoverage] //tested with integrationTests
 public sealed class DirectoryHelper : IDirectoryHelper
 {
     /// <summary>
@@ -29,7 +27,7 @@ public sealed class DirectoryHelper : IDirectoryHelper
             using StreamReader reader = new(fileStream);
 
             string content = await reader.ReadToEndAsync().ConfigureAwait(false);
-            Script script = new(file.FullName, content);
+            Script script = new(file.Name, content);
             scriptsToRun.Add(script);
         }
 

@@ -1,0 +1,19 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 90%
+        threshold: 1%
+    patch:
+      default:
+        target: 80%
+        threshold: 5%
+
+comment:
+  layout: "reach, diff, files"
+  require_changes: true
+
+ignore:
+  - "EasyDbMigratorTests/**"
+  - "ExampleTestLibWithSqlServerScripts/**"
+  - "ExampleTestLibWithPostgreSQLServerScripts/**"

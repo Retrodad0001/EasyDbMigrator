@@ -3,35 +3,27 @@ name: Release Master NuGet
 on:
   push:
     branches: [ master ]
- 
+
 jobs:
   Release:
     name: Release to Nuget
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    
+
     steps:
     - name: Check out Repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v5
 
-    - name: Setup .NET Core 8.0.x
-      uses: actions/setup-dotnet@v1
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: |
+          8.0.x
+          9.0.x
+          10.0.x
 
-    - name: Setup .NET Core 9.0.x
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 9.0.x
-
-    - name: Setup .NET Core 10.0.x
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 10.0.x
-    
     - name: Pack
-      run: dotnet pack EasyDbMigrator\\EasyDbMigrator.csproj -c Release
-  
-    - name: Publish to Nuget 
-      run: dotnet nuget push /home/runner/work/EasyDbMigrator/EasyDbMigrator/EasyDbMigrator/bin/Release/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet pack EasyDbMigrator/EasyDbMigrator.csproj -c Release -o ./artifacts
 
+    - name: Publish to Nuget
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate

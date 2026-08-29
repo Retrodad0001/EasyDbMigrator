@@ -5,40 +5,39 @@ on:
     branches: [ '**'  ]
   pull_request:
     branches: [ '**'  ]
-    
+
 jobs:
   BuildAndTest:
     name: EasyDBMigrator Package
-    runs-on: windows-latest
-    timeout-minutes: 15
-  
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
     steps:
     - name: Check out the Repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v5
 
-    - name: Setup .NET Core 8.0.x
-      uses: actions/setup-dotnet@v1
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: |
+          8.0.x
+          9.0.x
+          10.0.x
 
-    - name: Setup .NET Core 9.0.x
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 9.0.x
-
-    - name: Setup .NET Core 10.0.x
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 10.0.x
-   
     - name: Restore dependencies
       run: dotnet restore
-    
+
     - name: Build debug version all
       run: dotnet build --configuration Debug --no-restore
- 
-    - name: Run unittest with code-coverage
-      run: dotnet test --no-build --verbosity normal --filter Category!=Integrationtest /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-    
+
+    # Microsoft.Testing.Platform runner, opted in via the "test" section of global.json.
+    # MTP takes --coverage instead of coverlet.
+    # The integration tests start their own SQL Server and Postgres containers, which
+    # is why this job runs on Linux: the Windows runners cannot run Linux containers.
+    - name: Run all tests with code-coverage
+      run: dotnet test --no-build --coverage --coverage-output-format cobertura
+
     - name: Upload code coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}

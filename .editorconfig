@@ -101,6 +101,17 @@ dotnet_diagnostic.IDE0059.severity = warning
 # CA1873: Avoid potentially expensive logging
 dotnet_diagnostic.CA1873.severity = warning
 
+# MSTEST0068: Use 'Assert' instead of 'CollectionAssert'
+dotnet_diagnostic.MSTEST0068.severity = warning
+
+# MSTEST0037: Use proper 'Assert' methods
+dotnet_diagnostic.MSTEST0037.severity = warning
+
+# MSTEST0058: Do not use asserts in catch blocks. The integration tests catch
+# everything on purpose so a failure can be reported together with the migrator
+# log, and every catch block ends in Assert.Fail, so nothing can pass silently.
+dotnet_diagnostic.MSTEST0058.severity = none
+
 [*.vb]
 #### Naming styles ####
 

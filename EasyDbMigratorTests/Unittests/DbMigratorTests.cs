@@ -6,21 +6,22 @@ using EasyDbMigrator.DatabaseConnectors;
 using EasyDbMigratorTests.TestHelpers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System.Diagnostics.CodeAnalysis;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
 
 namespace EasyDbMigratorTests.Unittests;
 
 [ExcludeFromCodeCoverage]
+[TestClass]
 public class DbMigratorTests
 {
-    [Fact]
+    [TestMethod]
     public void WhenConstructingTheParameterDirectoryHelperShouldBeProvided()
     {
         static void act()
@@ -35,10 +36,10 @@ public class DbMigratorTests
                 , datetimeHelperMock.Object);
         }
 
-        Assert.Throws<ArgumentNullException>(() => act());
+        Assert.ThrowsExactly<ArgumentNullException>(() => act());
     }
 
-    [Fact]
+    [TestMethod]
     public void WhenConstructingTheParameterConnectorShouldBeProvided()
     {
         static void act()
@@ -55,10 +56,10 @@ public class DbMigratorTests
                 , datetimeHelperMock.Object);
         }
 
-        Assert.Throws<ArgumentNullException>(() => act());
+        Assert.ThrowsExactly<ArgumentNullException>(() => act());
     }
 
-    [Fact]
+    [TestMethod]
     public void WhenConstructingTheParameterAssemblyResourceHelperShouldBeProvided()
     {
         static void act()
@@ -74,10 +75,10 @@ public class DbMigratorTests
                 , datetimeHelperMock.Object);
         }
 
-        Assert.Throws<ArgumentNullException>(() => act());
+        Assert.ThrowsExactly<ArgumentNullException>(() => act());
     }
 
-    [Fact]
+    [TestMethod]
     public void WhenConstructingTheParameterLoggerShouldBeProvided()
     {
         static void act()
@@ -92,10 +93,10 @@ public class DbMigratorTests
                 , datetimeHelperMock.Object);
         }
 
-        Assert.Throws<ArgumentNullException>(() => act());
+        Assert.ThrowsExactly<ArgumentNullException>(() => act());
     }
 
-    [Fact]
+    [TestMethod]
     public void WhenConstructingTheParameterDataTimeHelperShouldBeProvided()
     {
         static void act()
@@ -110,10 +111,10 @@ public class DbMigratorTests
                 , null!);
         }
 
-        Assert.Throws<ArgumentNullException>(() => act());
+        Assert.ThrowsExactly<ArgumentNullException>(() => act());
     }
 
-    [Fact]
+    [TestMethod]
     public void WhenUsingTheCreateMethodHappyFlow()
     {
         static void act()
@@ -130,7 +131,7 @@ public class DbMigratorTests
         act();
     }
 
-    [Fact]
+    [TestMethod]
     public void WhenUsingTheCreateMethodTheILoggerShouldBeProvided()
     {
         static void act()
@@ -142,10 +143,10 @@ public class DbMigratorTests
                 , new PostgreSqlConnector());
         }
 
-        Assert.Throws<ArgumentNullException>(() => act());
+        Assert.ThrowsExactly<ArgumentNullException>(() => act());
     }
 
-    [Fact]
+    [TestMethod]
     public void WhenUsingTheCreateMethodTheMigrationConfigurationShouldBeProvided()
     {
         static void act()
@@ -156,10 +157,10 @@ public class DbMigratorTests
                 , new MicrosoftSqlConnector());
         }
 
-        Assert.Throws<ArgumentNullException>(() => act());
+        Assert.ThrowsExactly<ArgumentNullException>(() => act());
     }
 
-    [Fact]
+    [TestMethod]
     public void WhenUsingTheCreateMethodTheIDatabaseConnectorShouldBeProvided()
     {
         static void act()
@@ -172,10 +173,10 @@ public class DbMigratorTests
                 , null!);
         }
 
-        Assert.Throws<ArgumentNullException>(() => act());
+        Assert.ThrowsExactly<ArgumentNullException>(() => act());
     }
 
-    [Fact]
+    [TestMethod]
     public void WhenUsingTheCreateForLocalIntegrationTestingMethodHappyFlow()
     {
         static void act()
@@ -194,7 +195,7 @@ public class DbMigratorTests
         act();
     }
 
-    [Fact]
+    [TestMethod]
     public void WhenUsingTheCreateForLocalIntegrationTestingMethodTheILoggerShouldBeProvided()
     {
         static void act()
@@ -209,10 +210,10 @@ public class DbMigratorTests
                 , new MicrosoftSqlConnector());
         }
 
-        Assert.Throws<ArgumentNullException>(() => act());
+        Assert.ThrowsExactly<ArgumentNullException>(() => act());
     }
 
-    [Fact]
+    [TestMethod]
     public void WhenUsingTheCreateForLocalIntegrationTestingMethodTheMigrationConfigurationShouldBeProvided()
     {
         static void act()
@@ -225,10 +226,10 @@ public class DbMigratorTests
                 , new PostgreSqlConnector());
         }
 
-        Assert.Throws<ArgumentNullException>(() => act());
+        Assert.ThrowsExactly<ArgumentNullException>(() => act());
     }
 
-    [Fact]
+    [TestMethod]
     public void WhenUsingTheCreateForLocalIntegrationTestingMethodTheDataTimeHelperShouldBeProvided()
     {
         static void act()
@@ -243,10 +244,10 @@ public class DbMigratorTests
                 , new MicrosoftSqlConnector());
         }
 
-        Assert.Throws<ArgumentNullException>(() => act());
+        Assert.ThrowsExactly<ArgumentNullException>(() => act());
     }
 
-    [Fact]
+    [TestMethod]
     public void WhenUsingTheCreateForLocalIntegrationTestingMethodTheIDateBaseConnectorShouldBeProvided()
     {
         static void act()
@@ -262,10 +263,10 @@ public class DbMigratorTests
                 , null!);
         }
 
-        Assert.Throws<ArgumentNullException>(() => act());
+        Assert.ThrowsExactly<ArgumentNullException>(() => act());
     }
 
-    [Fact]
+    [TestMethod]
     public async Task WhenMigrationProcessGoesOk()
     {
         const string databaseName = "EasyDbMigrator";
@@ -324,7 +325,7 @@ public class DbMigratorTests
             , config
             , CancellationToken.None);
 
-        Assert.True(result);
+        Assert.IsTrue(result);
 
         _ = loggerMock
             .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
@@ -338,7 +339,7 @@ public class DbMigratorTests
             .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), false);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task CanUseFileDirectoryForScripts()
     {
         const string databaseName = "EasyDbMigrator";
@@ -399,7 +400,7 @@ public class DbMigratorTests
             , config
             , CancellationToken.None);
 
-        Assert.True(result);
+        Assert.IsTrue(result);
 
         _ = loggerMock
             .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
@@ -413,7 +414,7 @@ public class DbMigratorTests
             .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), false);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task WhenCreatingNewDatabaseFailsDuringTheMigrationProcess()
     {
         const string databaseName = "EasyDbMigrator";
@@ -471,7 +472,7 @@ public class DbMigratorTests
             , config
             , CancellationToken.None);
 
-        Assert.False(result);
+        Assert.IsFalse(result);
 
         _ = loggerMock
             .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
@@ -482,8 +483,7 @@ public class DbMigratorTests
             .CheckIfLoggerWasCalled("migration process executed with errors", LogLevel.Error, Times.Exactly(1), false);
     }
 
-
-    [Fact]
+    [TestMethod]
     public async Task WhenOneOfTheScriptsCannotBeParsedDuringTheMigrationProcess()
     {
         const string databaseName = "EasyDbMigrator";
@@ -533,7 +533,7 @@ public class DbMigratorTests
             , config
             , CancellationToken.None);
 
-        Assert.False(result);
+        Assert.IsFalse(result);
 
         _ = loggerMock
             .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
@@ -543,7 +543,7 @@ public class DbMigratorTests
             .CheckIfLoggerWasCalled("migration process executed with errors", LogLevel.Error, Times.Exactly(1), false);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task WhenCreatingNewVersioningTableFailsDuringTheMigrationProcess()
     {
         const string databaseName = "EasyDbMigrator";
@@ -602,7 +602,7 @@ public class DbMigratorTests
             , config
             , CancellationToken.None);
 
-        Assert.False(result);
+        Assert.IsFalse(result);
 
         _ = loggerMock
            .CheckIfLoggerWasCalled("setup database executed successfully", LogLevel.Information, Times.Exactly(1), false)
@@ -612,7 +612,7 @@ public class DbMigratorTests
            .CheckIfLoggerWasCalled("migration process executed with errors", LogLevel.Error, Times.Exactly(1), false);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task WhenSomeScriptFailsToRunSkipTheRestOfTheScripts()
     {
         const string databaseName = "EasyDbMigrator";
@@ -672,7 +672,7 @@ public class DbMigratorTests
             , datetimeHelperMock.Object);
 
         bool result = await migrator.TryApplyMigrationsAsync(someType, config, CancellationToken.None);
-        Assert.False(result);
+        Assert.IsFalse(result);
 
         _ = loggerMock
               .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
@@ -684,7 +684,6 @@ public class DbMigratorTests
               .CheckIfLoggerWasCalled("script: 20211230_003_Script3.sql was skipped due to exception in previous script", LogLevel.Warning, Times.Exactly(1), false)
               .CheckIfLoggerWasCalled("migration process executed with errors", LogLevel.Error, Times.Exactly(1), false);
 
-        //check that the 3rd script is skipped because of the error in the previous script so we check here that max 2 db calls are made
         databaseConnectorMock.Verify(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<Script>()
             , It.IsAny<DateTimeOffset>()
@@ -692,7 +691,7 @@ public class DbMigratorTests
         , Times.Exactly(2));
     }
 
-    [Fact]
+    [TestMethod]
     public async Task CanCancelTheMigrationProcessBeforeTheFirstScriptHasRun()
     {
         const string databaseName = "EasyDbMigrator";
@@ -759,12 +758,11 @@ public class DbMigratorTests
             , config
             , token);
 
-        Assert.True(result);
+        Assert.IsTrue(result);
 
         _ = loggerMock
               .CheckIfLoggerWasCalled("migration process was canceled from the outside", LogLevel.Warning, Times.Exactly(1), false);
 
-        //check that the 3rd script is skipped because of the error in the previous script so we check here that max 2 db calls are made
         databaseConnectorMock.Verify(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<Script>()
             , It.IsAny<DateTimeOffset>()
@@ -772,7 +770,7 @@ public class DbMigratorTests
         , Times.Exactly(0));
     }
 
-    [Fact]
+    [TestMethod]
     public async Task CanCancelTheMigrationProcessAfterTheFirstScriptHasRun()
     {
         const string databaseName = "EasyDbMigrator";
@@ -837,7 +835,7 @@ public class DbMigratorTests
                 , config
                 , token);
 
-        Assert.False(result);
+        Assert.IsFalse(result);
 
         _ = loggerMock
               .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
@@ -848,7 +846,6 @@ public class DbMigratorTests
               .CheckIfLoggerWasCalled("migration process was canceled", LogLevel.Warning, Times.Exactly(1), false)
               .CheckIfLoggerWasCalled("migration process executed with errors", LogLevel.Error, Times.Exactly(1), false);
 
-        //check that the 3rd script is skipped because of the error in the previous script so we check here that max 2 db calls are made
         databaseConnectorMock.Verify(x => x.RunDbMigrationScriptAsync(It.IsAny<MigrationConfiguration>()
             , It.IsAny<Script>()
             , It.IsAny<DateTimeOffset>()
@@ -856,7 +853,7 @@ public class DbMigratorTests
         , Times.Exactly(2));
     }
 
-    [Fact]
+    [TestMethod]
     public async Task CanSkipScriptsIfExecutedBefore()
     {
         const string databaseName = "EasyDbMigrator";
@@ -919,7 +916,7 @@ public class DbMigratorTests
             , config
             , CancellationToken.None);
 
-        Assert.True(result);
+        Assert.IsTrue(result);
 
         _ = loggerMock
              .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
@@ -932,7 +929,7 @@ public class DbMigratorTests
              .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), false);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task CanExcludeScriptsSoTheyWillNotBeExecuted()
     {
         const string databaseName = "EasyDbMigrator";
@@ -987,13 +984,12 @@ public class DbMigratorTests
             , directoryHelperMock.Object
             , datetimeHelperMock.Object);
 
-        //exclude some scripts
         migrator.ExcludeTheseScriptsInRun(new List<string> { "20211230_001_Script1.sql" });
 
         bool result = await migrator.TryApplyMigrationsAsync(someType
             , config
             , CancellationToken.None);
-        Assert.True(result);
+        Assert.IsTrue(result);
 
         _ = loggerMock
             .CheckIfLoggerWasCalled("start running migrations for database: EasyDbMigrator", LogLevel.Information, Times.Exactly(1), false)
@@ -1005,7 +1001,7 @@ public class DbMigratorTests
             .CheckIfLoggerWasCalled("migration process executed successfully", LogLevel.Information, Times.Exactly(1), false);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task LogWhenSomethingGoesWrongDeletingTheDatabase()
     {
         const string databaseName = "EasyDbMigrator";
@@ -1036,13 +1032,13 @@ public class DbMigratorTests
         bool success = await migrator.TryDeleteDatabaseIfExistAsync(config
             , CancellationToken.None);
 
-        Assert.False(success);
+        Assert.IsFalse(success);
 
         _ = loggerMock
             .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync executed with error", LogLevel.Error, Times.Exactly(1), true);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task CanDeleteOldTestDatabaseToSetupCleanTest()
     {
         const string databaseName = "EasyDbMigrator";
@@ -1074,13 +1070,13 @@ public class DbMigratorTests
         bool success = await migrator.TryDeleteDatabaseIfExistAsync(config
             , CancellationToken.None);
 
-        Assert.True(success);
+        Assert.IsTrue(success);
 
         _ = loggerMock
             .CheckIfLoggerWasCalled("DeleteDatabaseIfExistAsync has executed", LogLevel.Information, Times.Exactly(1), false);
     }
 
-    [Fact]
+    [TestMethod]
     public void IsPossibleToMockEasyDbCreatorInYourOwnTestsUsingTheInterface()
     {
         var sut = new Mock<IDbMigrator>();
@@ -1097,10 +1093,9 @@ public class DbMigratorTests
             , It.IsAny<CancellationToken>()))
            .ThrowsAsync(new Exception());
 
-        //just proving it can be done, no extra assert is needed
     }
 
-    [Fact]
+    [TestMethod]
     public void IsPossibleToMockEasyDbCreatorInYourOwnTestsUsingConcreteClass()
     {
         var sut = new Mock<DbMigrator>();
@@ -1117,9 +1112,9 @@ public class DbMigratorTests
             , It.IsAny<CancellationToken>()))
            .ThrowsAsync(new Exception());
 
-        //just proving it can be done, no extra assert is needed
     }
 
+    [ExcludeFromCodeCoverage]
     private sealed class TestLoggerImplementation : ILogger
     {
         public IDisposable BeginScope<TState>(TState state)
@@ -1138,7 +1133,7 @@ public class DbMigratorTests
         }
     }
 
-    [Fact]
+    [TestMethod]
     public void IsPossibleToInjectEasyDbCreatorInServiceCollection()
     {
         ServiceCollection? collection = new();
