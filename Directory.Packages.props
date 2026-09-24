@@ -1,0 +1,24 @@
+<Project>
+  <PropertyGroup>
+	<!-- Enable central package version management for the solution -->
+	<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+	<!-- Centralize package versions to consolidate across the solution -->
+	<PackageVersion Include="Microsoft.NET.ILLink.Tasks" Version="10.0.12" />
+	<PackageVersion Include="Microsoft.Data.SqlClient" Version="7.1.0" />
+	<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.12" />
+	<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.12" />
+	<PackageVersion Include="Npgsql" Version="10.0.3" />
+	<PackageVersion Include="Polly" Version="8.8.0" />
+	<PackageVersion Include="Dapper" Version="2.1.89" />
+	<PackageVersion Include="Moq" Version="4.20.72" />
+	<PackageVersion Include="SharpCompress" Version="0.50.4" />
+	<PackageVersion Include="TestEnvironment.Docker.Containers.Mssql" Version="2.1.10" />
+	<PackageVersion Include="TestEnvironment.Docker.Containers.Postgres" Version="2.1.8" />
+	<PackageVersion Update="Microsoft.Testing.Extensions.CodeCoverage" Version="18.11.2" />
+	<PackageVersion Update="Microsoft.Testing.Extensions.TrxReport" Version="2.4.1" />
+	<PackageVersion Update="MSTest.TestAdapter" Version="4.4.1" />
+	<PackageVersion Update="MSTest.TestFramework" Version="4.4.1" />
+  </ItemGroup>
+</Project>
